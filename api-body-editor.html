@@ -27,8 +27,10 @@ the License.
 <link rel="import" href="../files-payload-editor/files-payload-editor.html">
 <link rel="import" href="../content-type-selector/content-type-selector.html">
 <link rel="import" href="../events-target-behavior/events-target-behavior.html">
+<link rel="import" href="../api-form-mixin/api-form-styles.html">
 <dom-module id="api-body-editor">
   <template>
+    <style include="api-form-styles"></style>
     <style>
     :host {
       display: block;
@@ -63,7 +65,7 @@ the License.
     }
     </style>
     <div class="content-actions">
-      <paper-icon-button icon="arc:content-copy" class="copy-button" on-tap="_copyToClipboard" title="Copy current editor value to clipboard"></paper-icon-button>
+      <paper-icon-button icon="arc:content-copy" class="action-icon" on-tap="_copyToClipboard" title="Copy current editor value to clipboard"></paper-icon-button>
       <template is="dom-if" if="[[hasAmfModel]]">
         <template is="dom-if" if="[[!singleMimeType]]">
           <paper-dropdown-menu label="Select content type" no-label-float>
@@ -96,6 +98,7 @@ the License.
     /**
      * `api-body-editor`
      * Renders different types of body editors. It works with AMF data model
+     * but can be used separately.
      *
      * ## AMF support
      *
@@ -423,9 +426,20 @@ the License.
         }
         this.__createBodyPanel(selected);
       }
-
-      _notifyBodyChanged() {
-        console.warn('Implement me');
+      /**
+       * Notifies application about body change.
+       *
+       * @param {String|FormData|File|undefined} value Value to notify
+       */
+      _notifyBodyChanged(value) {
+        const e = new CustomEvent('body-value-changed', {
+          detail: {
+            value: value,
+          },
+          bubbles: true,
+          composed: true
+        });
+        this.dispatchEvent(e);
       }
       /**
        * Removes any existing body panel from local DOM.
@@ -451,7 +465,7 @@ the License.
           case 0: this._createRawPanel(); break;
           case 1: this._createFormDataPanel(); break;
           case 2: this._createMultipartPanel(); break;
-          case 4: this._createFilePanel(); break;
+          case 3: this._createFilePanel(); break;
         }
         Polymer.RenderStatus.afterNextRender(this, () => {
           this._attachValues();
@@ -509,10 +523,19 @@ the License.
         this.shadowRoot.querySelector('.body-panel').appendChild(panel);
       }
 
+      /**
+       * Handler for the `value-changed` event dispatched by an editor panel.
+       * Updates this element value reported back to the application and
+       * dispatches `body-value-changed` custom event so elements without
+       * direct access to this element can act upon new information.
+       *
+       * @param {CustomEvent} e
+       */
       _panelValueChanged(e) {
         this._cancelValueSetOnPanel = true;
         this.value = e.detail.value;
         this._cancelValueSetOnPanel = false;
+        this._notifyBodyChanged(e.detail.value);
       }
       /**
        * Attaches value and value change listeners to current editor
@@ -738,7 +761,12 @@ the License.
       _resetCopyButtonState(button) {
         button.icon = 'arc:content-copy';
       }
-
+      /**
+       * A handler for `amfModel` property change.
+       * Resets `mediaTypes` property as defined in the model.
+       *
+       * @param {Array|Object} model Passed model
+       */
       _amfChanged(model) {
         this.__latestViewModel = undefined;
         const panel = this.currentPanel;
@@ -818,13 +846,20 @@ the License.
        */
       _updateAmfMediaTypes(model) {
         this._setMimeTypes(undefined);
-        this._setSelectedMimeType(undefined);
-        const key = 'http://raml.org/vocabularies/http#mediaType';
+        const HTTP = 'http://raml.org/vocabularies/http#';
+        const key = HTTP + 'mediaType';
         const mediaTypes = model.map((item) => item[key][0]['@value']);
         this._setMimeTypes(mediaTypes);
         if (mediaTypes && mediaTypes[0]) {
-          this._setSelectedMimeType(mediaTypes[0]);
-          this.set('contentType', mediaTypes[0]);
+          if (this._modelHasType(model[HTTP + 'schema']), 'http://raml.org/vocabularies/shapes#FileShape') {
+            this.set('fileAccept', mediaTypes);
+            this.set('contentType', 'application/octet-stream');
+          } else {
+            if (this.fileAccept) {
+              this.set('fileAccept', undefined);
+            }
+            this.set('contentType', mediaTypes[0]);
+          }
         }
         this._setSingleMimeType(mediaTypes && mediaTypes.length === 1);
       }
