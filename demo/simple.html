@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>api-body-editor demo</title>
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+    <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
+    <link rel="import" href="../../neon-animation/web-animations.html">
+    <link rel="import" href="../../neon-animation/neon-animations.html">
+    <link rel="import" href="../../neon-animation/neon-animation.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../api-body-editor.html">
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      :root {
+        --code-type-text-value-color: #0d47a1;
+        --code-type-number-value-color: #03a9f4;
+        --code-type-boolean-value-color: #0288d1;
+        --code-type-null-value-color: #0288d1;
+        --code-punctuation-value-color: #757575;
+        --code-type-link-color: #757575;
+        --code-array-index-color: rgba(1, 87, 155, 0.57);
+        --code-background-color: #F4F5F6;
+        --code-mirror-background-color: #f5f2f0;
+        --code-mirror: {
+          background-color: var(--arc-code-mirror-background-color, #f5f2f0);
+        };
+
+        --code-mirror-editor: {
+          background-color: var(--arc-code-mirror-background-color, #f5f2f0);
+          z-index: 0;
+        };
+        --code-mirror-wrapper: {
+          display: block;
+        };
+      }
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic api-body-editor demo</h3>
+      <demo-snippet>
+        <template>
+          <dom-bind>
+            <template>
+              <api-body-editor value="{{value}}" allow-hide-optional allow-disable-params allow-custom></api-body-editor>
+              <output>[[value]]</output>
+            </template>
+          </dom-bind>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>

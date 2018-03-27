@@ -1,0 +1,847 @@
+<!--
+@license
+Copyright 2018 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/elements/dom-if.html">
+<link rel="import" href="../polymer/lib/utils/render-status.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../arc-icons/arc-icons.html">
+<link rel="import" href="../clipboard-copy/clipboard-copy.html">
+<link rel="import" href="../form-data-editor/form-data-editor.html">
+<link rel="import" href="../raw-payload-editor/raw-payload-editor.html">
+<link rel="import" href="../multipart-payload-editor/multipart-payload-editor.html">
+<link rel="import" href="../files-payload-editor/files-payload-editor.html">
+<link rel="import" href="../content-type-selector/content-type-selector.html">
+<link rel="import" href="../events-target-behavior/events-target-behavior.html">
+<dom-module id="api-body-editor">
+  <template>
+    <style>
+    :host {
+      display: block;
+      @apply --api-body-editor;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .content-actions {
+      @apply --layout-horizontal;
+      @apply --layout-end;
+      @apply --api-body-editor-content-actions;
+    }
+
+    paper-dropdown-menu {
+      margin-right: 12px;
+      @apply --payload-editor-dropdown;
+    }
+
+    paper-dropdown-menu.type {
+      padding: 0 12px;
+      min-width: 280px;
+      @apply --payload-editor-dropdown-type;
+    }
+
+    paper-icon-button[active] {
+      background-color: var(--raml-body-editor-panel-button-active, #e0e0e0);
+      border-radius: 50%;
+      @apply --api-body-editor-button-active;
+    }
+    </style>
+    <div class="content-actions">
+      <paper-icon-button icon="arc:content-copy" class="copy-button" on-tap="_copyToClipboard" title="Copy current editor value to clipboard"></paper-icon-button>
+      <template is="dom-if" if="[[hasAmfModel]]">
+        <template is="dom-if" if="[[!singleMimeType]]">
+          <paper-dropdown-menu label="Select content type" no-label-float>
+            <paper-listbox slot="dropdown-content" attr-for-selected="data-mime" selected="{{contentType}}">
+              <template is="dom-repeat" items="[[mimeTypes]]">
+                <paper-item data-mime$="[[item]]">[[item]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </template>
+      </template>
+      <template is="dom-if" if="[[!hasAmfModel]]">
+        <content-type-selector content-type="{{contentType}}">
+          <paper-item data-type="application/octet-stream">Any file data</paper-item>
+        </content-type-selector>
+        <paper-dropdown-menu class="type" label="Editor view" hidden$="[[editorSelectorHidden]]">
+          <paper-listbox slot="dropdown-content" selected="{{selected}}">
+            <paper-item hidden$="[[noTextInput]]">Raw input</paper-item>
+            <paper-item hidden$="[[noFormData]]">Form data (www-url-form-encoded)</paper-item>
+            <paper-item hidden$="[[noMultipart]]">Multipart form data (multipart/form-data)</paper-item>
+            <paper-item hidden$="[[noFile]]">Single file</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </template>
+    </div>
+    <section class="body-panel"></section>
+    <clipboard-copy></clipboard-copy>
+  </template>
+  <script>
+    /**
+     * `api-body-editor`
+     * Renders different types of body editors. It works with AMF data model
+     *
+     * ## AMF support
+     *
+     * The element supports [AMF](https://github.com/mulesoft/amf/)
+     * `json-ld` model. The model can be generated from OAS or RAML spec by
+     * default and other specs with appropriate plugin.
+     *
+     * The element accepts `http://www.w3.org/ns/hydra/core#Operation`,
+     * `http://raml.org/vocabularies/http#Request` or array of
+     * `http://raml.org/vocabularies/http#Payload` definitions in AMF
+     * vocabulary.
+     *
+     * When AMF model is accepted it alters the UI to render only allowed
+     * by the spec content types and therefore editors.
+     *
+     * ## Optional dependency for AMF
+     *
+     * `advanced-rest-client/api-view-model-transformer` is not imported by
+     * default to the element so applications that do not use AMF do not pay the
+     * cost of including the transformer. The transformer is a required
+     * dependency of the element, though.
+     *
+     * Be advised, **build process won't pick up the dependency** while it is
+     * included at run time. Therefore you have add the element to the build
+     * process manualy.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     * @appliesMixin ArcBehaviors.EventsTargetBehavior
+     */
+    class ApiBodyEditor extends ArcBehaviors.EventsTargetBehavior(Polymer.Element) {
+      static get is() { return 'api-body-editor'; }
+      static get properties() {
+        return {
+          /**
+           * Currently selected editor.
+           *
+           * - 0 for Raw editor
+           * - 1 for Form data
+           * - 2 for Multipart
+           * - 3 for File
+           */
+          selected: {
+            type: Number,
+            value: 0,
+            observer: '_selectedChanged'
+          },
+          /**
+           * A HTTP body.
+           *
+           * Depending of current editor selection the type can vary.
+           *
+           * @type {String|FormData|File}
+           */
+          value: {
+            type: String,
+            value: '',
+            notify: true,
+            observer: '_valueChanged'
+          },
+          /**
+           * When set it will attempt to run associated code mirror mode
+           * (raw editor).
+           * This element listens for the `content-type-changed` event and when
+           * handled it will automatically update content type and `mode`.
+           */
+          contentType: {
+            type: String,
+            observer: '_contentTypeChanged'
+          },
+          /**
+           * AMF json/ld model for body.
+           * When set it resets editor settings and transform it to work with
+           * data types defined in AMF only.
+           * @type {Object}
+           */
+          amfModel: {
+            type: Object,
+            observer: '_amfChanged'
+          },
+          // Computed final model for payload.
+          _effectiveModel: Object,
+          /**
+           * Computed value, `true` when `amfModel` is set.
+           * This controls how the view is rendered. AMF model has limited
+           * number of media types supported by the API. When not existing
+           * the edtior renders all possible types.
+           *
+           * @type {Object}
+           */
+          hasAmfModel: {
+            type: Boolean,
+            value: false,
+            computed: '_computeHasAmf(amfModel)'
+          },
+          // Computed value, if set then raw text input is hidden
+          noTextInput: Boolean,
+          // Computed value, if set then form data input is hidden
+          noFormData: Boolean,
+          // Computed value, if set then multipart input is hidden
+          noMultipart: Boolean,
+          // Computed value, if set then file input is hidden
+          noFile: Boolean,
+          // Computed value, true if the editor type selector is hidden.
+          editorSelectorHidden: {
+            type: Boolean,
+            readOnly: true
+          },
+          /**
+           * If set it computes `hasOptional` property and shows checkbox in the
+           * form to show / hide optional properties.
+           */
+          allowHideOptional: {
+            type: Boolean,
+            observer: '_allowDisableParamsChanged'
+          },
+          /**
+           * If set, enable / disable param checkbox is rendered next to each
+           * form item.
+           */
+          allowDisableParams: {
+            type: Boolean,
+            observer: '_allowDisableParamsChanged'
+          },
+          /**
+           * When set, renders "add custom" item button.
+           * If the element is to be used withouth AMF model this should always
+           * be enabled. Otherwise users won't be able to add a parameter.
+           */
+          allowCustom: {
+            type: Boolean,
+            observer: '_allowCustomChanged'
+          },
+          /**
+           * Renders items in "narrow" view
+           */
+          narrow: {
+            type: Boolean,
+            observer: '_narrowChanged'
+          },
+          /**
+           * List of supported mime types by this endpoint.
+           * This information is read from AMF data model.
+           */
+          mimeTypes: {
+            type: Array,
+            readOnly: true,
+            // observer: '_mimeTypesChanged'
+          },
+          /**
+           * RAML's type definition.
+           * A JSON editor uses it to create a schema definition (as a JSON object of {name: type}) to
+           * display autosuggestions.
+           */
+          selectedMimeType: {
+            type: Object,
+            readOnly: true
+          },
+          /**
+           * Computed value.
+           * It's `true` when the endpint supports single mime type.
+           * In this case it won't render type selector.
+           *
+           * @type {Object}
+           */
+          singleMimeType: {
+            type: Object,
+            readOnly: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_updateAmfSelectedMime(hasAmfModel, contentType, selected)'
+        ];
+      }
+
+      /**
+       * @return {HTMLElement} Currently rendered body panel.
+       */
+      get currentPanel() {
+        if (!this.shadowRoot) {
+          return;
+        }
+        const selector = '[data-body-panel]';
+        return this.shadowRoot.querySelector(selector);
+      }
+      /**
+       * @constructor
+       */
+      constructor() {
+        super();
+        this._ctHandler = this._ctHandler.bind(this);
+        this._payloadKeyDown = this._payloadKeyDown.bind(this);
+        this._panelValueChanged = this._panelValueChanged.bind(this);
+      }
+
+      _attachListeners(node) {
+        node.addEventListener('content-type-changed', this._ctHandler);
+        this.addEventListener('keydown', this._payloadKeyDown);
+      }
+
+      _detachListeners(node) {
+        node.removeEventListener('content-type-changed', this._ctHandler);
+        this.removeEventListener('keydown', this._payloadKeyDown);
+      }
+      /**
+       * Computes value for `hasAmfModel`.
+       * @param {?Object} amf AMF model for body.
+       * @return {Boolean}
+       */
+      _computeHasAmf(amf) {
+        return !!amf;
+      }
+      /**
+       * Handler for content type changed event.
+       * @param {CustomEvent} e
+       */
+      _ctHandler(e) {
+        this.set('contentType', e.detail.value);
+      }
+      /**
+       * Handler for content type change.
+       * Updates state of the UI depending on AMF model.
+       *
+       * @param {String} contentType New content type value.
+       * @param {String} oldValue Previous value
+       */
+      _contentTypeChanged(contentType, oldValue) {
+        this._updateEditorsState(contentType, oldValue);
+        this._computeEditorSelectorHidden(contentType);
+      }
+      /**
+       * Updates selected model for AMF.
+       *
+       * @param {String} contentType New content type value.
+       */
+      _updateAmfSelectedMime(hasAmfModel, contentType, selected) {
+        // only form data and url encoded form accepts model property
+        if (!hasAmfModel || (selected !== 1 && selected !== 2)) {
+          return;
+        }
+        this._importTransformer()
+        .then(() => {
+          if (this.__transformingModel) {
+            return;
+          }
+          this.__transformingModel = true;
+          setTimeout(() => {
+            this._propagateModel(contentType);
+            this.__transformingModel = false;
+          }, 25);
+        })
+        .catch(() => {
+          throw 'Implement me';
+        });
+      }
+
+      _hideAllEditors() {
+        this.noTextInput = true;
+        this.noFormData = true;
+        this.noMultipart = true;
+        this.noFile = true;
+      }
+
+      _renderAllEditors() {
+        this.noTextInput = false;
+        this.noFormData = false;
+        this.noMultipart = false;
+        this.noFile = false;
+      }
+      /**
+       * Updates editors availability state depending on content type.
+       * @param {String} contentType New content type value.
+       * @param {String} oldValue Previous value
+       */
+      _updateEditorsState(contentType, oldValue) {
+        if (!contentType) {
+          this._renderAllEditors();
+          return;
+        }
+        const value = this.value;
+        this._hideAllEditors();
+        if (contentType.indexOf('multipart/form-data') === 0) {
+          this.noTextInput = false;
+          this.noMultipart = false;
+          this.selected = 2;
+          return;
+        }
+        if (oldValue && oldValue.indexOf('multipart/form-data') === 0) {
+          this.value = '';
+        }
+        if (contentType === 'application/octet-stream' || value instanceof Blob) {
+          this.noFile = false;
+          this.selected = 3;
+          return;
+        }
+        if (contentType.indexOf('json') !== -1) {
+          this.noTextInput = false;
+          this.selected = 0;
+          return;
+        }
+        if (contentType === 'application/x-www-form-urlencoded') {
+          this.noTextInput = false;
+          this.noFormData = false;
+          this.selected = 1;
+          return;
+        }
+        this.noTextInput = false;
+        this.selected = 0;
+      }
+      /**
+       * Replaces active body editor with new one.
+       */
+      _selectedChanged(selected, oldValue) {
+        this.__removeExistingPanel();
+        if (selected === -1 || selected === undefined || selected === null) {
+          this._notifyBodyChanged();
+          return;
+        }
+        if (oldValue !== undefined) {
+          this._analyticsEvent('api-body-editor', 'usage-selection', selected);
+        }
+        this.__createBodyPanel(selected);
+      }
+
+      _notifyBodyChanged() {
+        console.warn('Implement me');
+      }
+      /**
+       * Removes any existing body panel from local DOM.
+       */
+      __removeExistingPanel() {
+        const panel = this.currentPanel;
+        if(!panel) {
+          return;
+        }
+        const events = this.__currentListeners;
+        if (events && events.length) {
+          for (let [type, fn] of events.entries()) {
+            panel.removeEventListener(type, fn);
+            events.delete(type);
+          }
+          this.__currentListeners = undefined;
+        }
+        panel.parentNode.removeChild(panel);
+      }
+
+      __createBodyPanel(selected) {
+        switch(selected) {
+          case 0: this._createRawPanel(); break;
+          case 1: this._createFormDataPanel(); break;
+          case 2: this._createMultipartPanel(); break;
+          case 4: this._createFilePanel(); break;
+        }
+        Polymer.RenderStatus.afterNextRender(this, () => {
+          this._attachValues();
+        });
+      }
+      /**
+       * Adds shared properties for all panels.
+       *
+       * @param {HTMLElement} panel
+       * @param {String} type Body type.
+       */
+      __addCommonProperties(panel, type) {
+        panel.eventsTarget = this.eventsTarget;
+        panel.dataset.type = type;
+        panel.dataset.bodyPanel = true;
+        panel.allowDisableParams = this.allowDisableParams;
+        panel.allowCustom = this.allowCustom;
+        panel.narrow = this.narrow;
+        panel.contentType = this.contentType;
+        panel.allowHideOptional = this.allowHideOptional;
+      }
+      /**
+       * Creates instance of Raw body panel and adds it to local DOM.
+       */
+      _createRawPanel() {
+        const panel = document.createElement('raw-payload-editor');
+        this.__addCommonProperties(panel, 'raw');
+        this.shadowRoot.querySelector('.body-panel').appendChild(panel);
+      }
+
+      /**
+       * Creates instance of Raw body panel and adds it to local DOM.
+       */
+      _createFormDataPanel() {
+        const panel = document.createElement('form-data-editor');
+        this.__addCommonProperties(panel, 'urlencode');
+        this.shadowRoot.querySelector('.body-panel').appendChild(panel);
+      }
+
+      /**
+       * Creates instance of Raw body panel and adds it to local DOM.
+       */
+      _createFilePanel() {
+        const panel = document.createElement('files-payload-editor');
+        this.__addCommonProperties(panel, 'file');
+        this.shadowRoot.querySelector('.body-panel').appendChild(panel);
+      }
+
+      /**
+       * Creates instance of Raw body panel and adds it to local DOM.
+       */
+      _createMultipartPanel() {
+        const panel = document.createElement('multipart-payload-editor');
+        this.__addCommonProperties(panel, 'formdata');
+        this.shadowRoot.querySelector('.body-panel').appendChild(panel);
+      }
+
+      _panelValueChanged(e) {
+        this._cancelValueSetOnPanel = true;
+        this.value = e.detail.value;
+        this._cancelValueSetOnPanel = false;
+      }
+      /**
+       * Attaches value and value change listeners to current editor
+       * after it's created.
+       */
+      _attachValues() {
+        const panel = this.currentPanel;
+        this.__currentListeners = new Map();
+        this.__currentListeners.set('value-changed', this._panelValueChanged);
+        panel.addEventListener('value-changed', this._panelValueChanged);
+        // AMF view model transformer caches valus in the model
+        // fo the value is propagated through the model.
+        if (!this.hasAmfModel) {
+          panel.value = this.value;
+        }
+      }
+
+      /**
+       * Attaches data model to an editor when content type changes.
+       *
+       * Calee must import transformer element before calling this function.
+       *
+       * Currently only `form-data-editor` and `multipart-payload-editor`
+       * support amf data model.
+       *
+       * @return {Promise} Resolved when model is set.
+       */
+      _propagateModel(contentType) {
+        const panel = this.currentPanel;
+        if (this.__latestViewModel && this.__latestViewModel[contentType]) {
+          if (this.__latestViewModel[contentType] !== panel.model) {
+            panel.model = this.__latestViewModel[contentType];
+          }
+          return;
+        }
+        if (!this._effectiveModel) {
+          console.warn('Expecting effective model to be set.');
+          return;
+        }
+        const key = 'http://raml.org/vocabularies/http#mediaType';
+        const model = this._effectiveModel.find((item) => item[key][0]['@value'] === contentType);
+        if (!model) {
+          // It may happen when content type changed because of
+          // FormData or File.
+          return;
+        }
+        const schema = model['http://raml.org/vocabularies/http#schema'][0];
+        const properties = schema['http://www.w3.org/ns/shacl#property'];
+        const transformer = this.transformer;
+        return transformer.computeViewModel(properties)
+        .then((data) => {
+          panel.model = data;
+          if (!this.__latestViewModel) {
+            this.__latestViewModel = {};
+          }
+          this.__latestViewModel[contentType] = data;
+        });
+      }
+      /**
+       * @return {HTMLElement|undefined} Reference to transformer element.
+       */
+      get transformer() {
+        if (!this.shadowRoot) {
+          return;
+        }
+        let element = this.shadowRoot.querySelector('api-view-model-transformer');
+        if (!element) {
+          element = document.createElement('api-view-model-transformer');
+          this.shadowRoot.appendChild(element);
+        }
+        return element;
+      }
+      /**
+       * Dispatches analytics event.
+       *
+       * @param {String} category Event category
+       * @param {String} action Event action
+       * @param {String} label Event label
+       */
+      _analyticsEvent(category, action, label) {
+        const e = new CustomEvent('send-analytics', {
+          detail: {
+            type: 'event',
+            category: category,
+            action: action,
+            label: label
+          },
+          bubbles: true,
+          composed: true
+        });
+        this.dispatchEvent(e);
+      }
+      /**
+       * Dispatches `send-request` custom event when the user pressed
+       * `meta+enter` on Mac or `ctrl+enter` otherwise keys combination.
+       *
+       * @param {CustomEvent} e
+       */
+      _payloadKeyDown(e) {
+        if (e.key !== 'Enter') {
+          return;
+        }
+        const actionKey = navigator.platform === 'MacIntel' ? 'metaKey' : 'ctrlKey';
+        if (!e[actionKey]) {
+          return;
+        }
+        this.dispatchEvent(new CustomEvent('send-request', {
+          cancelable: true,
+          bubbles: true,
+          composed: true
+        }));
+      }
+
+      /**
+       * Computes a value of the hidden attribute of the editory type selector.
+       * Some content types are supported by only one type of the editor so in
+       * this cases the editor should be hidden.
+       *
+       * @param {String} contentType Current content type.
+       * @return {Boolean} true to hide the selector.
+       */
+      _computeEditorSelectorHidden(contentType) {
+        let result;
+        const value = this.value;
+        if (!contentType) {
+          result = false;
+        } else if (value instanceof Blob) {
+          result = true;
+        } else if (contentType.indexOf('json') !== -1) {
+          result = true;
+        } else if (contentType.indexOf('x-www-form-urlencoded') !== -1) {
+          result = false;
+        } else if (contentType.indexOf('multipart/') !== -1) {
+          result = false;
+        } else {
+          result = true;
+        }
+        this._setEditorSelectorHidden(result);
+      }
+      /**
+       * Updates property value on current panel.
+       *
+       * @param {any} value New value to set.
+       */
+      _propertyChangeHandler(prop, value) {
+        const panel = this.currentPanel;
+        if (!panel) {
+          return;
+        }
+        panel[prop] = value;
+      }
+      /**
+       * Updates value of the panel if `value` change and it is not
+       * internal change.
+       *
+       * @param {String|FormData|File} value New value to set.
+       */
+      _valueChanged(value) {
+        if (this._cancelValueSetOnPanel) {
+          return;
+        }
+        this._propertyChangeHandler('value', value);
+      }
+      /**
+       * Updates `allowHideOptional` on a panel.
+       *
+       * @param {Boolean} value New value to set.
+       */
+      _allowHideOptionalChanged(value) {
+        this._propertyChangeHandler('allowHideOptional', value);
+      }
+      /**
+       * Updates `allowDisableParams` on a panel.
+       *
+       * @param {Boolean} value New value to set.
+       */
+      _allowDisableParamsChanged(value) {
+        this._propertyChangeHandler('allowDisableParams', value);
+      }
+      /**
+       * Updates `allowCustom` on a panel.
+       *
+       * @param {Boolean} value New value to set.
+       */
+      _allowCustomChanged(value) {
+        this._propertyChangeHandler('allowCustom', value);
+      }
+      /**
+       * Updates `narrow` on a panel.
+       *
+       * @param {Boolean} value New value to set.
+       */
+      _narrowChanged(value) {
+        this._propertyChangeHandler('narrow', value);
+      }
+
+      /**
+       * Coppies current body text value to clipboard.
+       */
+      _copyToClipboard(e) {
+        const button = e.target;
+        var copy = this.shadowRoot.querySelector('clipboard-copy');
+        copy.content = this.value;
+        if (copy.copy()) {
+          button.icon = 'arc:done';
+        } else {
+          button.icon = 'arc:error';
+          this.dispatchEvent(new CustomEvent('send-analytics', {
+            cancelable: true,
+            bubbles: true,
+            composed: true,
+            detail: {
+              type: 'exception',
+              description: 'Copy to clipboard error - raml-body-editor',
+              fatal: false
+            }
+          }));
+        }
+        setTimeout(() => this._resetCopyButtonState(button), 1000);
+        this._analyticsEvent('api-body-editor', 'Copy to clipboard');
+      }
+
+      _resetCopyButtonState(button) {
+        button.icon = 'arc:content-copy';
+      }
+
+      _amfChanged(model) {
+        this.__latestViewModel = undefined;
+        const panel = this.currentPanel;
+        if (!panel) {
+          return;
+        }
+        if (!model) {
+          panel.model = undefined;
+          return;
+        }
+        model = this._ensurePayloadModel(model);
+        if (!model) {
+          console.warn('Passed model do not contain "payload" definition');
+          return;
+        }
+        this._effectiveModel = model;
+        this._updateAmfMediaTypes(model);
+      }
+      /**
+       * Ensures that the passed model is an array of
+       * `http://raml.org/vocabularies/http#Payload`
+       * in the AMF vocabulary.
+       * The element accepts `http://www.w3.org/ns/hydra/core#Operation`,
+       * `http://raml.org/vocabularies/http#Request` or array of
+       * `http://raml.org/vocabularies/http#Payload` definitions.
+       * It selectes the array from the model.
+       *
+       * @param {Array|Object} model Passed model
+       * @return {Array|undefined} Payload model of undefined if the model
+       * is invalid for this element.
+       */
+      _ensurePayloadModel(model) {
+        if (model instanceof Array) {
+          return model;
+        }
+        const core = 'http://www.w3.org/ns/hydra/core#';
+        const rvoc = 'http://raml.org/vocabularies/http#';
+        if (this._modelHasType(model, core + 'Operation')) {
+          model = model[core + 'expects'][0];
+        }
+        if (this._modelHasType(model, rvoc + 'Request')) {
+          model = model[rvoc + 'payload'];
+        }
+        if (model instanceof Array) {
+          return model;
+        }
+      }
+      /**
+       * Checks if a model has a type.
+       * @param {Object} model Model to test
+       * @param {String} type Type name
+       * @return {Boolean} True if model has a type.
+       */
+      _modelHasType(model, type) {
+        let types = model && model['@type'] || [];
+        return types.some((item) => item === type);
+      }
+      /**
+       * Imports `api-view-model-transformer` element to use it when
+       * AMF model is used.
+       * @return {Promise}
+       */
+      _importTransformer() {
+        return new Promise((resolve, reject) => {
+          const uri = '../api-view-model-transformer/api-view-model-transformer.html';
+          const url = this.resolveUrl(uri);
+          Polymer.importHref(url,
+          () => resolve(),
+          () => reject(),
+          false);
+        });
+      }
+      /**
+       * Creates a list of media types supported by the endpoint as defined in
+       * API spec file.
+       * @param {Array} model List of `Payload` definitions
+       */
+      _updateAmfMediaTypes(model) {
+        this._setMimeTypes(undefined);
+        this._setSelectedMimeType(undefined);
+        const key = 'http://raml.org/vocabularies/http#mediaType';
+        const mediaTypes = model.map((item) => item[key][0]['@value']);
+        this._setMimeTypes(mediaTypes);
+        if (mediaTypes && mediaTypes[0]) {
+          this._setSelectedMimeType(mediaTypes[0]);
+          this.set('contentType', mediaTypes[0]);
+        }
+        this._setSingleMimeType(mediaTypes && mediaTypes.length === 1);
+      }
+
+      /**
+       * Fires when the value change.
+       *
+       * @event body-value-changed
+       * @param {String} value Current editor value
+       */
+      /**
+       * Dispatched when the request should be invoked.
+       *
+       * @event send-request
+       */
+    }
+
+    window.customElements.define(ApiBodyEditor.is, ApiBodyEditor);
+  </script>
+</dom-module>
