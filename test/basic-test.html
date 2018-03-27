@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>api-body-editor test</title>
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../api-body-editor.html">
+  </head>
+  <body>
+    <test-fixture id="Basic">
+      <template>
+        <api-body-editor></api-body-editor>
+      </template>
+    </test-fixture>
+    <script>
+      suite('Initialization', () => {
+        let element;
+        suiteSetup((done) => {
+          element = fixture('Basic');
+          flush(() => done());
+        });
+
+        test('Default selection is raw panel', () => {
+          assert.equal(element.selected, 0);
+        });
+
+        test('Initializes RAW editor when no data', () => {
+          const current = element.currentPanel;
+          assert.equal(current.nodeName, 'RAW-PAYLOAD-EDITOR');
+        });
+
+        test('Value is empty', () => {
+          assert.equal(element.value, '');
+        });
+
+        test('Content type is not set', () => {
+          assert.isUndefined(element.contentType);
+        });
+
+        test('hasAmfModel is false', () => {
+          assert.isFalse(element.hasAmfModel);
+        });
+
+        test('editorSelectorHidden is undefined', () => {
+          assert.isUndefined(element.editorSelectorHidden);
+        });
+
+        test('Editor type selector is rendered', () => {
+          const selector = element.shadowRoot.querySelector('paper-dropdown-menu.type');
+          assert.ok(selector);
+        });
+
+        ['raw', 'urlencode', 'multipart', 'file'].forEach((type) => {
+          test(`Editor type "${type}" is rendered`, () => {
+            const node = element.shadowRoot.querySelector(`paper-item[data-source="${type}"]`);
+            assert.ok(node);
+          });
+        });
+
+        test('content-type-selector is rendered', () => {
+          const node = element.shadowRoot.querySelector('content-type-selector');
+          assert.ok(node);
+        });
+
+        test('AMF types selector is not renered', () => {
+          const node = element.shadowRoot.querySelector('.amf-types');
+          assert.notOk(node);
+        });
+      });
+    </script>
+  </body>
+</html>

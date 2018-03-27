@@ -57,18 +57,12 @@ the License.
       min-width: 280px;
       @apply --payload-editor-dropdown-type;
     }
-
-    paper-icon-button[active] {
-      background-color: var(--raml-body-editor-panel-button-active, #e0e0e0);
-      border-radius: 50%;
-      @apply --api-body-editor-button-active;
-    }
     </style>
     <div class="content-actions">
       <paper-icon-button icon="arc:content-copy" class="action-icon" on-tap="_copyToClipboard" title="Copy current editor value to clipboard"></paper-icon-button>
       <template is="dom-if" if="[[hasAmfModel]]">
         <template is="dom-if" if="[[!singleMimeType]]">
-          <paper-dropdown-menu label="Select content type" no-label-float>
+          <paper-dropdown-menu class="amf-types" label="Select content type" no-label-float>
             <paper-listbox slot="dropdown-content" attr-for-selected="data-mime" selected="{{contentType}}">
               <template is="dom-repeat" items="[[mimeTypes]]">
                 <paper-item data-mime$="[[item]]">[[item]]</paper-item>
@@ -83,10 +77,10 @@ the License.
         </content-type-selector>
         <paper-dropdown-menu class="type" label="Editor view" hidden$="[[editorSelectorHidden]]">
           <paper-listbox slot="dropdown-content" selected="{{selected}}">
-            <paper-item hidden$="[[noTextInput]]">Raw input</paper-item>
-            <paper-item hidden$="[[noFormData]]">Form data (www-url-form-encoded)</paper-item>
-            <paper-item hidden$="[[noMultipart]]">Multipart form data (multipart/form-data)</paper-item>
-            <paper-item hidden$="[[noFile]]">Single file</paper-item>
+            <paper-item data-source="raw" hidden$="[[noTextInput]]">Raw input</paper-item>
+            <paper-item data-source="urlencode" hidden$="[[noFormData]]">Form data (www-url-form-encoded)</paper-item>
+            <paper-item data-source="multipart" hidden$="[[noMultipart]]">Multipart form data (multipart/form-data)</paper-item>
+            <paper-item data-source="file" hidden$="[[noFile]]">Single file</paper-item>
           </paper-listbox>
         </paper-dropdown-menu>
       </template>
@@ -332,6 +326,7 @@ the License.
       _contentTypeChanged(contentType, oldValue) {
         this._updateEditorsState(contentType, oldValue);
         this._computeEditorSelectorHidden(contentType);
+        this._propertyChangeHandler('contentType', contentType);
       }
       /**
        * Updates selected model for AMF.
