@@ -846,7 +846,7 @@ the License.
         const mediaTypes = model.map((item) => item[key][0]['@value']);
         this._setMimeTypes(mediaTypes);
         if (mediaTypes && mediaTypes[0]) {
-          if (this._modelHasType(model[HTTP + 'schema']), 'http://raml.org/vocabularies/shapes#FileShape') {
+          if (this._modelHasType(model[0][HTTP + 'schema'], 'http://raml.org/vocabularies/shapes#FileShape')) {
             this.set('fileAccept', mediaTypes);
             this.set('contentType', 'application/octet-stream');
           } else {
