@@ -159,15 +159,20 @@
           });
         });
 
-        test('body-value-changed event is dispatched', (done) => {
+        test('body-value-changed event is dispatched when setting value on inner editor', (done) => {
           const element = fixture('Raw');
+          element.selected = 0;
           flush(() => {
             element.addEventListener('body-value-changed', (e) => {
               assert.equal(e.detail.value, 'test');
               done();
             });
-            const editor = element.currentPanel;
-            editor.value = 'test';
+            // The elemnt is waiting for the next frame until assings
+            // custent value to the editor.
+            Polymer.RenderStatus.afterNextRender(this, () => {
+              const editor = element.currentPanel;
+              editor.value = 'test';
+            });
           });
         });
 
