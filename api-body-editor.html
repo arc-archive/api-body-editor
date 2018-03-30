@@ -57,6 +57,11 @@ the License.
       min-width: 280px;
       @apply --payload-editor-dropdown-type;
     }
+
+    .single-ct-label {
+      @apply --arc-font-body1;
+      color: var(--api-body-editor-single-media-type-label);
+    }
     </style>
     <div class="content-actions">
       <paper-icon-button icon="arc:content-copy" class="action-icon" on-tap="_copyToClipboard" title="Copy current editor value to clipboard"></paper-icon-button>
@@ -69,6 +74,9 @@ the License.
               </template>
             </paper-listbox>
           </paper-dropdown-menu>
+        </template>
+        <template is="dom-if" if="[[singleMimeType]]">
+          <p class="single-ct-label">Media type: [[contentType]]</p>
         </template>
       </template>
       <template is="dom-if" if="[[!hasAmfModel]]">
@@ -335,7 +343,7 @@ the License.
        */
       _updateAmfSelectedMime(hasAmfModel, contentType, selected) {
         // only form data and url encoded form accepts model property
-        if (!hasAmfModel || (selected !== 1 && selected !== 2)) {
+        if (!hasAmfModel || (selected === 3)) {
           return;
         }
         this._importTransformer()
@@ -560,9 +568,19 @@ the License.
        */
       _propagateModel(contentType) {
         const panel = this.currentPanel;
-        if (this.__latestViewModel && this.__latestViewModel[contentType]) {
-          if (this.__latestViewModel[contentType] !== panel.model) {
-            panel.model = this.__latestViewModel[contentType];
+        if (!this.__cache) {
+          this.__cache = new Map();
+        }
+        const modelCacheKey = contentType + 'model';
+        const valueCacheKey = contentType + 'value';
+        if (this.__cache.has(modelCacheKey)) {
+          const cachedModel = this.__cache.get(modelCacheKey);
+          const cachedValue = this.__cache.get(valueCacheKey);
+          if (cachedModel !== panel.model) {
+            panel.model = cachedModel;
+          }
+          if (cachedValue !== panel.value) {
+            panel.value = cachedValue;
           }
           return;
         }
@@ -583,10 +601,14 @@ the License.
         return transformer.computeViewModel(properties)
         .then((data) => {
           panel.model = data;
-          if (!this.__latestViewModel) {
-            this.__latestViewModel = {};
+          if (this.selected === 0) {
+            this._buildExampleValue(data)
+            .then((value) => {
+              this.__cache.set(valueCacheKey, value);
+              panel.value = value;
+            });
           }
-          this.__latestViewModel[contentType] = data;
+          this.__cache.set(modelCacheKey, data);
         });
       }
       /**
@@ -763,7 +785,7 @@ the License.
        * @param {Array|Object} model Passed model
        */
       _amfChanged(model) {
-        this.__latestViewModel = undefined;
+        this.__cache = new Map();
         const panel = this.currentPanel;
         if (!panel) {
           return;
@@ -800,8 +822,12 @@ the License.
         const core = 'http://www.w3.org/ns/hydra/core#';
         const rvoc = 'http://raml.org/vocabularies/http#';
         if (this._modelHasType(model, core + 'Operation')) {
-          model = model[core + 'expects'][0];
+          model = model[core + 'expects'];
         }
+        if (!model) {
+          return;
+        }
+        model = model[0];
         if (this._modelHasType(model, rvoc + 'Request')) {
           model = model[rvoc + 'payload'];
         }
@@ -825,11 +851,17 @@ the License.
        * @return {Promise}
        */
       _importTransformer() {
+        if (this.__transformerReady) {
+          return Promise.resolve();
+        }
         return new Promise((resolve, reject) => {
           const uri = '../api-view-model-transformer/api-view-model-transformer.html';
           const url = this.resolveUrl(uri);
           Polymer.importHref(url,
-          () => resolve(),
+          () => {
+            this.__transformerReady = true;
+            resolve();
+          },
           () => reject(),
           false);
         });
@@ -857,6 +889,49 @@ the License.
           }
         }
         this._setSingleMimeType(mediaTypes && mediaTypes.length === 1);
+      }
+      /**
+       * Builds an example value form a properties model.
+       *
+       * @param {Array} properties View data model
+       * @return {Promise<String>} Example for body
+       */
+      _buildExampleValue(properties) {
+        let result = '';
+        if (!properties || !properties.length) {
+          return Promise.resolve(result);
+        }
+        const ct = this.contentType;
+        if (!ct) {
+          return Promise.resolve(result);
+        }
+        if (ct.indexOf('/json') !== -1) {
+          result = this._buildExampleValueJson(properties);
+        } else if (ct.indexOf('xml') !== -1) {
+          result = this._buildExampleValueXml(properties);
+        }
+        return result;
+      }
+      /**
+       * Builds a JSON example value form a properties model.
+       *
+       * @param {Array} properties View data model
+       * @return {Promise<String>} Example for body
+       */
+      _buildExampleValueJson(properties) {
+        return this._importTransformer()
+        .then(() => this.transformer.computeDisplayJson(properties));
+      }
+
+      /**
+       * Builds an XML example value form a properties model.
+       *
+       * @param {Array} properties View data model
+       * @return {Promise<String>} Example for body
+       */
+      _buildExampleValueXml(properties) {
+        return this._importTransformer()
+        .then(() => this.transformer.computeDisplayXml(properties));
       }
 
       /**

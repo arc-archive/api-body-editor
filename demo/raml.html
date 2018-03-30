@@ -138,9 +138,9 @@
         }
         const list = [];
         operations.forEach((item) => {
-          if (item['http://www.w3.org/ns/hydra/core#method'][0]['@value'] === 'get') {
-            return;
-          }
+          // if (item['http://www.w3.org/ns/hydra/core#method'][0]['@value'] === 'get') {
+          //   return;
+          // }
           list.push({
             id: item['@id'],
             label: app._getAmfValue(item['http://www.w3.org/ns/hydra/core#method'])
@@ -148,7 +148,7 @@
         });
         app.selectedShape = -1;
         app.operations = list;
-        app.selectedShape = 0;
+        // app.selectedShape = 0;
         setTimeout(() => app._methodChanged(), 100);
       };
       app._computeApiParams = function(apiPrams) {
@@ -157,16 +157,17 @@
         }
         return JSON.stringify(apiPrams, null, 1);
       };
-      app._methodChanged = function() {
+      app._methodChanged = function(e, d) {
         app.selectedBody = undefined;
         app.payloads = undefined;
         app.payloadOptions = undefined;
-        if (app.selectedShape === undefined || app.selectedShape === -1) {
+        const selection = (d === undefined ? app.selectedShape : d.value);
+        if (selection === undefined || selection === -1) {
           return;
         }
         let data = app.amfModel[0]['http://raml.org/vocabularies/document#encodes'][0];
         data = data['http://raml.org/vocabularies/http#endpoint'][app.selectedEndpointIndex];
-        data = data['http://www.w3.org/ns/hydra/core#supportedOperation'][app.selectedShape];
+        data = data['http://www.w3.org/ns/hydra/core#supportedOperation'][selection];
         // data = data['http://www.w3.org/ns/hydra/core#expects'][0];
         // data = data['http://raml.org/vocabularies/http#payload'];
         app.selectedBody = data;
