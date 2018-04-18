@@ -600,8 +600,11 @@ the License.
           // FormData or File.
           return;
         }
-        const schema = model['http://raml.org/vocabularies/http#schema'][0];
-        const properties = schema['http://www.w3.org/ns/shacl#property'];
+        const schema = model['http://raml.org/vocabularies/http#schema'];
+        if (!schema) {
+          return;
+        }
+        const properties = schema[0]['http://www.w3.org/ns/shacl#property'];
         const transformer = this.transformer;
         return transformer.computeViewModel(properties)
         .then((data) => {
