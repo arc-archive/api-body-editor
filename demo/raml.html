@@ -13,6 +13,7 @@
   <link rel="import" href="../../paper-listbox/paper-listbox.html">
   <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
   <link rel="import" href="../../neon-animation/web-animations.html">
+  <link rel="import" href="../../api-headers-editor/api-headers-editor.html">
   <link rel="import" href="../api-body-editor.html">
   <custom-style>
     <style is="custom-style" include="demo-pages-shared-styles">
@@ -98,6 +99,11 @@
         <paper-checkbox checked="{{narrow}}">Render narrow view</paper-checkbox>
         <paper-checkbox checked="{{allowCustom}}">Allow custom properties</paper-checkbox>
       </section>
+
+      <section class="vertical-section-container centered">
+        <h3>Request headers editor to demo cooperation</h3>
+        <api-headers-editor allow-hide-optional allow-disable-params allow-custom></api-headers-editor>
+      </section>
     </template>
   </dom-bind>
   <script>
@@ -159,18 +165,23 @@
       };
       app._methodChanged = function(e, d) {
         app.selectedBody = undefined;
-        app.payloads = undefined;
-        app.payloadOptions = undefined;
+        app.headersModel = undefined;
         const selection = (d === undefined ? app.selectedShape : d.value);
         if (selection === undefined || selection === -1) {
           return;
         }
         let data = app.amfModel[0]['http://raml.org/vocabularies/document#encodes'][0];
         data = data['http://raml.org/vocabularies/http#endpoint'][app.selectedEndpointIndex];
-        data = data['http://www.w3.org/ns/hydra/core#supportedOperation'][selection];
-        // data = data['http://www.w3.org/ns/hydra/core#expects'][0];
+        const ops = data['http://www.w3.org/ns/hydra/core#supportedOperation'];
+        const body = ops[selection];
+        // data = data[''][0];
         // data = data['http://raml.org/vocabularies/http#payload'];
-        app.selectedBody = data;
+        app.selectedBody = body;
+        const expects = body['http://www.w3.org/ns/hydra/core#expects'];
+        if (!expects) {
+          return;
+        }
+        app.headersModel = expects[0]['http://raml.org/vocabularies/http#header'];
       };
       window.addEventListener('WebComponentsReady', () => app._load());
     })(document.getElementById('demo'));

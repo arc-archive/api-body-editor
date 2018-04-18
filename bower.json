@@ -39,7 +39,8 @@
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
     "iron-component-page": "^3.0.1",
     "web-animations-js": "web-animations/web-animations-js#^2.3",
-    "iron-test-helpers": "PolymerElements/iron-test-helpers#^2.0.0"
+    "iron-test-helpers": "PolymerElements/iron-test-helpers#^2.0.0",
+    "api-headers-editor": "advanced-rest-client/api-headers-editor#2.0.0-preview"
   },
   "repository": {
     "type": "git",
