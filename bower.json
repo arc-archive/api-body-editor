@@ -40,7 +40,8 @@
     "iron-component-page": "^3.0.1",
     "web-animations-js": "web-animations/web-animations-js#^2.3",
     "iron-test-helpers": "PolymerElements/iron-test-helpers#^2.0.0",
-    "api-headers-editor": "advanced-rest-client/api-headers-editor#2.0.0-preview"
+    "api-headers-editor": "advanced-rest-client/api-headers-editor#2.0.0-preview",
+    "arc-polyfills": "advanced-rest-client/arc-polyfills#^0.1.11"
   },
   "repository": {
     "type": "git",
