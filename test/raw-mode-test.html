@@ -149,14 +149,16 @@
 
         test('Raw value change changes editor value', (done) => {
           const element = fixture('Raw');
+          element.selected = 0;
           flush(() => {
             const v = 'test-value-1';
             const editor = element.currentPanel;
-            editor.set('value', v);
-            Polymer.RenderStatus.afterNextRender(this, () => {
-              assert.equal(element.value, v);
+            element.addEventListener('value-changed', function clb(e) {
+              element.removeEventListener('value-changed', clb);
+              assert.equal(e.detail.value, v);
               done();
             });
+            editor.set('value', v);
           });
         });
 
