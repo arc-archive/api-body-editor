@@ -1,10 +1,10 @@
 {
   "name": "api-body-editor",
   "description": "Renders different types of body editors. It works with AMF data model",
-  "version": "2.0.0-preview",
+  "version": "2.0.0",
   "license": "Apache-2.0",
   "authors": [
-    "pawel Psztyc",
+    "Pawel Psztyc",
     "The Advanced REST client authors <arc@mulesoft.com>"
   ],
   "keywords": [
@@ -23,15 +23,15 @@
     "paper-item": "PolymerElements/paper-item#^2.1.0",
     "events-target-behavior": "advanced-rest-client/events-target-behavior#^2.0.0",
     "clipboard-copy": "advanced-rest-client/clipboard-copy#^2.0.0",
-    "raw-payload-editor": "advanced-rest-client/raw-payload-editor#2.0.0-preview",
-    "multipart-payload-editor": "advanced-rest-client/multipart-payload-editor#2.0.0-preview",
-    "files-payload-editor": "advanced-rest-client/files-payload-editor#2.0.0-preview",
-    "form-data-editor": "advanced-rest-client/form-data-editor#2.0.0-preview",
+    "raw-payload-editor": "advanced-rest-client/raw-payload-editor#^2.0.0",
+    "multipart-payload-editor": "advanced-rest-client/multipart-payload-editor#^2.0.0",
+    "files-payload-editor": "advanced-rest-client/files-payload-editor#^2.0.0",
+    "form-data-editor": "advanced-rest-client/form-data-editor#^2.0.0",
     "arc-icons": "advanced-rest-client/arc-icons#^2.0.0",
     "paper-icon-button": "PolymerElements/paper-icon-button#^2.1.0",
-    "content-type-selector": "advanced-rest-client/content-type-selector#2.0.0-preview",
-    "api-view-model-transformer": "advanced-rest-client/api-view-model-transformer#2.0-preview",
-    "api-form-mixin": "advanced-rest-client/api-form-mixin#2.0.0-preview"
+    "content-type-selector": "advanced-rest-client/content-type-selector#^2.0.0",
+    "api-view-model-transformer": "advanced-rest-client/api-view-model-transformer#^2.0.0",
+    "api-form-mixin": "advanced-rest-client/api-form-mixin#^2.0.0"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
@@ -40,7 +40,7 @@
     "iron-component-page": "^3.0.1",
     "web-animations-js": "web-animations/web-animations-js#^2.3",
     "iron-test-helpers": "PolymerElements/iron-test-helpers#^2.0.0",
-    "api-headers-editor": "advanced-rest-client/api-headers-editor#2.0.0-preview",
+    "api-headers-editor": "advanced-rest-client/api-headers-editor#^2.0.0",
     "arc-polyfills": "advanced-rest-client/arc-polyfills#^0.1.11"
   },
   "repository": {
