@@ -475,9 +475,7 @@ the License.
           case 2: this._createMultipartPanel(); break;
           case 3: this._createFilePanel(); break;
         }
-        Polymer.RenderStatus.afterNextRender(this, () => {
-          this._attachValues();
-        });
+        this._attachValues();
       }
       /**
        * Adds shared properties for all panels.
