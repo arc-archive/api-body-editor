@@ -72,7 +72,7 @@ the License.
       <template is="dom-if" if="[[hasAmfModel]]">
         <template is="dom-if" if="[[!singleMimeType]]">
           <paper-dropdown-menu class="amf-types" label="Select content type" no-label-float>
-            <paper-listbox slot="dropdown-content" attr-for-selected="data-mime" selected="{{contentType}}">
+            <paper-listbox slot="dropdown-content" attr-for-selected="data-mime" selected="{{contentType}}" on-selected-changed="_typeSelectedChanged">
               <template is="dom-repeat" items="[[mimeTypes]]">
                 <paper-item data-mime$="[[item]]">[[item]]</paper-item>
               </template>
@@ -891,7 +891,12 @@ the License.
             if (this.fileAccept) {
               this.set('fileAccept', undefined);
             }
-            this.set('contentType', mediaTypes[0]);
+            const index = mediaTypes.indexOf(this.contentType);
+            const type = index === -1 ? mediaTypes[0] : mediaTypes[index];
+            if (this.contentType !== type) {
+              this.set('contentType', mediaTypes[0]);
+              this._notifyContentTypeChange(mediaTypes[0]);
+            }
           }
         }
         this._setSingleMimeType(mediaTypes && mediaTypes.length === 1);
@@ -939,7 +944,30 @@ the License.
         return this._importTransformer()
         .then(() => this.transformer.computeDisplayXml(properties));
       }
-
+      /**
+       * Dospatches `content-type-changed` custom event when CT changes by
+       * using type selection.
+       * @param {String} type Content type value to announce.
+       */
+      _notifyContentTypeChange(type) {
+        this.dispatchEvent(new CustomEvent('content-type-changed', {
+          bubbles: true,
+          composed: true,
+          detail: {
+            value: type
+          }
+        }));
+      }
+      /**
+       * Notifies about content type change when type selection changes.
+       * @param {CustomEvent} e
+       */
+      _typeSelectedChanged(e) {
+        if (!e.detail.value) {
+          return;
+        }
+        this._notifyContentTypeChange(e.detail.value);
+      }
       /**
        * Fires when the value change.
        *
@@ -950,6 +978,13 @@ the License.
        * Dispatched when the request should be invoked.
        *
        * @event send-request
+       */
+
+      /**
+       * Dispatched when the user select media type from the list of available types.
+       *
+       * @event content-type-changed
+       * @param {String} value New content type value.
        */
     }
 

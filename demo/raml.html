@@ -8,6 +8,7 @@
   <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
   <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
   <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../paper-toast/paper-toast.html">
   <link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
   <link rel="import" href="../../paper-item/paper-item.html">
   <link rel="import" href="../../paper-listbox/paper-listbox.html">
@@ -106,10 +107,11 @@
       </section>
     </template>
   </dom-bind>
+  <paper-toast id="toast"></paper-toast>
   <script>
     (function(app) {
       app._load = function() {
-        fetch('./amf-model.json')
+        fetch('./demo-api.json')
         .then((response) => response.json())
         .then((data) => {
           app.amfModel = data;
@@ -183,7 +185,14 @@
         }
         app.headersModel = expects[0]['http://raml.org/vocabularies/http#header'];
       };
+
+      app._ctChanged = function(e) {
+        const toast = document.getElementById('toast');
+        toast.text = `Content type changed: ${e.detail.value}`;
+        toast.opened = true;
+      };
       window.addEventListener('WebComponentsReady', () => app._load());
+      window.addEventListener('content-type-changed', app._ctChanged);
     })(document.getElementById('demo'));
   </script>
 </body>

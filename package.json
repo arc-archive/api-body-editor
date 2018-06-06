@@ -1,14 +1,15 @@
 {
   "name": "@api-components/api-body-editor",
   "description": "Renders different types of body editors. It works with AMF data model",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "license": "Apache-2.0",
   "authors": [
     "Pawel Psztyc",
     "The Advanced REST client authors <arc@mulesoft.com>"
   ],
   "devDependencies": {
-    "@polymer/gen-typescript-declarations": "^1.1.1"
+    "@polymer/gen-typescript-declarations": "^1.1.1",
+    "amf-client-js": "^1.4.0-31"
   },
   "private": false,
   "scripts": {
