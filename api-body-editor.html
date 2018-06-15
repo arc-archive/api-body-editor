@@ -28,6 +28,7 @@ the License.
 <link rel="import" href="../content-type-selector/content-type-selector.html">
 <link rel="import" href="../events-target-behavior/events-target-behavior.html">
 <link rel="import" href="../api-form-mixin/api-form-styles.html">
+<link rel="import" href="../api-view-model-transformer/api-view-model-transformer.html">
 <dom-module id="api-body-editor">
   <template>
     <style include="api-form-styles"></style>
@@ -99,6 +100,7 @@ the License.
     </div>
     <section class="body-panel"></section>
     <clipboard-copy></clipboard-copy>
+    <api-view-model-transformer id="transformer"></api-view-model-transformer>
   </template>
   <script>
     /**
@@ -119,17 +121,6 @@ the License.
      *
      * When AMF model is accepted it alters the UI to render only allowed
      * by the spec content types and therefore editors.
-     *
-     * ## Optional dependency for AMF
-     *
-     * `advanced-rest-client/api-view-model-transformer` is not imported by
-     * default to the element so applications that do not use AMF do not pay the
-     * cost of including the transformer. The transformer is a required
-     * dependency of the element, though.
-     *
-     * Be advised, **build process won't pick up the dependency** while it is
-     * included at run time. Therefore you have add the element to the build
-     * process manualy.
      *
      * @customElement
      * @polymer
@@ -351,20 +342,14 @@ the License.
         if (!hasAmfModel || (selected === 3)) {
           return;
         }
-        this._importTransformer()
-        .then(() => {
-          if (this.__transformingModel) {
-            return;
-          }
-          this.__transformingModel = true;
-          setTimeout(() => {
-            this._propagateModel(contentType);
-            this.__transformingModel = false;
-          }, 25);
-        })
-        .catch(() => {
-          throw 'Implement me';
-        });
+        if (this.__transformingModel) {
+          return;
+        }
+        this.__transformingModel = true;
+        setTimeout(() => {
+          this._propagateModel(contentType);
+          this.__transformingModel = false;
+        }, 25);
       }
 
       _hideAllEditors() {
@@ -562,8 +547,6 @@ the License.
       /**
        * Attaches data model to an editor when content type changes.
        *
-       * Calee must import transformer element before calling this function.
-       *
        * Currently only `form-data-editor` and `multipart-payload-editor`
        * support amf data model.
        *
@@ -603,33 +586,16 @@ the License.
           return;
         }
         const properties = schema[0]['http://www.w3.org/ns/shacl#property'];
-        const transformer = this.transformer;
-        return transformer.computeViewModel(properties)
+        return this.$.transformer.computeViewModel(properties)
         .then((data) => {
           panel.model = data;
           if (this.selected === 0) {
-            this._buildExampleValue(data)
-            .then((value) => {
-              this.__cache.set(valueCacheKey, value);
-              panel.value = value;
-            });
+            const value = this._buildExampleValue(data);
+            this.__cache.set(valueCacheKey, value);
+            panel.value = value;
           }
           this.__cache.set(modelCacheKey, data);
         });
-      }
-      /**
-       * @return {HTMLElement|undefined} Reference to transformer element.
-       */
-      get transformer() {
-        if (!this.shadowRoot) {
-          return;
-        }
-        let element = this.shadowRoot.querySelector('api-view-model-transformer');
-        if (!element) {
-          element = document.createElement('api-view-model-transformer');
-          this.shadowRoot.appendChild(element);
-        }
-        return element;
       }
       /**
        * Dispatches analytics event.
@@ -852,27 +818,6 @@ the License.
         return types.some((item) => item === type);
       }
       /**
-       * Imports `api-view-model-transformer` element to use it when
-       * AMF model is used.
-       * @return {Promise}
-       */
-      _importTransformer() {
-        if (this.__transformerReady) {
-          return Promise.resolve();
-        }
-        return new Promise((resolve, reject) => {
-          const uri = '../api-view-model-transformer/api-view-model-transformer.html';
-          const url = this.resolveUrl(uri);
-          Polymer.importHref(url,
-          () => {
-            this.__transformerReady = true;
-            resolve();
-          },
-          () => reject(),
-          false);
-        });
-      }
-      /**
        * Creates a list of media types supported by the endpoint as defined in
        * API spec file.
        * @param {Array} model List of `Payload` definitions
@@ -905,44 +850,23 @@ the License.
        * Builds an example value form a properties model.
        *
        * @param {Array} properties View data model
-       * @return {Promise<String>} Example for body
+       * @return {String} Example for body
        */
       _buildExampleValue(properties) {
         let result = '';
         if (!properties || !properties.length) {
-          return Promise.resolve(result);
+          return result;
         }
         const ct = this.contentType;
         if (!ct) {
-          return Promise.resolve(result);
+          return result;
         }
         if (ct.indexOf('/json') !== -1) {
-          result = this._buildExampleValueJson(properties);
+          result = this.$.transformer.computeDisplayJson(properties);
         } else if (ct.indexOf('xml') !== -1) {
-          result = this._buildExampleValueXml(properties);
+          result = this.$.transformer.computeDisplayXml(properties);
         }
         return result;
-      }
-      /**
-       * Builds a JSON example value form a properties model.
-       *
-       * @param {Array} properties View data model
-       * @return {Promise<String>} Example for body
-       */
-      _buildExampleValueJson(properties) {
-        return this._importTransformer()
-        .then(() => this.transformer.computeDisplayJson(properties));
-      }
-
-      /**
-       * Builds an XML example value form a properties model.
-       *
-       * @param {Array} properties View data model
-       * @return {Promise<String>} Example for body
-       */
-      _buildExampleValueXml(properties) {
-        return this._importTransformer()
-        .then(() => this.transformer.computeDisplayXml(properties));
       }
       /**
        * Dospatches `content-type-changed` custom event when CT changes by
