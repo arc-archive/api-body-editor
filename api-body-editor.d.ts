@@ -25,6 +25,9 @@
 /// <reference path="../content-type-selector/content-type-selector.d.ts" />
 /// <reference path="../events-target-behavior/events-target-behavior.d.ts" />
 /// <reference path="../api-form-mixin/api-form-styles.d.ts" />
+/// <reference path="../api-view-model-transformer/api-view-model-transformer.d.ts" />
+/// <reference path="../amf-helper-mixin/amf-helper-mixin.d.ts" />
+/// <reference path="../raml-aware/raml-aware.d.ts" />
 
 /**
  * `api-body-editor`
@@ -44,23 +47,12 @@
  *
  * When AMF model is accepted it alters the UI to render only allowed
  * by the spec content types and therefore editors.
- *
- * ## Optional dependency for AMF
- *
- * `advanced-rest-client/api-view-model-transformer` is not imported by
- * default to the element so applications that do not use AMF do not pay the
- * cost of including the transformer. The transformer is a required
- * dependency of the element, though.
- *
- * Be advised, **build process won't pick up the dependency** while it is
- * included at run time. Therefore you have add the element to the build
- * process manualy.
  */
 declare class ApiBodyEditor extends
   ArcBehaviors.EventsTargetBehavior(
-  Polymer.Element) {
+  ApiElements.AmfHelperMixin(
+  Polymer.Element)) {
   readonly currentPanel: HTMLElement|null;
-  readonly transformer: HTMLElement|null|undefined;
 
   /**
    * Currently selected editor.
@@ -88,11 +80,16 @@ declare class ApiBodyEditor extends
   contentType: string|null|undefined;
 
   /**
+   * `raml-aware` scope property to use.
+   */
+  aware: string|null|undefined;
+
+  /**
    * AMF json/ld model for body.
    * When set it resets editor settings and transform it to work with
    * data types defined in AMF only.
    */
-  amfModel: object|null;
+  amfBody: object|null;
 
   /**
    * Computed final model for payload.
@@ -100,12 +97,12 @@ declare class ApiBodyEditor extends
   _effectiveModel: object|null|undefined;
 
   /**
-   * Computed value, `true` when `amfModel` is set.
+   * Computed value, `true` when `amfBody` is set.
    * This controls how the view is rendered. AMF model has limited
    * number of media types supported by the API. When not existing
    * the edtior renders all possible types.
    */
-  readonly hasAmfModel: object|null;
+  readonly hasAmfBody: object|null;
 
   /**
    * Computed value, if set then raw text input is hidden
@@ -179,7 +176,7 @@ declare class ApiBodyEditor extends
   _detachListeners(node: any): void;
 
   /**
-   * Computes value for `hasAmfModel`.
+   * Computes value for `hasAmfBody`.
    *
    * @param amf AMF model for body.
    */
@@ -204,7 +201,7 @@ declare class ApiBodyEditor extends
    *
    * @param contentType New content type value.
    */
-  _updateAmfSelectedMime(hasAmfModel: any, contentType: String|null, selected: any): void;
+  _updateAmfSelectedMime(hasAmfBody: any, contentType: String|null, selected: any): void;
   _hideAllEditors(): void;
   _renderAllEditors(): void;
 
@@ -265,14 +262,13 @@ declare class ApiBodyEditor extends
   /**
    * Attaches data model to an editor when content type changes.
    *
-   * Calee must import transformer element before calling this function.
-   *
    * Currently only `form-data-editor` and `multipart-payload-editor`
    * support amf data model.
    *
    * @returns Resolved when model is set.
    */
   _propagateModel(contentType: any): Promise<any>|null;
+  _prepareViewModel(contentType: any, schema: any): any;
 
   /**
    * Dispatches analytics event.
@@ -349,7 +345,7 @@ declare class ApiBodyEditor extends
   _resetCopyButtonState(button: any): void;
 
   /**
-   * A handler for `amfModel` property change.
+   * A handler for `amfBody` property change.
    * Resets `mediaTypes` property as defined in the model.
    *
    * @param model Passed model
@@ -372,27 +368,33 @@ declare class ApiBodyEditor extends
   _ensurePayloadModel(model: any[]|object|null): any[]|null|undefined;
 
   /**
-   * Checks if a model has a type.
-   *
-   * @param model Model to test
-   * @param type Type name
-   * @returns True if model has a type.
-   */
-  _modelHasType(model: object|null, type: String|null): Boolean|null;
-
-  /**
-   * Imports `api-view-model-transformer` element to use it when
-   * AMF model is used.
-   */
-  _importTransformer(): Promise<any>|null;
-
-  /**
    * Creates a list of media types supported by the endpoint as defined in
    * API spec file.
    *
    * @param model List of `Payload` definitions
    */
   _updateAmfMediaTypes(model: any[]|null): void;
+
+  /**
+   * Builds an example value form a properties model.
+   *
+   * @param properties View data model
+   * @returns Example for body
+   */
+  _buildExampleValue(properties: any[]|null): String|null;
+
+  /**
+   * Dospatches `content-type-changed` custom event when CT changes by
+   * using type selection.
+   *
+   * @param type Content type value to announce.
+   */
+  _notifyContentTypeChange(type: String|null): void;
+
+  /**
+   * Notifies about content type change when type selection changes.
+   */
+  _typeSelectedChanged(e: CustomEvent|null): void;
 }
 
 interface HTMLElementTagNameMap {
