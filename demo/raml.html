@@ -15,6 +15,7 @@
   <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
   <link rel="import" href="../../neon-animation/web-animations.html">
   <link rel="import" href="../../api-headers-editor/api-headers-editor.html">
+  <link rel="import" href="../../raml-aware/raml-aware.html">
   <link rel="import" href="../api-body-editor.html">
   <custom-style>
     <style is="custom-style" include="demo-pages-shared-styles">
@@ -93,7 +94,8 @@
         </paper-dropdown-menu>
       </header>
       <section role="main" class="vertical-section-container centered main">
-        <api-body-editor value="{{value}}" amf-model="[[selectedBody]]" narrow="[[narrow]]" allow-hide-optional allow-disable-params allow-custom="[[allowCustom]]"></api-body-editor>
+        <raml-aware raml="{{amfModel}}" scope="model"></raml-aware>
+        <api-body-editor value="{{value}}" aware="model" amf-body="[[selectedBody]]" narrow="[[narrow]]" allow-hide-optional allow-disable-params allow-custom="[[allowCustom]]"></api-body-editor>
         <output>[[value]]</output>
       </section>
       <section class="vertical-section-container centered">
@@ -125,10 +127,10 @@
         return model[0]['@value'];
       };
       app._setEndpointsList = function(data) {
-        data = data[0]['http://raml.org/vocabularies/document#encodes'][0];
-        const endpoints = data['http://raml.org/vocabularies/http#endpoint'];
+        data = data[0][ApiElements.Amf.ns.raml.vocabularies.document + 'encodes'][0];
+        const endpoints = data[ApiElements.Amf.ns.raml.vocabularies.http + 'endpoint'];
         const list = endpoints.map((item) => {
-          return app._getAmfValue(item['http://raml.org/vocabularies/http#path']);
+          return app._getAmfValue(item[ApiElements.Amf.ns.raml.vocabularies.http + 'path']);
         });
         app.endpoints = list;
       };
@@ -137,21 +139,21 @@
         app._computeOperations(index);
       };
       app._computeOperations = function(index) {
-        let data = app.amfModel[0]['http://raml.org/vocabularies/document#encodes'][0];
-        data = data['http://raml.org/vocabularies/http#endpoint'][index];
-        const operations = data['http://www.w3.org/ns/hydra/core#supportedOperation'];
+        let data = app.amfModel[0][ApiElements.Amf.ns.raml.vocabularies.document + 'encodes'][0];
+        data = data[ApiElements.Amf.ns.raml.vocabularies.http + 'endpoint'][index];
+        const operations = data[ApiElements.Amf.ns.w3.hydra.core + 'supportedOperation'];
         if (!operations) {
           app.selectedShape = -1;
           return;
         }
         const list = [];
         operations.forEach((item) => {
-          // if (item['http://www.w3.org/ns/hydra/core#method'][0]['@value'] === 'get') {
+          // if (item[ApiElements.Amf.ns.w3.hydra.core + 'method'][0]['@value'] === 'get') {
           //   return;
           // }
           list.push({
             id: item['@id'],
-            label: app._getAmfValue(item['http://www.w3.org/ns/hydra/core#method'])
+            label: app._getAmfValue(item[ApiElements.Amf.ns.w3.hydra.core + 'method'])
           });
         });
         app.selectedShape = -1;
@@ -167,23 +169,17 @@
       };
       app._methodChanged = function(e, d) {
         app.selectedBody = undefined;
-        app.headersModel = undefined;
         const selection = (d === undefined ? app.selectedShape : d.value);
         if (selection === undefined || selection === -1) {
           return;
         }
-        let data = app.amfModel[0]['http://raml.org/vocabularies/document#encodes'][0];
-        data = data['http://raml.org/vocabularies/http#endpoint'][app.selectedEndpointIndex];
-        const ops = data['http://www.w3.org/ns/hydra/core#supportedOperation'];
+        let data = app.amfModel[0][ApiElements.Amf.ns.raml.vocabularies.document + 'encodes'][0];
+        data = data[ApiElements.Amf.ns.raml.vocabularies.http + 'endpoint'][app.selectedEndpointIndex];
+        const ops = data[ApiElements.Amf.ns.w3.hydra.core + 'supportedOperation'];
         const body = ops[selection];
         // data = data[''][0];
-        // data = data['http://raml.org/vocabularies/http#payload'];
+        // data = data[ApiElements.Amf.ns.raml.vocabularies.http + 'payload'];
         app.selectedBody = body;
-        const expects = body['http://www.w3.org/ns/hydra/core#expects'];
-        if (!expects) {
-          return;
-        }
-        app.headersModel = expects[0]['http://raml.org/vocabularies/http#header'];
       };
 
       app._ctChanged = function(e) {
