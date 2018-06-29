@@ -350,7 +350,7 @@ the License.
        */
       _updateAmfSelectedMime(hasAmfBody, contentType, selected) {
         // only form data and url encoded form accepts model property
-        if (!hasAmfBody || (selected === 3)) {
+        if (!hasAmfBody || !contentType || (selected === 3)) {
           return;
         }
         if (this.__transformingModel) {
