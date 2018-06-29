@@ -11,7 +11,31 @@ uses:
 types:
   AppPerson: !include resourceTypes/app-person.raml
   Product: !include resourceTypes/product.raml
-
+  NewDataType:
+    description: This is a new DataType
+    type: object
+    properties:
+      newProperty:
+        required: true
+        minLength: 1
+        maxLength: 40
+        example: This is a new DataType
+        description: Property description
+        default: This is a new DataType
+        type: string
+      otherScalar: number
+      complex:
+        type: object
+        properties:
+          propA:
+            type: string
+            example: prop A example
+          propB:
+            type: string
+            example: prop B example
+            default: Prop B default value
+          propC:
+            type: number
 traits:
   Paginated: !include traits/pagination.raml
   Adminable: !include traits/adminable.raml
@@ -95,3 +119,8 @@ traits:
         description: |
           This demonstrates a body as an Array
         type: AppPerson[]
+/ramlTypeTest:
+  post:
+    body:
+      application/json:
+        type: NewDataType
