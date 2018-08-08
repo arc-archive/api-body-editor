@@ -278,6 +278,13 @@ the License.
           singleMimeType: {
             type: Object,
             readOnly: true
+          },
+          /**
+           * When set the editor is in read only mode.
+           */
+          readonly: {
+            type: Boolean,
+            observer: '_readonlyChanged'
           }
         };
       }
@@ -330,6 +337,9 @@ the License.
        * @param {CustomEvent} e
        */
       _ctHandler(e) {
+        if (this.readonly) {
+          return;
+        }
         this.set('contentType', e.detail.value);
       }
       /**
@@ -437,6 +447,9 @@ the License.
        * @param {String|FormData|File|undefined} value Value to notify
        */
       _notifyBodyChanged(value) {
+        if (this.readonly) {
+          return;
+        }
         const e = new CustomEvent('body-value-changed', {
           detail: {
             value: value,
@@ -535,6 +548,9 @@ the License.
        * @param {CustomEvent} e
        */
       _panelValueChanged(e) {
+        if (this.readonly) {
+          return;
+        }
         this._cancelValueSetOnPanel = true;
         this.value = e.detail.value;
         this._cancelValueSetOnPanel = false;
@@ -753,6 +769,14 @@ the License.
       _narrowChanged(value) {
         this._propertyChangeHandler('narrow', value);
       }
+      /**
+       * Updates `readonly` on a panel.
+       *
+       * @param {Boolean} value New value to set.
+       */
+      _readonlyChanged(value) {
+        this._propertyChangeHandler('readonly', value);
+      }
 
       /**
        * Coppies current body text value to clipboard.
@@ -894,6 +918,9 @@ the License.
        * @param {String} type Content type value to announce.
        */
       _notifyContentTypeChange(type) {
+        if (this.readonly) {
+          return;
+        }
         this.dispatchEvent(new CustomEvent('content-type-changed', {
           bubbles: true,
           composed: true,
