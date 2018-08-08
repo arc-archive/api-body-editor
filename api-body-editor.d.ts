@@ -172,6 +172,11 @@ declare class ApiBodyEditor extends
    * In this case it won't render type selector.
    */
   readonly singleMimeType: object|null;
+
+  /**
+   * When set the editor is in read only mode.
+   */
+  readonly: boolean|null|undefined;
   _attachListeners(node: any): void;
   _detachListeners(node: any): void;
 
@@ -201,7 +206,7 @@ declare class ApiBodyEditor extends
    *
    * @param contentType New content type value.
    */
-  _updateAmfSelectedMime(hasAmfBody: any, contentType: String|null, selected: any): void;
+  _updateAmfSelectedMime(hasAmfBody: Boolean|null, contentType: String|null, selected: Number|null): void;
   _hideAllEditors(): void;
   _renderAllEditors(): void;
 
@@ -216,7 +221,7 @@ declare class ApiBodyEditor extends
   /**
    * Replaces active body editor with new one.
    */
-  _selectedChanged(selected: any, oldValue: any): void;
+  _selectedChanged(selected: Number|null, oldValue: Number|null): void;
 
   /**
    * Notifies application about body change.
@@ -267,7 +272,7 @@ declare class ApiBodyEditor extends
    *
    * @returns Resolved when model is set.
    */
-  _propagateModel(contentType: any): Promise<any>|null;
+  _propagateModel(contentType: String|null): Promise<any>|null;
   _prepareViewModel(contentType: any, schema: any): any;
 
   /**
@@ -291,16 +296,16 @@ declare class ApiBodyEditor extends
    * this cases the editor should be hidden.
    *
    * @param contentType Current content type.
-   * @returns true to hide the selector.
    */
-  _computeEditorSelectorHidden(contentType: String|null): Boolean|null;
+  _updateEditorSelectorHidden(contentType: String|null): void;
 
   /**
    * Updates property value on current panel.
    *
+   * @param prop Name of the proeprty to set
    * @param value New value to set.
    */
-  _propertyChangeHandler(prop: any, value: any|null): void;
+  _propertyChangeHandler(prop: String|null, value: any|null): void;
 
   /**
    * Updates value of the panel if `value` change and it is not
@@ -339,9 +344,16 @@ declare class ApiBodyEditor extends
   _narrowChanged(value: Boolean|null): void;
 
   /**
+   * Updates `readonly` on a panel.
+   *
+   * @param value New value to set.
+   */
+  _readonlyChanged(value: Boolean|null): void;
+
+  /**
    * Coppies current body text value to clipboard.
    */
-  _copyToClipboard(e: any): void;
+  _copyToClipboard(e: Event|null): void;
   _resetCopyButtonState(button: any): void;
 
   /**
