@@ -12,40 +12,28 @@
   <link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
   <link rel="import" href="../../paper-item/paper-item.html">
   <link rel="import" href="../../paper-listbox/paper-listbox.html">
-  <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
   <link rel="import" href="../../neon-animation/web-animations.html">
   <link rel="import" href="../../api-headers-editor/api-headers-editor.html">
   <link rel="import" href="../../raml-aware/raml-aware.html">
+  <link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
+  <link rel="import" href="../../arc-electron-default-theme/arc-electron-default-theme.html">
   <link rel="import" href="../api-body-editor.html">
   <custom-style>
     <style is="custom-style" include="demo-pages-shared-styles">
-    :root {
-      --code-type-text-value-color: #0d47a1;
-      --code-type-number-value-color: #03a9f4;
-      --code-type-boolean-value-color: #0288d1;
-      --code-type-null-value-color: #0288d1;
-      --code-punctuation-value-color: #757575;
-      --code-type-link-color: #757575;
-      --code-array-index-color: rgba(1, 87, 155, 0.57);
-      --code-background-color: #F4F5F6;
-      --code-mirror-background-color: #f5f2f0;
-      --code-mirror: {
-        background-color: var(--arc-code-mirror-background-color, #f5f2f0);
-      };
-
-      --code-mirror-editor: {
-        background-color: var(--arc-code-mirror-background-color, #f5f2f0);
-        z-index: 0;
-      };
-      --code-mirror-wrapper: {
-        display: block;
-      };
-    }
-
-    html,
-    body {
+    body,
+    html {
+      background-color: #e5e5e5;
+      height: 100vh;
       margin: 0;
       padding: 0;
+    }
+    .card {
+      @apply --shadow-elevation-4dp;
+      padding: 20px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+      background-color: #fff;
     }
 
     header {
@@ -71,12 +59,24 @@
       padding: 24px;
       margin-bottom: 40px;
     }
+
+    h1 {
+      @apply --paper-font-display1;
+    }
+
+    h2 {
+      @apply --paper-font-title;
+    }
+
+    paper-toggle-button {
+      margin-bottom: 12px;
+    }
     </style>
   </custom-style>
 </head>
 <body>
   <dom-bind id="demo">
-    <template is="dom-bind">
+    <template>
       <header>
         <paper-dropdown-menu label="Select demo endpoint">
           <paper-listbox slot="dropdown-content" id="enpointsList" selected="{{selectedEndpointIndex}}" on-selected-changed="_endpointChanged">
@@ -93,18 +93,34 @@
           </paper-listbox>
         </paper-dropdown-menu>
       </header>
-      <section role="main" class="vertical-section-container centered main">
+
+      <section role="main" class="vertical-section-container centered card">
         <raml-aware raml="{{amfModel}}" scope="model"></raml-aware>
-        <api-body-editor value="{{value}}" aware="model" amf-body="[[selectedBody]]" narrow="[[narrow]]" allow-hide-optional allow-disable-params allow-custom="[[allowCustom]]"></api-body-editor>
-        <output>[[value]]</output>
-      </section>
-      <section class="vertical-section-container centered">
-        <paper-checkbox checked="{{narrow}}">Render narrow view</paper-checkbox>
-        <paper-checkbox checked="{{allowCustom}}">Allow custom properties</paper-checkbox>
+        <api-body-editor
+          value="{{value}}"
+          aware="model"
+          amf-body="[[selectedBody]]"
+          narrow="[[narrow]]"
+          readonly="[[readonly]]"
+          allow-hide-optional
+          allow-disable-params
+          allow-custom="[[allowCustom]]"></api-body-editor>
       </section>
 
-      <section class="vertical-section-container centered">
-        <h3>Request headers editor to demo cooperation</h3>
+      <section class="vertical-section-container centered card">
+        <h2>Output</h2>
+        <output>[[value]]</output>
+      </section>
+
+      <section class="vertical-section-container centered card">
+        <h2>Configuration</h2>
+        <paper-toggle-button checked="{{narrow}}">Render narrow view</paper-toggle-button>
+        <paper-toggle-button checked="{{allowCustom}}">Allow custom properties</paper-toggle-button>
+        <paper-toggle-button checked="{{readonly}}">Read only mode</paper-toggle-button>
+      </section>
+
+      <section class="vertical-section-container centered card">
+        <h2>Request headers editor</h2>
         <api-headers-editor allow-hide-optional allow-disable-params allow-custom></api-headers-editor>
       </section>
     </template>
