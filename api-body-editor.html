@@ -92,7 +92,7 @@ the License.
         </template>
       </template>
       <template is="dom-if" if="[[!hasAmfBody]]">
-        <content-type-selector content-type="{{contentType}}">
+        <content-type-selector content-type="{{contentType}}" events-target="[[eventsTarget]]">
           <paper-item data-type="application/octet-stream">Any file data</paper-item>
         </content-type-selector>
         <paper-dropdown-menu class="type" label="Editor view" hidden$="[[editorSelectorHidden]]">
