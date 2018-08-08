@@ -135,8 +135,9 @@ the License.
      * @appliesMixin ArcBehaviors.EventsTargetBehavior
      * @appliesMixin ApiElements.AmfHelperMixin
      */
-    class ApiBodyEditor extends ApiElements.AmfHelperMixin(ArcBehaviors.EventsTargetBehavior(Polymer.Element)) {
-      static get is() { return 'api-body-editor'; }
+    class ApiBodyEditor extends
+      ApiElements.AmfHelperMixin(ArcBehaviors.EventsTargetBehavior(Polymer.Element)) {
+      static get is() {return 'api-body-editor';}
       static get properties() {
         return {
           /**
@@ -351,13 +352,15 @@ the License.
        */
       _contentTypeChanged(contentType, oldValue) {
         this._updateEditorsState(contentType, oldValue);
-        this._computeEditorSelectorHidden(contentType);
+        this._updateEditorSelectorHidden(contentType);
         this._propertyChangeHandler('contentType', contentType);
       }
       /**
        * Updates selected model for AMF.
        *
+       * @param {Boolean} hasAmfBody
        * @param {String} contentType New content type value.
+       * @param {Number} selected
        */
       _updateAmfSelectedMime(hasAmfBody, contentType, selected) {
         // only form data and url encoded form accepts model property
@@ -429,6 +432,9 @@ the License.
       }
       /**
        * Replaces active body editor with new one.
+       *
+       * @param {Number} selected
+       * @param {Number} oldValue
        */
       _selectedChanged(selected, oldValue) {
         this.__removeExistingPanel();
@@ -464,7 +470,7 @@ the License.
        */
       __removeExistingPanel() {
         const panel = this.currentPanel;
-        if(!panel) {
+        if (!panel) {
           return;
         }
         const events = this.__currentListeners;
@@ -479,7 +485,7 @@ the License.
       }
 
       __createBodyPanel(selected) {
-        switch(selected) {
+        switch (selected) {
           case 0: this._createRawPanel(); break;
           case 1: this._createFormDataPanel(); break;
           case 2: this._createMultipartPanel(); break;
@@ -578,6 +584,7 @@ the License.
        * Currently only `form-data-editor` and `multipart-payload-editor`
        * support amf data model.
        *
+       * @param {String} contentType
        * @return {Promise} Resolved when model is set.
        */
       _propagateModel(contentType) {
@@ -693,9 +700,8 @@ the License.
        * this cases the editor should be hidden.
        *
        * @param {String} contentType Current content type.
-       * @return {Boolean} true to hide the selector.
        */
-      _computeEditorSelectorHidden(contentType) {
+      _updateEditorSelectorHidden(contentType) {
         let result;
         const value = this.value;
         if (!contentType) {
@@ -716,6 +722,7 @@ the License.
       /**
        * Updates property value on current panel.
        *
+       * @param {String} prop Name of the proeprty to set
        * @param {any} value New value to set.
        */
       _propertyChangeHandler(prop, value) {
@@ -780,10 +787,12 @@ the License.
 
       /**
        * Coppies current body text value to clipboard.
+       *
+       * @param {Event} e
        */
       _copyToClipboard(e) {
         const button = e.target;
-        var copy = this.shadowRoot.querySelector('clipboard-copy');
+        const copy = this.shadowRoot.querySelector('clipboard-copy');
         copy.content = this.value;
         if (copy.copy()) {
           button.icon = 'arc:done';
@@ -873,7 +882,8 @@ the License.
         const mediaTypes = model.map((item) => this._getValue(item, key));
         this._setMimeTypes(mediaTypes);
         if (mediaTypes && mediaTypes[0]) {
-          if (this._hasType(model[0][this.ns.raml.vocabularies.http + 'schema'], this.ns.raml.vocabularies.shapes + 'FileShape')) {
+          const shape = model[0][this.ns.raml.vocabularies.http + 'schema'];
+          if (this._hasType(shape, this.ns.raml.vocabularies.shapes + 'FileShape')) {
             this.set('fileAccept', mediaTypes);
             this.set('contentType', 'application/octet-stream');
           } else {
