@@ -43,7 +43,9 @@
     "web-animations-js": "web-animations/web-animations-js#^2.3",
     "iron-test-helpers": "PolymerElements/iron-test-helpers#^2.0.0",
     "api-headers-editor": "advanced-rest-client/api-headers-editor#^2.0.0",
-    "arc-polyfills": "advanced-rest-client/arc-polyfills#^0.1.11"
+    "arc-polyfills": "advanced-rest-client/arc-polyfills#^0.1.11",
+    "arc-electron-default-theme": "advanced-rest-client/arc-electron-default-theme#2.0.0-preview",
+    "paper-toggle-button": "PolymerElements/paper-toggle-button#^2.0.0"
   },
   "repository": {
     "type": "git",

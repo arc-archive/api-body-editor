@@ -135,8 +135,9 @@ the License.
      * @appliesMixin ArcBehaviors.EventsTargetBehavior
      * @appliesMixin ApiElements.AmfHelperMixin
      */
-    class ApiBodyEditor extends ApiElements.AmfHelperMixin(ArcBehaviors.EventsTargetBehavior(Polymer.Element)) {
-      static get is() { return 'api-body-editor'; }
+    class ApiBodyEditor extends
+      ApiElements.AmfHelperMixin(ArcBehaviors.EventsTargetBehavior(Polymer.Element)) {
+      static get is() {return 'api-body-editor';}
       static get properties() {
         return {
           /**
@@ -278,6 +279,13 @@ the License.
           singleMimeType: {
             type: Object,
             readOnly: true
+          },
+          /**
+           * When set the editor is in read only mode.
+           */
+          readonly: {
+            type: Boolean,
+            observer: '_readonlyChanged'
           }
         };
       }
@@ -330,6 +338,9 @@ the License.
        * @param {CustomEvent} e
        */
       _ctHandler(e) {
+        if (this.readonly) {
+          return;
+        }
         this.set('contentType', e.detail.value);
       }
       /**
@@ -341,13 +352,15 @@ the License.
        */
       _contentTypeChanged(contentType, oldValue) {
         this._updateEditorsState(contentType, oldValue);
-        this._computeEditorSelectorHidden(contentType);
+        this._updateEditorSelectorHidden(contentType);
         this._propertyChangeHandler('contentType', contentType);
       }
       /**
        * Updates selected model for AMF.
        *
+       * @param {Boolean} hasAmfBody
        * @param {String} contentType New content type value.
+       * @param {Number} selected
        */
       _updateAmfSelectedMime(hasAmfBody, contentType, selected) {
         // only form data and url encoded form accepts model property
@@ -419,6 +432,9 @@ the License.
       }
       /**
        * Replaces active body editor with new one.
+       *
+       * @param {Number} selected
+       * @param {Number} oldValue
        */
       _selectedChanged(selected, oldValue) {
         this.__removeExistingPanel();
@@ -437,6 +453,9 @@ the License.
        * @param {String|FormData|File|undefined} value Value to notify
        */
       _notifyBodyChanged(value) {
+        if (this.readonly) {
+          return;
+        }
         const e = new CustomEvent('body-value-changed', {
           detail: {
             value: value,
@@ -451,7 +470,7 @@ the License.
        */
       __removeExistingPanel() {
         const panel = this.currentPanel;
-        if(!panel) {
+        if (!panel) {
           return;
         }
         const events = this.__currentListeners;
@@ -466,7 +485,7 @@ the License.
       }
 
       __createBodyPanel(selected) {
-        switch(selected) {
+        switch (selected) {
           case 0: this._createRawPanel(); break;
           case 1: this._createFormDataPanel(); break;
           case 2: this._createMultipartPanel(); break;
@@ -535,6 +554,9 @@ the License.
        * @param {CustomEvent} e
        */
       _panelValueChanged(e) {
+        if (this.readonly) {
+          return;
+        }
         this._cancelValueSetOnPanel = true;
         this.value = e.detail.value;
         this._cancelValueSetOnPanel = false;
@@ -562,6 +584,7 @@ the License.
        * Currently only `form-data-editor` and `multipart-payload-editor`
        * support amf data model.
        *
+       * @param {String} contentType
        * @return {Promise} Resolved when model is set.
        */
       _propagateModel(contentType) {
@@ -677,9 +700,8 @@ the License.
        * this cases the editor should be hidden.
        *
        * @param {String} contentType Current content type.
-       * @return {Boolean} true to hide the selector.
        */
-      _computeEditorSelectorHidden(contentType) {
+      _updateEditorSelectorHidden(contentType) {
         let result;
         const value = this.value;
         if (!contentType) {
@@ -700,6 +722,7 @@ the License.
       /**
        * Updates property value on current panel.
        *
+       * @param {String} prop Name of the proeprty to set
        * @param {any} value New value to set.
        */
       _propertyChangeHandler(prop, value) {
@@ -753,13 +776,23 @@ the License.
       _narrowChanged(value) {
         this._propertyChangeHandler('narrow', value);
       }
+      /**
+       * Updates `readonly` on a panel.
+       *
+       * @param {Boolean} value New value to set.
+       */
+      _readonlyChanged(value) {
+        this._propertyChangeHandler('readonly', value);
+      }
 
       /**
        * Coppies current body text value to clipboard.
+       *
+       * @param {Event} e
        */
       _copyToClipboard(e) {
         const button = e.target;
-        var copy = this.shadowRoot.querySelector('clipboard-copy');
+        const copy = this.shadowRoot.querySelector('clipboard-copy');
         copy.content = this.value;
         if (copy.copy()) {
           button.icon = 'arc:done';
@@ -849,7 +882,8 @@ the License.
         const mediaTypes = model.map((item) => this._getValue(item, key));
         this._setMimeTypes(mediaTypes);
         if (mediaTypes && mediaTypes[0]) {
-          if (this._hasType(model[0][this.ns.raml.vocabularies.http + 'schema'], this.ns.raml.vocabularies.shapes + 'FileShape')) {
+          const shape = model[0][this.ns.raml.vocabularies.http + 'schema'];
+          if (this._hasType(shape, this.ns.raml.vocabularies.shapes + 'FileShape')) {
             this.set('fileAccept', mediaTypes);
             this.set('contentType', 'application/octet-stream');
           } else {
@@ -894,6 +928,9 @@ the License.
        * @param {String} type Content type value to announce.
        */
       _notifyContentTypeChange(type) {
+        if (this.readonly) {
+          return;
+        }
         this.dispatchEvent(new CustomEvent('content-type-changed', {
           bubbles: true,
           composed: true,

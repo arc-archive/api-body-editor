@@ -11,77 +11,96 @@
     <link rel="import" href="../../paper-input/paper-input.html">
     <link rel="import" href="../../paper-button/paper-button.html">
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
+    <link rel="import" href="../../arc-electron-default-theme/arc-electron-default-theme.html">
     <link rel="import" href="../api-body-editor.html">
     <custom-style>
       <style is="custom-style" include="demo-pages-shared-styles">
-      :root {
-        --code-type-text-value-color: #0d47a1;
-        --code-type-number-value-color: #03a9f4;
-        --code-type-boolean-value-color: #0288d1;
-        --code-type-null-value-color: #0288d1;
-        --code-punctuation-value-color: #757575;
-        --code-type-link-color: #757575;
-        --code-array-index-color: rgba(1, 87, 155, 0.57);
-        --code-background-color: #F4F5F6;
-        --code-mirror-background-color: #f5f2f0;
-        --code-mirror: {
-          background-color: var(--arc-code-mirror-background-color, #f5f2f0);
-        };
+      body,
+      html {
+        background-color: #e5e5e5;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
 
-        --code-mirror-editor: {
-          background-color: var(--arc-code-mirror-background-color, #f5f2f0);
-          z-index: 0;
-        };
-        --code-mirror-wrapper: {
-          display: block;
-        };
+      .card {
+        @apply --shadow-elevation-4dp;
+        padding: 20px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+        background-color: #fff;
+      }
+
+      h1 {
+        @apply --paper-font-display1;
+      }
+
+      h2 {
+        @apply --paper-font-title;
+      }
+
+      paper-toggle-button {
+        margin-bottom: 12px;
       }
       </style>
     </custom-style>
   </head>
   <body>
-    <div class="vertical-section-container centered">
-      <h3>Basic api-body-editor demo</h3>
-      <demo-snippet>
-        <template>
-          <dom-bind>
-            <template>
-              <api-body-editor value="{{value}}" allow-hide-optional allow-disable-params allow-custom></api-body-editor>
-              <output>[[value]]</output>
-            </template>
-          </dom-bind>
-        </template>
-      </demo-snippet>
-      <fieldset>
-        <legend>Content type change event</legend>
-        <p>Dispatches "content-type-changed" event handled by the element.</p>
-        <iron-form id="ctForm">
-          <form enctype="application/json" autocomplete="on">
-            <paper-input name="ct" label="Content type value" value="application/json"></paper-input>
-            <paper-button raised id="sendCt">Send event</paper-button>
-          </form>
-        </iron-form>
-      </fieldset>
-    </div>
+    <dom-bind id="demo">
+      <template>
+        <section role="main" class="vertical-section-container centered card">
+          <api-body-editor
+            value="{{value}}"
+            narrow="[[narrow]]"
+            readonly="[[readonly]]"
+            allow-hide-optional
+            allow-disable-params
+            allow-custom="[[allowCustom]]"></api-body-editor>
+        </section>
+
+        <section class="vertical-section-container centered card">
+          <h2>Output</h2>
+          <output>[[value]]</output>
+        </section>
+
+        <section class="vertical-section-container centered card">
+          <h2>Configuration</h2>
+          <paper-toggle-button checked="{{narrow}}">Render narrow view</paper-toggle-button>
+          <paper-toggle-button checked="{{allowCustom}}">Allow custom properties</paper-toggle-button>
+          <paper-toggle-button checked="{{readonly}}">Read only mode</paper-toggle-button>
+        </section>
+
+        <section class="vertical-section-container centered card">
+          <fieldset>
+            <legend>Content type change event</legend>
+            <p>Dispatches "content-type-changed" event handled by the element.</p>
+            <iron-form id="ctForm">
+              <form enctype="application/json" autocomplete="on">
+                <paper-input name="ct" label="Content type value" value="{{eventContentType}}"></paper-input>
+                <paper-button raised on-click="_sendEvent">Send event</paper-button>
+              </form>
+            </iron-form>
+          </fieldset>
+        </section>
+      </template>
+    </dom-bind>
     <script>
-    const sendCtButton = document.getElementById('sendCt');
-    const ctForm = document.getElementById('ctForm');
-    sendCtButton.addEventListener('tap', () => {
-      ctForm.submit();
-    });
-    ctForm.addEventListener('iron-form-presubmit', function(e) {
-      e.preventDefault();
-      const data = ctForm.serializeForm();
-      const ev = new CustomEvent('content-type-changed', {
-        detail: {
-          value: data.ct
-        },
-        bubbles: true,
-        composed: true
-      });
-      document.body.dispatchEvent(ev);
-    });
+    (function(demo) {
+      demo.eventContentType = 'application/json';
+      demo._sendEvent = function() {
+        const ctForm = document.getElementById('ctForm');
+        const data = ctForm.serializeForm();
+        document.body.dispatchEvent(new CustomEvent('content-type-changed', {
+          detail: {
+            value: data.ct
+          },
+          bubbles: true,
+          composed: true
+        }));
+      };
+    })(document.getElementById('demo'));
     </script>
   </body>
 </html>
