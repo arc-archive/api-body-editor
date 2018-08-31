@@ -31,6 +31,8 @@ the License.
 <link rel="import" href="../api-view-model-transformer/api-view-model-transformer.html">
 <link rel="import" href="../amf-helper-mixin/amf-helper-mixin.html">
 <link rel="import" href="../raml-aware/raml-aware.html">
+<link rel="import" href="../api-example-generator/api-example-generator.html">
+<link rel="import" href="api-body-editor-amf-overlay.html">
 <dom-module id="api-body-editor">
   <template>
     <style include="api-form-styles"></style>
@@ -108,6 +110,7 @@ the License.
     <section class="body-panel"></section>
     <clipboard-copy></clipboard-copy>
     <api-view-model-transformer amf-model="[[amfModel]]" id="transformer"></api-view-model-transformer>
+    <api-example-generator amf-model="[[amfModel]]" id="exampleGenerator"></api-example-generator>
   </template>
   <script>
     /**
@@ -134,9 +137,12 @@ the License.
      * @demo demo/index.html
      * @appliesMixin ArcBehaviors.EventsTargetBehavior
      * @appliesMixin ApiElements.AmfHelperMixin
+     * @appliesMixin ApiElements.ApiBodyEditorAmfOverlay
      */
     class ApiBodyEditor extends
-      ApiElements.AmfHelperMixin(ArcBehaviors.EventsTargetBehavior(Polymer.Element)) {
+      ApiElements.ApiBodyEditorAmfOverlay(
+        ApiElements.AmfHelperMixin(
+          ArcBehaviors.EventsTargetBehavior(Polymer.Element))) {
       static get is() {return 'api-body-editor';}
       static get properties() {
         return {
@@ -175,35 +181,6 @@ the License.
           contentType: {
             type: String,
             observer: '_contentTypeChanged'
-          },
-          /**
-           * `raml-aware` scope property to use.
-           */
-          aware: String,
-          /**
-           * AMF json/ld model for body.
-           * When set it resets editor settings and transform it to work with
-           * data types defined in AMF only.
-           * @type {Object}
-           */
-          amfBody: {
-            type: Object,
-            observer: '_amfChanged'
-          },
-          // Computed final model for payload.
-          _effectiveModel: Object,
-          /**
-           * Computed value, `true` when `amfBody` is set.
-           * This controls how the view is rendered. AMF model has limited
-           * number of media types supported by the API. When not existing
-           * the edtior renders all possible types.
-           *
-           * @type {Object}
-           */
-          hasAmfBody: {
-            type: Boolean,
-            value: false,
-            computed: '_computeHasAmf(amfBody)'
           },
           // Computed value, if set then raw text input is hidden
           noTextInput: Boolean,
@@ -252,35 +229,6 @@ the License.
             observer: '_narrowChanged'
           },
           /**
-           * List of supported mime types by this endpoint.
-           * This information is read from AMF data model.
-           */
-          mimeTypes: {
-            type: Array,
-            readOnly: true,
-            // observer: '_mimeTypesChanged'
-          },
-          /**
-           * RAML's type definition.
-           * A JSON editor uses it to create a schema definition (as a JSON object of {name: type}) to
-           * display autosuggestions.
-           */
-          selectedMimeType: {
-            type: Object,
-            readOnly: true
-          },
-          /**
-           * Computed value.
-           * It's `true` when the endpint supports single mime type.
-           * In this case it won't render type selector.
-           *
-           * @type {Object}
-           */
-          singleMimeType: {
-            type: Object,
-            readOnly: true
-          },
-          /**
            * When set the editor is in read only mode.
            */
           readonly: {
@@ -288,12 +236,6 @@ the License.
             observer: '_readonlyChanged'
           }
         };
-      }
-
-      static get observers() {
-        return [
-          '_updateAmfSelectedMime(hasAmfBody, contentType, selected)'
-        ];
       }
 
       /**
@@ -311,33 +253,25 @@ the License.
        */
       constructor() {
         super();
-        this._ctHandler = this._ctHandler.bind(this);
+        this._contentTypeHandler = this._contentTypeHandler.bind(this);
         this._payloadKeyDown = this._payloadKeyDown.bind(this);
         this._panelValueChanged = this._panelValueChanged.bind(this);
       }
 
       _attachListeners(node) {
-        node.addEventListener('content-type-changed', this._ctHandler);
+        node.addEventListener('content-type-changed', this._contentTypeHandler);
         this.addEventListener('keydown', this._payloadKeyDown);
       }
 
       _detachListeners(node) {
-        node.removeEventListener('content-type-changed', this._ctHandler);
+        node.removeEventListener('content-type-changed', this._contentTypeHandler);
         this.removeEventListener('keydown', this._payloadKeyDown);
-      }
-      /**
-       * Computes value for `hasAmfBody`.
-       * @param {?Object} amf AMF model for body.
-       * @return {Boolean}
-       */
-      _computeHasAmf(amf) {
-        return !!amf;
       }
       /**
        * Handler for content type changed event.
        * @param {CustomEvent} e
        */
-      _ctHandler(e) {
+      _contentTypeHandler(e) {
         if (this.readonly) {
           return;
         }
@@ -355,27 +289,27 @@ the License.
         this._updateEditorSelectorHidden(contentType);
         this._propertyChangeHandler('contentType', contentType);
       }
-      /**
-       * Updates selected model for AMF.
-       *
-       * @param {Boolean} hasAmfBody
-       * @param {String} contentType New content type value.
-       * @param {Number} selected
-       */
-      _updateAmfSelectedMime(hasAmfBody, contentType, selected) {
-        // only form data and url encoded form accepts model property
-        if (!hasAmfBody || !contentType || (selected === 3)) {
-          return;
-        }
-        if (this.__transformingModel) {
-          return;
-        }
-        this.__transformingModel = true;
-        setTimeout(() => {
-          this._propagateModel(contentType);
-          this.__transformingModel = false;
-        }, 25);
-      }
+      // /**
+      //  * Updates selected model for AMF.
+      //  *
+      //  * @param {Boolean} hasAmfBody
+      //  * @param {String} contentType New content type value.
+      //  * @param {Number} selected
+      //  */
+      // _updateAmfSelectedMime(hasAmfBody, contentType, selected) {
+      //   // only form data and url encoded form accepts model property
+      //   if (!hasAmfBody || !contentType || (selected === 3)) {
+      //     return;
+      //   }
+      //   if (this.__transformingModel) {
+      //     return;
+      //   }
+      //   this.__transformingModel = true;
+      //   setTimeout(() => {
+      //     this._propagateModel(contentType);
+      //     this.__transformingModel = false;
+      //   }, 25);
+      // }
 
       _hideAllEditors() {
         this.noTextInput = true;
@@ -578,81 +512,89 @@ the License.
         }
       }
 
-      /**
-       * Attaches data model to an editor when content type changes.
-       *
-       * Currently only `form-data-editor` and `multipart-payload-editor`
-       * support amf data model.
-       *
-       * @param {String} contentType
-       * @return {Promise} Resolved when model is set.
-       */
-      _propagateModel(contentType) {
-        const panel = this.currentPanel;
-        if (!this.__cache) {
-          this.__cache = new Map();
-        }
-        const modelCacheKey = contentType + 'model';
-        const valueCacheKey = contentType + 'value';
-        if (this.__cache.has(modelCacheKey)) {
-          const cachedModel = this.__cache.get(modelCacheKey);
-          const cachedValue = this.__cache.get(valueCacheKey);
-          if (cachedModel !== panel.model) {
-            panel.model = cachedModel;
-          }
-          if (cachedValue !== panel.value) {
-            panel.value = cachedValue;
-          }
-          return;
-        }
-        if (!this._effectiveModel) {
-          console.warn('Expecting effective model to be set.');
-          return;
-        }
-        const key = this.ns.raml.vocabularies.http + 'mediaType';
-        const model = this._effectiveModel.find((item) => item[key][0]['@value'] === contentType);
-        if (!model) {
-          // It may happen when content type changed because of
-          // FormData or File.
-          return;
-        }
-        const schema = model[this.ns.raml.vocabularies.http + 'schema'];
-        if (!schema) {
-          return;
-        }
-        const promise = this._prepareViewModel(contentType, schema[0]);
-        return promise
-        .then((data) => {
-          panel.model = data;
-          if (this.selected === 0) {
-            const value = typeof data === 'string' ? data : this._buildExampleValue(data);
-            this.__cache.set(valueCacheKey, value);
-            panel.value = value;
-          }
-          this.__cache.set(modelCacheKey, data);
-        });
-      }
-
-      _prepareViewModel(contentType, schema) {
-        const properties = schema[this.ns.w3.shacl.name + 'property'];
-        if (properties && properties.length) {
-          return this.$.transformer.computeViewModel(properties);
-        }
-        // this._resolve(schema);
-        const isJson = !!(contentType && contentType.indexOf('json') !== -1);
-        let result = this._getExampleValue(schema, isJson);
-        if (!result) {
-          const examples = schema[this.ns.raml.vocabularies.document + 'examples'];
-          if (examples && examples[0]) {
-            const example = this._resolve(examples[0]);
-            result = this._getValue(example, this.ns.raml.vocabularies.document + 'raw');
-          }
-        }
-        if (!result) {
-          result = this._getValue(schema, this.ns.raml.vocabularies.document + 'raw');
-        }
-        return Promise.resolve(result);
-      }
+      // /**
+      //  * Attaches data model to an editor when content type changes.
+      //  *
+      //  * Currently only `form-data-editor` and `multipart-payload-editor`
+      //  * support amf data model.
+      //  *
+      //  * @param {String} contentType
+      //  * @return {Promise} Resolved when model is set.
+      //  */
+      // _propagateModel(contentType) {
+      //   if (!this.__cache) {
+      //     this.__cache = new Map();
+      //   }
+      //   const modelCacheKey = contentType + 'model';
+      //   const valueCacheKey = contentType + 'value';
+      //   if (this.__cache.has(modelCacheKey)) {
+      //     const panel = this.currentPanel;
+      //     if (!panel) {
+      //       return;
+      //     }
+      //     const cachedModel = this.__cache.get(modelCacheKey);
+      //     const cachedValue = this.__cache.get(valueCacheKey);
+      //     if (cachedModel !== panel.model) {
+      //       panel.model = cachedModel;
+      //     }
+      //     if (cachedValue !== panel.value) {
+      //       panel.value = cachedValue;
+      //     }
+      //     return;
+      //   }
+      //   if (!this._effectiveModel) {
+      //     console.warn('Expecting effective model to be set.');
+      //     return;
+      //   }
+      //   const key = this.ns.raml.vocabularies.http + 'mediaType';
+      //   const model = this._effectiveModel.find((item) => item[key][0]['@value'] === contentType);
+      //   if (!model) {
+      //     // It may happen when content type changed because of
+      //     // FormData or File.
+      //     return;
+      //   }
+      //   const schema = model[this.ns.raml.vocabularies.http + 'schema'];
+      //   if (!schema) {
+      //     return;
+      //   }
+      //   const promise = this._prepareViewModel(contentType, schema[0]);
+      //   return promise
+      //   .then((data) => {
+      //     const panel = this.currentPanel;
+      //     if (!panel) {
+      //       return;
+      //     }
+      //     panel.model = data;
+      //     if (this.selected === 0) {
+      //       const value = typeof data === 'string' ? data : this._buildExampleValue(data);
+      //       this.__cache.set(valueCacheKey, value);
+      //       panel.value = value;
+      //     }
+      //     this.__cache.set(modelCacheKey, data);
+      //   });
+      // }
+      //
+      // _prepareViewModel(contentType, schema) {
+      //   this._resolve(schema);
+      //   const properties = schema[this.ns.w3.shacl.name + 'property'];
+      //   if (properties && properties.length) {
+      //     return this.$.transformer.computeViewModel(properties);
+      //   }
+      //   // this._resolve(schema);
+      //   const isJson = !!(contentType && contentType.indexOf('json') !== -1);
+      //   let result = this._getExampleValue(schema, isJson);
+      //   if (!result) {
+      //     const examples = schema[this.ns.raml.vocabularies.document + 'examples'];
+      //     if (examples && examples[0]) {
+      //       const example = this._resolve(examples[0]);
+      //       result = this._getValue(example, this.ns.raml.vocabularies.document + 'raw');
+      //     }
+      //   }
+      //   if (!result) {
+      //     result = this._getValue(schema, this.ns.raml.vocabularies.document + 'raw');
+      //   }
+      //   return Promise.resolve(result);
+      // }
       /**
        * Dispatches analytics event.
        *
@@ -816,112 +758,29 @@ the License.
       _resetCopyButtonState(button) {
         button.icon = 'arc:content-copy';
       }
-      /**
-       * A handler for `amfBody` property change.
-       * Resets `mediaTypes` property as defined in the model.
-       *
-       * @param {Array|Object} model Passed model
-       */
-      _amfChanged(model) {
-        this.__cache = new Map();
-        const panel = this.currentPanel;
-        if (!panel) {
-          return;
-        }
-        if (!model) {
-          panel.model = undefined;
-          return;
-        }
-        model = this._ensurePayloadModel(model);
-        if (!model) {
-          console.warn('Passed model do not contain "payload" definition');
-          return;
-        }
-        this._effectiveModel = model;
-        this._updateAmfMediaTypes(model);
-      }
-      /**
-       * Ensures that the passed model is an array of
-       * `http://raml.org/vocabularies/http#Payload`
-       * in the AMF vocabulary.
-       * The element accepts `http://www.w3.org/ns/hydra/core#Operation`,
-       * `http://raml.org/vocabularies/http#Request` or array of
-       * `http://raml.org/vocabularies/http#Payload` definitions.
-       * It selectes the array from the model.
-       *
-       * @param {Array|Object} model Passed model
-       * @return {Array|undefined} Payload model of undefined if the model
-       * is invalid for this element.
-       */
-      _ensurePayloadModel(model) {
-        if (model instanceof Array) {
-          return model;
-        }
-        if (this._hasType(model, this.ns.w3.hydra.core + 'Operation')) {
-          model = model[this.ns.w3.hydra.core + 'expects'];
-        }
-        if (!model) {
-          return;
-        }
-        model = model[0];
-        if (this._hasType(model, this.ns.raml.vocabularies.http + 'Request')) {
-          model = model[this.ns.raml.vocabularies.http + 'payload'];
-        }
-        if (model instanceof Array) {
-          return model;
-        }
-      }
-      /**
-       * Creates a list of media types supported by the endpoint as defined in
-       * API spec file.
-       * @param {Array} model List of `Payload` definitions
-       */
-      _updateAmfMediaTypes(model) {
-        this._setMimeTypes(undefined);
-        const key = this.ns.raml.vocabularies.http + 'mediaType';
-        const mediaTypes = model.map((item) => this._getValue(item, key));
-        this._setMimeTypes(mediaTypes);
-        if (mediaTypes && mediaTypes[0]) {
-          const shape = model[0][this.ns.raml.vocabularies.http + 'schema'];
-          if (this._hasType(shape, this.ns.raml.vocabularies.shapes + 'FileShape')) {
-            this.set('fileAccept', mediaTypes);
-            this.set('contentType', 'application/octet-stream');
-          } else {
-            if (this.fileAccept) {
-              this.set('fileAccept', undefined);
-            }
-            const index = mediaTypes.indexOf(this.contentType);
-            const type = index === -1 ? mediaTypes[0] : mediaTypes[index];
-            if (this.contentType !== type) {
-              this.set('contentType', mediaTypes[0]);
-              this._notifyContentTypeChange(mediaTypes[0]);
-            }
-          }
-        }
-        this._setSingleMimeType(mediaTypes && mediaTypes.length === 1);
-      }
-      /**
-       * Builds an example value form a properties model.
-       *
-       * @param {Array} properties View data model
-       * @return {String} Example for body
-       */
-      _buildExampleValue(properties) {
-        let result = '';
-        if (!properties || !properties.length) {
-          return result;
-        }
-        const ct = this.contentType;
-        if (!ct) {
-          return result;
-        }
-        if (ct.indexOf('/json') !== -1) {
-          result = this.$.transformer.computeDisplayJson(properties);
-        } else if (ct.indexOf('xml') !== -1) {
-          result = this.$.transformer.computeDisplayXml(properties);
-        }
-        return result;
-      }
+
+      // /**
+      //  * Builds an example value form a properties model.
+      //  *
+      //  * @param {Array} properties View data model
+      //  * @return {String} Example for body
+      //  */
+      // _buildExampleValue(properties) {
+      //   let result = '';
+      //   if (!properties || !properties.length) {
+      //     return result;
+      //   }
+      //   const ct = this.contentType;
+      //   if (!ct) {
+      //     return result;
+      //   }
+      //   if (ct.indexOf('/json') !== -1) {
+      //     result = this.$.transformer.computeDisplayJson(properties);
+      //   } else if (ct.indexOf('xml') !== -1) {
+      //     result = this.$.transformer.computeDisplayXml(properties);
+      //   }
+      //   return result;
+      // }
       /**
        * Dospatches `content-type-changed` custom event when CT changes by
        * using type selection.
