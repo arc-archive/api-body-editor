@@ -233,8 +233,8 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
         return;
       }
       const schema = this._schemaForMedia(contentType);
-      return this._updatePanelModel(panel, contentType, schema)
-      .then(() => this._updatePanelValue(panel, contentType, schema));
+      this._updatePanelModel(panel, contentType, schema);
+      this._updatePanelValue(panel, contentType, schema);
     }
 
     _schemaForMedia(mediaType) {
@@ -262,18 +262,22 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
         }
       }
     }
+
+    _typeHasModel(contentType) {
+      const allowed = ['application/x-www-form-urlencoded', 'multipart/form-data'];
+      return allowed.indexOf(contentType) !== -1;
+    }
+
     /**
      * Updates view model on panels that support the model.
      *
      * @param {HTMLElement} panel Current panel
      * @param {String} contentType Current content type
      * @param {Object} schema A schema for current payload.
-     * @return {Promise}
      */
     _updatePanelModel(panel, contentType, schema) {
-      const allowed = ['application/x-www-form-urlencoded', 'multipart/form-data'];
-      if (allowed.indexOf(contentType) === -1) {
-        return Promise.resolve();
+      if (!this._typeHasModel(contentType)) {
+        return;
       }
       let data;
       if (this._hasType(schema, this.ns.raml.vocabularies.shapes + 'UnionShape')) {
@@ -287,10 +291,8 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
         // media types.
         return Promise.resolve();
       }
-      return this.$.transformer.computeViewModel(data)
-      .then((model) => {
-        panel.model = model;
-      });
+      const model = this.$.transformer.computeViewModel(data);
+      panel.model = model;
     }
     /**
      * To simplify things, this searches for first **object** from the union type
@@ -328,7 +330,10 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
      */
     _updatePanelValue(panel, type, schema) {
       const example = this.$.exampleGenerator.computeExample(type, schema);
-      panel.value = (example || '');
+      if (!example && this._typeHasModel(type)) {
+        return;
+      }
+      panel.value = example || '';
     }
   }
   return ABEAOmixin;
