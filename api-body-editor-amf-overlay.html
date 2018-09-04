@@ -12,6 +12,7 @@ License for the specific language governing permissions and limitations under
 the License.
 -->
 <link rel="import" href="../polymer/lib/utils/mixin.html">
+<link rel="import" href="../polymer/lib/utils/render-status.html">
 <script>
 (function(global) {
 'use strict';
@@ -49,8 +50,7 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
          * @type {Object}
          */
         amfBody: {
-          type: Object,
-          observer: '_amfChanged'
+          type: Object
         },
         // Computed final model for payload.
         _effectiveModel: Object,
@@ -91,7 +91,8 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
 
     static get observers() {
       return [
-        '_updatePanelAmf(hasAmfBody, contentType)'
+        '_updatePanelAmf(hasAmfBody, contentType)',
+        '_amfChanged(amfBody, amfModel)'
       ];
     }
 
@@ -105,19 +106,35 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
     }
 
     _clearAmfSettings() {
-      this.__cache = new Map();
       this._effectiveModel = undefined;
     }
 
     /**
+     * Creates a debouncer for body change action so it can be sure that
+     * `amfModel` and `amfBody` properties are set.
+     *
+     * After debouncer timeout `__amfChanged()` is called with current value of
+     * `amfBody`
+     */
+    _amfChanged() {
+      if (this.__bodyChangeDebouncer) {
+        return;
+      }
+      this.__bodyChangeDebouncer = true;
+      Polymer.RenderStatus.afterNextRender(this, () => {
+        this.__bodyChangeDebouncer = false;
+        this.__amfChanged(this.amfBody);
+      });
+    }
+    /**
      * A handler for `amfBody` property change.
      * Resets `mediaTypes` property as defined in the model.
      *
-     * @param {Array|Object} model Passed model
+     * @param {Array|Object} bodyShape Passed model
      */
-    _amfChanged(model) {
+    __amfChanged(bodyShape) {
       this._clearAmfSettings();
-      if (!model) {
+      if (!bodyShape) {
         // Clears view model from the value.
         const panel = this.currentPanel;
         if (panel) {
@@ -126,13 +143,13 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
         return;
       }
 
-      model = this._ensurePayloadModel(model);
-      if (!model) {
+      bodyShape = this._ensurePayloadModel(bodyShape);
+      if (!bodyShape) {
         return;
       }
-      this._updateAmfMediaTypes(model);
-      this._selectDefaultMediaType(model);
-      this._effectiveModel = model;
+      this._updateAmfMediaTypes(bodyShape);
+      this._selectDefaultMediaType(bodyShape);
+      this._effectiveModel = bodyShape;
     }
 
     /**
