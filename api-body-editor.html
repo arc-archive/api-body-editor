@@ -173,7 +173,7 @@ the License.
             observer: '_valueChanged'
           },
           /**
-           * When set it will attempt to run associated code mirror mode
+           * When set it attempts to run associated code mirror mode
            * (raw editor).
            * This element listens for the `content-type-changed` event and when
            * handled it will automatically update content type and `mode`.
@@ -289,27 +289,6 @@ the License.
         this._updateEditorSelectorHidden(contentType);
         this._propertyChangeHandler('contentType', contentType);
       }
-      // /**
-      //  * Updates selected model for AMF.
-      //  *
-      //  * @param {Boolean} hasAmfBody
-      //  * @param {String} contentType New content type value.
-      //  * @param {Number} selected
-      //  */
-      // _updateAmfSelectedMime(hasAmfBody, contentType, selected) {
-      //   // only form data and url encoded form accepts model property
-      //   if (!hasAmfBody || !contentType || (selected === 3)) {
-      //     return;
-      //   }
-      //   if (this.__transformingModel) {
-      //     return;
-      //   }
-      //   this.__transformingModel = true;
-      //   setTimeout(() => {
-      //     this._propagateModel(contentType);
-      //     this.__transformingModel = false;
-      //   }, 25);
-      // }
 
       _hideAllEditors() {
         this.noTextInput = true;
@@ -451,7 +430,6 @@ the License.
         this.__addCommonProperties(panel, 'raw');
         this.shadowRoot.querySelector('.body-panel').appendChild(panel);
       }
-
       /**
        * Creates instance of Raw body panel and adds it to local DOM.
        */
@@ -460,7 +438,6 @@ the License.
         this.__addCommonProperties(panel, 'urlencode');
         this.shadowRoot.querySelector('.body-panel').appendChild(panel);
       }
-
       /**
        * Creates instance of Raw body panel and adds it to local DOM.
        */
@@ -469,7 +446,6 @@ the License.
         this.__addCommonProperties(panel, 'file');
         this.shadowRoot.querySelector('.body-panel').appendChild(panel);
       }
-
       /**
        * Creates instance of Raw body panel and adds it to local DOM.
        */
@@ -478,12 +454,11 @@ the License.
         this.__addCommonProperties(panel, 'formdata');
         this.shadowRoot.querySelector('.body-panel').appendChild(panel);
       }
-
       /**
        * Handler for the `value-changed` event dispatched by an editor panel.
        * Updates this element value reported back to the application and
        * dispatches `body-value-changed` custom event so elements without
-       * direct access to this element can act upon new information.
+       * direct access to this element can use this information.
        *
        * @param {CustomEvent} e
        */
@@ -505,96 +480,10 @@ the License.
         this.__currentListeners = new Map();
         this.__currentListeners.set('value-changed', this._panelValueChanged);
         panel.addEventListener('value-changed', this._panelValueChanged);
-        // AMF view model transformer caches valus in the model
-        // fo the value is propagated through the model.
         if (!this.hasAmfBody) {
           panel.value = this.value;
         }
       }
-
-      // /**
-      //  * Attaches data model to an editor when content type changes.
-      //  *
-      //  * Currently only `form-data-editor` and `multipart-payload-editor`
-      //  * support amf data model.
-      //  *
-      //  * @param {String} contentType
-      //  * @return {Promise} Resolved when model is set.
-      //  */
-      // _propagateModel(contentType) {
-      //   if (!this.__cache) {
-      //     this.__cache = new Map();
-      //   }
-      //   const modelCacheKey = contentType + 'model';
-      //   const valueCacheKey = contentType + 'value';
-      //   if (this.__cache.has(modelCacheKey)) {
-      //     const panel = this.currentPanel;
-      //     if (!panel) {
-      //       return;
-      //     }
-      //     const cachedModel = this.__cache.get(modelCacheKey);
-      //     const cachedValue = this.__cache.get(valueCacheKey);
-      //     if (cachedModel !== panel.model) {
-      //       panel.model = cachedModel;
-      //     }
-      //     if (cachedValue !== panel.value) {
-      //       panel.value = cachedValue;
-      //     }
-      //     return;
-      //   }
-      //   if (!this._effectiveModel) {
-      //     console.warn('Expecting effective model to be set.');
-      //     return;
-      //   }
-      //   const key = this.ns.raml.vocabularies.http + 'mediaType';
-      //   const model = this._effectiveModel.find((item) => item[key][0]['@value'] === contentType);
-      //   if (!model) {
-      //     // It may happen when content type changed because of
-      //     // FormData or File.
-      //     return;
-      //   }
-      //   const schema = model[this.ns.raml.vocabularies.http + 'schema'];
-      //   if (!schema) {
-      //     return;
-      //   }
-      //   const promise = this._prepareViewModel(contentType, schema[0]);
-      //   return promise
-      //   .then((data) => {
-      //     const panel = this.currentPanel;
-      //     if (!panel) {
-      //       return;
-      //     }
-      //     panel.model = data;
-      //     if (this.selected === 0) {
-      //       const value = typeof data === 'string' ? data : this._buildExampleValue(data);
-      //       this.__cache.set(valueCacheKey, value);
-      //       panel.value = value;
-      //     }
-      //     this.__cache.set(modelCacheKey, data);
-      //   });
-      // }
-      //
-      // _prepareViewModel(contentType, schema) {
-      //   this._resolve(schema);
-      //   const properties = schema[this.ns.w3.shacl.name + 'property'];
-      //   if (properties && properties.length) {
-      //     return this.$.transformer.computeViewModel(properties);
-      //   }
-      //   // this._resolve(schema);
-      //   const isJson = !!(contentType && contentType.indexOf('json') !== -1);
-      //   let result = this._getExampleValue(schema, isJson);
-      //   if (!result) {
-      //     const examples = schema[this.ns.raml.vocabularies.document + 'examples'];
-      //     if (examples && examples[0]) {
-      //       const example = this._resolve(examples[0]);
-      //       result = this._getValue(example, this.ns.raml.vocabularies.document + 'raw');
-      //     }
-      //   }
-      //   if (!result) {
-      //     result = this._getValue(schema, this.ns.raml.vocabularies.document + 'raw');
-      //   }
-      //   return Promise.resolve(result);
-      // }
       /**
        * Dispatches analytics event.
        *
@@ -617,7 +506,7 @@ the License.
       }
       /**
        * Dispatches `send-request` custom event when the user pressed
-       * `meta+enter` on Mac or `ctrl+enter` otherwise keys combination.
+       * `meta+enter` on Mac or `ctrl+enter` eklsewhere keys combination.
        *
        * @param {CustomEvent} e
        */
@@ -635,7 +524,6 @@ the License.
           composed: true
         }));
       }
-
       /**
        * Computes a value of the hidden attribute of the editory type selector.
        * Some content types are supported by only one type of the editor so in
@@ -726,9 +614,8 @@ the License.
       _readonlyChanged(value) {
         this._propertyChangeHandler('readonly', value);
       }
-
       /**
-       * Coppies current body text value to clipboard.
+       * Copies current body text value to clipboard.
        *
        * @param {Event} e
        */
@@ -754,35 +641,15 @@ the License.
         setTimeout(() => this._resetCopyButtonState(button), 1000);
         this._analyticsEvent('api-body-editor', 'Copy to clipboard');
       }
-
+      /**
+       * Resets state of the copy button.
+       * @param {Element} button
+       */
       _resetCopyButtonState(button) {
         button.icon = 'arc:content-copy';
       }
-
-      // /**
-      //  * Builds an example value form a properties model.
-      //  *
-      //  * @param {Array} properties View data model
-      //  * @return {String} Example for body
-      //  */
-      // _buildExampleValue(properties) {
-      //   let result = '';
-      //   if (!properties || !properties.length) {
-      //     return result;
-      //   }
-      //   const ct = this.contentType;
-      //   if (!ct) {
-      //     return result;
-      //   }
-      //   if (ct.indexOf('/json') !== -1) {
-      //     result = this.$.transformer.computeDisplayJson(properties);
-      //   } else if (ct.indexOf('xml') !== -1) {
-      //     result = this.$.transformer.computeDisplayXml(properties);
-      //   }
-      //   return result;
-      // }
       /**
-       * Dospatches `content-type-changed` custom event when CT changes by
+       * Dispatches `content-type-changed` custom event when CT changes by
        * using type selection.
        * @param {String} type Content type value to announce.
        */

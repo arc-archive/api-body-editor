@@ -116,23 +116,6 @@
         </div>
       </header>
 
-      <!-- <header>
-        <paper-dropdown-menu label="Select demo endpoint">
-          <paper-listbox slot="dropdown-content" id="enpointsList" selected="{{selectedEndpointIndex}}" on-selected-changed="_endpointChanged">
-            <template is="dom-repeat" items="[[endpoints]]">
-              <paper-item>[[item]]</paper-item>
-            </template>
-          </paper-listbox>
-        </paper-dropdown-menu>
-        <paper-dropdown-menu label="Select endpoint's method">
-          <paper-listbox slot="dropdown-content" selected="{{selectedShape}}" on-selected-changed="_methodChanged">
-            <template is="dom-repeat" items="[[operations]]">
-              <paper-item>[[item.label]]</paper-item>
-            </template>
-          </paper-listbox>
-        </paper-dropdown-menu>
-      </header> -->
-
       <raml-aware raml="{{amfModel}}" scope="model"></raml-aware>
       <section role="main" class="centered card">
         <api-navigation aware="model" endpoints-opened></api-navigation>
