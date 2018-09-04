@@ -16,7 +16,8 @@
   <link rel="import" href="../../api-headers-editor/api-headers-editor.html">
   <link rel="import" href="../../raml-aware/raml-aware.html">
   <link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
-  <link rel="import" href="../../arc-electron-default-theme/arc-electron-default-theme.html">
+  <link rel="import" href="../../api-navigation/api-navigation.html">
+  <link rel="import" href="../../api-console-default-theme/api-console-default-theme.html">
   <link rel="import" href="../api-body-editor.html">
   <custom-style>
     <style is="custom-style" include="demo-pages-shared-styles">
@@ -27,6 +28,13 @@
       margin: 0;
       padding: 0;
     }
+
+    [role="main"] {
+      max-width: 1100px;
+      @apply --layout-horizontal;
+      @apply --layout-start;
+    }
+
     .card {
       @apply --shadow-elevation-4dp;
       padding: 20px;
@@ -39,11 +47,26 @@
     header {
       padding: 12px 24px;
       background-color: #C5E1A5;
+      @apply --layout-horizontal;
+      @apply --layout-center;
       --iron-icon-fill-color: #3E2723;
       --paper-input-container-focus-color: #33691E;
       --paper-input-container-label: {
         color: #3E2723;
       };
+    }
+
+    .spacer {
+      @apply --layout-flex;
+    }
+
+    .options {
+        @apply --layout-horizontal;
+        @apply --layout-center;
+    }
+
+    .options > * {
+      margin-left: 8px;
     }
 
     output {
@@ -77,25 +100,25 @@
 <body>
   <dom-bind id="demo">
     <template>
+
       <header>
         <paper-dropdown-menu label="Select demo endpoint">
-          <paper-listbox slot="dropdown-content" id="enpointsList" selected="{{selectedEndpointIndex}}" on-selected-changed="_endpointChanged">
-            <template is="dom-repeat" items="[[endpoints]]">
-              <paper-item>[[item]]</paper-item>
-            </template>
+          <paper-listbox slot="dropdown-content" id="apisList" on-selected-changed="_apiChanged">
+            <paper-item data-src="demo-api.json">Demo api</paper-item>
+            <paper-item data-src="demo-api-compact.json">Demo api - compact model</paper-item>
           </paper-listbox>
         </paper-dropdown-menu>
-        <paper-dropdown-menu label="Select endpoint's method">
-          <paper-listbox slot="dropdown-content" selected="{{selectedShape}}" on-selected-changed="_methodChanged">
-            <template is="dom-repeat" items="[[operations]]">
-              <paper-item>[[item.label]]</paper-item>
-            </template>
-          </paper-listbox>
-        </paper-dropdown-menu>
+        <div class="spacer"></div>
+        <div class="options">
+          <paper-toggle-button checked="{{narrow}}">Render narrow view</paper-toggle-button>
+          <paper-toggle-button checked="{{allowCustom}}">Allow custom properties</paper-toggle-button>
+          <paper-toggle-button checked="{{readonly}}">Read only mode</paper-toggle-button>
+        </div>
       </header>
 
-      <section role="main" class="vertical-section-container centered card">
-        <raml-aware raml="{{amfModel}}" scope="model"></raml-aware>
+      <raml-aware raml="{{amfModel}}" scope="model"></raml-aware>
+      <section role="main" class="centered card">
+        <api-navigation aware="model" endpoints-opened></api-navigation>
         <api-body-editor
           value="{{value}}"
           aware="model"
@@ -113,88 +136,50 @@
       </section>
 
       <section class="vertical-section-container centered card">
-        <h2>Configuration</h2>
-        <paper-toggle-button checked="{{narrow}}">Render narrow view</paper-toggle-button>
-        <paper-toggle-button checked="{{allowCustom}}">Allow custom properties</paper-toggle-button>
-        <paper-toggle-button checked="{{readonly}}">Read only mode</paper-toggle-button>
-      </section>
-
-      <section class="vertical-section-container centered card">
         <h2>Request headers editor</h2>
         <api-headers-editor allow-hide-optional allow-disable-params allow-custom></api-headers-editor>
       </section>
+
+      <demo-element id="helper" amf-model="{{amfModel}}"></demo-element>
     </template>
   </dom-bind>
   <paper-toast id="toast"></paper-toast>
   <script>
     (function(app) {
+      class DemoElement extends ApiElements.AmfHelperMixin(Polymer.Element) {}
+      window.customElements.define('demo-element', DemoElement);
+
       app._load = function() {
-        fetch('./demo-api.json')
+        document.getElementById('apisList').selected = 0;
+      };
+
+      app._loadFile = function(file) {
+        fetch('./' + file)
         .then((response) => response.json())
         .then((data) => {
           app.amfModel = data;
-          app._setEndpointsList(data);
         });
       };
-      app._getAmfValue = function(model) {
-        if (!model || !(model instanceof Array) || !model[0]) {
-          return;
+
+      app._apiChanged = function(e) {
+        const file = e.target.selectedItem.dataset.src;
+        app._loadFile(file);
+      };
+
+      app._navChanged = function(e) {
+        const type = e.detail.type;
+        if (type === 'method') {
+          app.setData(e.detail.selected);
+          app.hasData = true;
+        } else {
+          app.hasData = false;
         }
-        return model[0]['@value'];
       };
-      app._setEndpointsList = function(data) {
-        data = data[0][ApiElements.Amf.ns.raml.vocabularies.document + 'encodes'][0];
-        const endpoints = data[ApiElements.Amf.ns.raml.vocabularies.http + 'endpoint'];
-        const list = endpoints.map((item) => {
-          return app._getAmfValue(item[ApiElements.Amf.ns.raml.vocabularies.http + 'path']);
-        });
-        app.endpoints = list;
-      };
-      app._endpointChanged = function(e) {
-        const index = e.detail.value;
-        app._computeOperations(index);
-      };
-      app._computeOperations = function(index) {
-        let data = app.amfModel[0][ApiElements.Amf.ns.raml.vocabularies.document + 'encodes'][0];
-        data = data[ApiElements.Amf.ns.raml.vocabularies.http + 'endpoint'][index];
-        const operations = data[ApiElements.Amf.ns.w3.hydra.core + 'supportedOperation'];
-        if (!operations) {
-          app.selectedShape = -1;
-          return;
-        }
-        const list = [];
-        operations.forEach((item) => {
-          // if (item[ApiElements.Amf.ns.w3.hydra.core + 'method'][0]['@value'] === 'get') {
-          //   return;
-          // }
-          list.push({
-            id: item['@id'],
-            label: app._getAmfValue(item[ApiElements.Amf.ns.w3.hydra.core + 'method'])
-          });
-        });
-        app.selectedShape = -1;
-        app.operations = list;
-        // app.selectedShape = 0;
-        setTimeout(() => app._methodChanged(), 100);
-      };
-      app._computeApiParams = function(apiPrams) {
-        if (!apiPrams) {
-          return 'none';
-        }
-        return JSON.stringify(apiPrams, null, 1);
-      };
-      app._methodChanged = function(e, d) {
-        app.selectedBody = undefined;
-        const selection = (d === undefined ? app.selectedShape : d.value);
-        if (selection === undefined || selection === -1) {
-          return;
-        }
-        let data = app.amfModel[0][ApiElements.Amf.ns.raml.vocabularies.document + 'encodes'][0];
-        data = data[ApiElements.Amf.ns.raml.vocabularies.http + 'endpoint'][app.selectedEndpointIndex];
-        const ops = data[ApiElements.Amf.ns.w3.hydra.core + 'supportedOperation'];
-        const body = ops[selection];
-        // data = data[''][0];
-        // data = data[ApiElements.Amf.ns.raml.vocabularies.http + 'payload'];
+
+      app.setData = function(selected) {
+        const webApi = app.$.helper._computeWebApi(app.amfModel);
+        const body = app.$.helper._computeMethodModel(webApi, selected);
+        // console.log(body);
         app.selectedBody = body;
       };
 
@@ -203,8 +188,9 @@
         toast.text = `Content type changed: ${e.detail.value}`;
         toast.opened = true;
       };
-      window.addEventListener('WebComponentsReady', () => app._load());
+      window.addEventListener('WebComponentsReady', app._load);
       window.addEventListener('content-type-changed', app._ctChanged);
+      window.addEventListener('api-navigation-selection-changed', app._navChanged);
     })(document.getElementById('demo'));
   </script>
 </body>
