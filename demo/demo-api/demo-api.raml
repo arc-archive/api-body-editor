@@ -124,3 +124,24 @@ traits:
     body:
       application/json:
         type: NewDataType
+/urlencoded:
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        type: Product
+/union:
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        type: ExampleType.Alertable
+/files:
+  /multipart:
+    post:
+      body:
+        multipart/form-data:
+          description: The file to be uploaded.
+          properties:
+            file1:
+              type: file
+            file2:
+              type: string

@@ -1,5 +1,603 @@
 {
   "schema_version": "1.0.0",
+  "namespaces": [
+    {
+      "name": "ApiElements",
+      "description": "",
+      "summary": "",
+      "sourceRange": {
+        "file": "api-body-editor-amf-overlay.html",
+        "start": {
+          "line": 22,
+          "column": 2
+        },
+        "end": {
+          "line": 22,
+          "column": 26
+        }
+      },
+      "mixins": [
+        {
+          "description": "Adds AMF support to body editor.\n\nThis mixin's only purpose is to keep AMF support separated from the\nbody editor code so it's clearer to read it.",
+          "summary": "",
+          "path": "api-body-editor-amf-overlay.html",
+          "properties": [
+            {
+              "name": "aware",
+              "type": "string | null | undefined",
+              "description": "`raml-aware` scope property to use.",
+              "privacy": "public",
+              "sourceRange": {
+                "start": {
+                  "line": 45,
+                  "column": 8
+                },
+                "end": {
+                  "line": 45,
+                  "column": 21
+                }
+              },
+              "metadata": {
+                "polymer": {
+                  "attributeType": "String"
+                }
+              }
+            },
+            {
+              "name": "amfBody",
+              "type": "Object",
+              "description": "AMF json/ld model for body.\nWhen set it resets editor settings and transform it to work with\ndata types defined in AMF only.",
+              "privacy": "public",
+              "sourceRange": {
+                "start": {
+                  "line": 52,
+                  "column": 8
+                },
+                "end": {
+                  "line": 54,
+                  "column": 9
+                }
+              },
+              "metadata": {
+                "polymer": {
+                  "attributeType": "Object"
+                }
+              }
+            },
+            {
+              "name": "_effectiveModel",
+              "type": "Object | null | undefined",
+              "description": "Computed final model for payload.",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 56,
+                  "column": 8
+                },
+                "end": {
+                  "line": 56,
+                  "column": 31
+                }
+              },
+              "metadata": {
+                "polymer": {
+                  "attributeType": "Object"
+                }
+              }
+            },
+            {
+              "name": "hasAmfBody",
+              "type": "Object",
+              "description": "Computed value, `true` when `amfBody` is set.\nThis controls how the view is rendered. AMF model has limited\nnumber of media types supported by the API. When not existing\nthe edtior renders all possible types.",
+              "privacy": "public",
+              "sourceRange": {
+                "start": {
+                  "line": 65,
+                  "column": 8
+                },
+                "end": {
+                  "line": 69,
+                  "column": 9
+                }
+              },
+              "metadata": {
+                "polymer": {
+                  "readOnly": true,
+                  "attributeType": "Boolean"
+                }
+              },
+              "defaultValue": "false"
+            },
+            {
+              "name": "mimeTypes",
+              "type": "Array | null | undefined",
+              "description": "List of supported mime types by this endpoint.\nThis information is read from AMF data model.",
+              "privacy": "public",
+              "sourceRange": {
+                "start": {
+                  "line": 74,
+                  "column": 8
+                },
+                "end": {
+                  "line": 77,
+                  "column": 9
+                }
+              },
+              "metadata": {
+                "polymer": {
+                  "readOnly": true,
+                  "attributeType": "Array"
+                }
+              }
+            },
+            {
+              "name": "singleMimeType",
+              "type": "Object",
+              "description": "Computed value.\nIt's `true` when the endpint supports single mime type.\nIn this case it won't render type selector.",
+              "privacy": "public",
+              "sourceRange": {
+                "start": {
+                  "line": 85,
+                  "column": 8
+                },
+                "end": {
+                  "line": 88,
+                  "column": 9
+                }
+              },
+              "metadata": {
+                "polymer": {
+                  "readOnly": true,
+                  "attributeType": "Object"
+                }
+              }
+            }
+          ],
+          "methods": [
+            {
+              "name": "_computeHasAmf",
+              "description": "Computes value for `hasAmfBody`.",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 104,
+                  "column": 4
+                },
+                "end": {
+                  "line": 106,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [
+                {
+                  "name": "amf",
+                  "type": "?Object",
+                  "description": "AMF model for body."
+                }
+              ],
+              "return": {
+                "type": "Boolean"
+              }
+            },
+            {
+              "name": "_clearAmfSettings",
+              "description": "",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 108,
+                  "column": 4
+                },
+                "end": {
+                  "line": 110,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [],
+              "return": {
+                "type": "void"
+              }
+            },
+            {
+              "name": "_amfChanged",
+              "description": "Creates a debouncer for body change action so it can be sure that\n`amfModel` and `amfBody` properties are set.\n\nAfter debouncer timeout `__amfChanged()` is called with current value of\n`amfBody`",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 119,
+                  "column": 4
+                },
+                "end": {
+                  "line": 128,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [],
+              "return": {
+                "type": "void"
+              }
+            },
+            {
+              "name": "__amfChanged",
+              "description": "A handler for `amfBody` property change.\nResets `mediaTypes` property as defined in the model.",
+              "privacy": "private",
+              "sourceRange": {
+                "start": {
+                  "line": 135,
+                  "column": 4
+                },
+                "end": {
+                  "line": 153,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [
+                {
+                  "name": "bodyShape",
+                  "type": "(Array | Object)",
+                  "description": "Passed model"
+                }
+              ],
+              "return": {
+                "type": "void"
+              }
+            },
+            {
+              "name": "_ensurePayloadModel",
+              "description": "Ensures that the passed model is an array of\n`http://raml.org/vocabularies/http#Payload`\nin the AMF vocabulary.\nThe element accepts `http://www.w3.org/ns/hydra/core#Operation`,\n`http://raml.org/vocabularies/http#Request` or array of\n`http://raml.org/vocabularies/http#Payload` definitions.\nIt selectes the array from the model.",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 168,
+                  "column": 4
+                },
+                "end": {
+                  "line": 189,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [
+                {
+                  "name": "model",
+                  "type": "(Array | Object)",
+                  "description": "Passed model"
+                }
+              ],
+              "return": {
+                "type": "(Array | undefined)",
+                "desc": "Payload model of undefined if the model\nis invalid for this element."
+              }
+            },
+            {
+              "name": "_updateAmfMediaTypes",
+              "description": "Creates a list of media types supported by the endpoint as defined in\nAPI spec file.",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 196,
+                  "column": 4
+                },
+                "end": {
+                  "line": 204,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [
+                {
+                  "name": "model",
+                  "type": "Array",
+                  "description": "List of `Payload` definitions"
+                }
+              ],
+              "return": {
+                "type": "void"
+              }
+            },
+            {
+              "name": "_selectDefaultMediaType",
+              "description": "Sets a content type property based on AMF mode's available options.\nIt sets the first defined media type in the model.\n\nThis function **always** triggers the change by clearing `contentType`\nfirst and then assigning new value.\n\nIf the AMF model is a file model then it sets `fileAccept` property",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 216,
+                  "column": 4
+                },
+                "end": {
+                  "line": 242,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [
+                {
+                  "name": "model",
+                  "type": "Array",
+                  "description": "List of `Payload` definitions"
+                }
+              ],
+              "return": {
+                "type": "void"
+              }
+            },
+            {
+              "name": "_updatePanelAmf",
+              "description": "",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 244,
+                  "column": 4
+                },
+                "end": {
+                  "line": 255,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [
+                {
+                  "name": "hasAmfBody"
+                },
+                {
+                  "name": "contentType"
+                }
+              ],
+              "return": {
+                "type": "void"
+              }
+            },
+            {
+              "name": "_schemaForMedia",
+              "description": "",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 257,
+                  "column": 4
+                },
+                "end": {
+                  "line": 281,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [
+                {
+                  "name": "mediaType"
+                }
+              ]
+            },
+            {
+              "name": "_typeHasModel",
+              "description": "",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 283,
+                  "column": 4
+                },
+                "end": {
+                  "line": 286,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [
+                {
+                  "name": "contentType"
+                }
+              ]
+            },
+            {
+              "name": "_updatePanelModel",
+              "description": "Updates view model on panels that support the model.",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 295,
+                  "column": 4
+                },
+                "end": {
+                  "line": 313,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [
+                {
+                  "name": "panel",
+                  "type": "HTMLElement",
+                  "description": "Current panel"
+                },
+                {
+                  "name": "contentType",
+                  "type": "String",
+                  "description": "Current content type"
+                },
+                {
+                  "name": "schema",
+                  "type": "Object",
+                  "description": "A schema for current payload."
+                }
+              ]
+            },
+            {
+              "name": "_getUnionObjectProperties",
+              "description": "To simplify things, this searches for first **object** from the union type\ndefinition and returns its properties.\n\nThe component do not offer an UI to selected union type.",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 323,
+                  "column": 4
+                },
+                "end": {
+                  "line": 339,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [
+                {
+                  "name": "schema",
+                  "type": "Object",
+                  "description": "Payload's schema definition"
+                }
+              ],
+              "return": {
+                "type": "(Array.<Object> | undefined)",
+                "desc": "Properies of first object, if any."
+              }
+            },
+            {
+              "name": "_updatePanelValue",
+              "description": "Updates panel value depending on examples or type schema availability.",
+              "privacy": "protected",
+              "sourceRange": {
+                "start": {
+                  "line": 348,
+                  "column": 4
+                },
+                "end": {
+                  "line": 354,
+                  "column": 5
+                }
+              },
+              "metadata": {},
+              "params": [
+                {
+                  "name": "panel",
+                  "type": "HTMLElement",
+                  "description": "Current panel"
+                },
+                {
+                  "name": "type",
+                  "type": "String",
+                  "description": "Current content type"
+                },
+                {
+                  "name": "schema",
+                  "type": "Object",
+                  "description": "A schema for current payload."
+                }
+              ],
+              "return": {
+                "type": "Promise"
+              }
+            }
+          ],
+          "staticMethods": [],
+          "demos": [],
+          "metadata": {},
+          "sourceRange": {
+            "start": {
+              "line": 34,
+              "column": 0
+            },
+            "end": {
+              "line": 357,
+              "column": 2
+            }
+          },
+          "privacy": "public",
+          "name": "ApiElements.ApiBodyEditorAmfOverlay",
+          "attributes": [
+            {
+              "name": "aware",
+              "description": "`raml-aware` scope property to use.",
+              "sourceRange": {
+                "start": {
+                  "line": 45,
+                  "column": 8
+                },
+                "end": {
+                  "line": 45,
+                  "column": 21
+                }
+              },
+              "metadata": {},
+              "type": "string | null | undefined"
+            },
+            {
+              "name": "amf-body",
+              "description": "AMF json/ld model for body.\nWhen set it resets editor settings and transform it to work with\ndata types defined in AMF only.",
+              "sourceRange": {
+                "start": {
+                  "line": 52,
+                  "column": 8
+                },
+                "end": {
+                  "line": 54,
+                  "column": 9
+                }
+              },
+              "metadata": {},
+              "type": "Object"
+            },
+            {
+              "name": "has-amf-body",
+              "description": "Computed value, `true` when `amfBody` is set.\nThis controls how the view is rendered. AMF model has limited\nnumber of media types supported by the API. When not existing\nthe edtior renders all possible types.",
+              "sourceRange": {
+                "start": {
+                  "line": 65,
+                  "column": 8
+                },
+                "end": {
+                  "line": 69,
+                  "column": 9
+                }
+              },
+              "metadata": {},
+              "type": "Object"
+            },
+            {
+              "name": "mime-types",
+              "description": "List of supported mime types by this endpoint.\nThis information is read from AMF data model.",
+              "sourceRange": {
+                "start": {
+                  "line": 74,
+                  "column": 8
+                },
+                "end": {
+                  "line": 77,
+                  "column": 9
+                }
+              },
+              "metadata": {},
+              "type": "Array | null | undefined"
+            },
+            {
+              "name": "single-mime-type",
+              "description": "Computed value.\nIt's `true` when the endpint supports single mime type.\nIn this case it won't render type selector.",
+              "sourceRange": {
+                "start": {
+                  "line": 85,
+                  "column": 8
+                },
+                "end": {
+                  "line": 88,
+                  "column": 9
+                }
+              },
+              "metadata": {},
+              "type": "Object"
+            }
+          ],
+          "events": [],
+          "styling": {
+            "cssVariables": [],
+            "selectors": []
+          },
+          "slots": []
+        }
+      ]
+    }
+  ],
   "elements": [
     {
       "description": "`api-body-editor`\nRenders different types of body editors. It works with AMF data model\nbut can be used separately.\n\n## AMF support\n\nThe element supports [AMF](https://github.com/mulesoft/amf/)\n`json-ld` model. The model can be generated from OAS or RAML spec by\ndefault and other specs with appropriate plugin.\n\nThe element accepts `http://www.w3.org/ns/hydra/core#Operation`,\n`http://raml.org/vocabularies/http#Request` or array of\n`http://raml.org/vocabularies/http#Payload` definitions in AMF\nvocabulary.\n\nWhen AMF model is accepted it alters the UI to render only allowed\nby the spec content types and therefore editors.",
@@ -66,7 +664,7 @@
             },
             "end": {
               "line": 128,
-              "column": 24
+              "column": 32
             }
           },
           "metadata": {
@@ -101,17 +699,159 @@
           "inheritedFrom": "ApiElements.AmfHelperMixin"
         },
         {
+          "name": "aware",
+          "type": "string | null | undefined",
+          "description": "`raml-aware` scope property to use.",
+          "privacy": "public",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 45,
+              "column": 8
+            },
+            "end": {
+              "line": 45,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "attributeType": "String"
+            }
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "amfBody",
+          "type": "Object",
+          "description": "AMF json/ld model for body.\nWhen set it resets editor settings and transform it to work with\ndata types defined in AMF only.",
+          "privacy": "public",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 52,
+              "column": 8
+            },
+            "end": {
+              "line": 54,
+              "column": 9
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "attributeType": "Object"
+            }
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "_effectiveModel",
+          "type": "Object | null | undefined",
+          "description": "Computed final model for payload.",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 56,
+              "column": 8
+            },
+            "end": {
+              "line": 56,
+              "column": 31
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "attributeType": "Object"
+            }
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "hasAmfBody",
+          "type": "Object",
+          "description": "Computed value, `true` when `amfBody` is set.\nThis controls how the view is rendered. AMF model has limited\nnumber of media types supported by the API. When not existing\nthe edtior renders all possible types.",
+          "privacy": "public",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 65,
+              "column": 8
+            },
+            "end": {
+              "line": 69,
+              "column": 9
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "readOnly": true,
+              "attributeType": "Boolean"
+            }
+          },
+          "defaultValue": "false",
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "mimeTypes",
+          "type": "Array | null | undefined",
+          "description": "List of supported mime types by this endpoint.\nThis information is read from AMF data model.",
+          "privacy": "public",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 74,
+              "column": 8
+            },
+            "end": {
+              "line": 77,
+              "column": 9
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "readOnly": true,
+              "attributeType": "Array"
+            }
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "singleMimeType",
+          "type": "Object",
+          "description": "Computed value.\nIt's `true` when the endpint supports single mime type.\nIn this case it won't render type selector.",
+          "privacy": "public",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 85,
+              "column": 8
+            },
+            "end": {
+              "line": 88,
+              "column": 9
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "readOnly": true,
+              "attributeType": "Object"
+            }
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
           "name": "currentPanel",
           "type": "HTMLElement",
           "description": "",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 301,
+              "line": 243,
               "column": 6
             },
             "end": {
-              "line": 307,
+              "line": 249,
               "column": 7
             }
           },
@@ -128,11 +868,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 150,
+              "line": 156,
               "column": 10
             },
             "end": {
-              "line": 154,
+              "line": 160,
               "column": 11
             }
           },
@@ -151,11 +891,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 162,
+              "line": 168,
               "column": 10
             },
             "end": {
-              "line": 167,
+              "line": 173,
               "column": 11
             }
           },
@@ -171,15 +911,15 @@
         {
           "name": "contentType",
           "type": "string | null | undefined",
-          "description": "When set it will attempt to run associated code mirror mode\n(raw editor).\nThis element listens for the `content-type-changed` event and when\nhandled it will automatically update content type and `mode`.",
+          "description": "When set it attempts to run associated code mirror mode\n(raw editor).\nThis element listens for the `content-type-changed` event and when\nhandled it will automatically update content type and `mode`.",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 174,
+              "line": 180,
               "column": 10
             },
             "end": {
-              "line": 177,
+              "line": 183,
               "column": 11
             }
           },
@@ -191,104 +931,17 @@
           }
         },
         {
-          "name": "aware",
-          "type": "string | null | undefined",
-          "description": "`raml-aware` scope property to use.",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 181,
-              "column": 10
-            },
-            "end": {
-              "line": 181,
-              "column": 23
-            }
-          },
-          "metadata": {
-            "polymer": {
-              "attributeType": "String"
-            }
-          }
-        },
-        {
-          "name": "amfBody",
-          "type": "Object",
-          "description": "AMF json/ld model for body.\nWhen set it resets editor settings and transform it to work with\ndata types defined in AMF only.",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 188,
-              "column": 10
-            },
-            "end": {
-              "line": 191,
-              "column": 11
-            }
-          },
-          "metadata": {
-            "polymer": {
-              "observer": "\"_amfChanged\"",
-              "attributeType": "Object"
-            }
-          }
-        },
-        {
-          "name": "_effectiveModel",
-          "type": "Object | null | undefined",
-          "description": "Computed final model for payload.",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 193,
-              "column": 10
-            },
-            "end": {
-              "line": 193,
-              "column": 33
-            }
-          },
-          "metadata": {
-            "polymer": {
-              "attributeType": "Object"
-            }
-          }
-        },
-        {
-          "name": "hasAmfBody",
-          "type": "Object",
-          "description": "Computed value, `true` when `amfBody` is set.\nThis controls how the view is rendered. AMF model has limited\nnumber of media types supported by the API. When not existing\nthe edtior renders all possible types.",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 202,
-              "column": 10
-            },
-            "end": {
-              "line": 206,
-              "column": 11
-            }
-          },
-          "metadata": {
-            "polymer": {
-              "readOnly": true,
-              "attributeType": "Boolean"
-            }
-          },
-          "defaultValue": "false"
-        },
-        {
           "name": "noTextInput",
           "type": "boolean | null | undefined",
           "description": "Computed value, if set then raw text input is hidden",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 208,
+              "line": 185,
               "column": 10
             },
             "end": {
-              "line": 208,
+              "line": 185,
               "column": 30
             }
           },
@@ -305,11 +958,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 210,
+              "line": 187,
               "column": 10
             },
             "end": {
-              "line": 210,
+              "line": 187,
               "column": 29
             }
           },
@@ -326,11 +979,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 212,
+              "line": 189,
               "column": 10
             },
             "end": {
-              "line": 212,
+              "line": 189,
               "column": 30
             }
           },
@@ -347,11 +1000,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 214,
+              "line": 191,
               "column": 10
             },
             "end": {
-              "line": 214,
+              "line": 191,
               "column": 25
             }
           },
@@ -368,11 +1021,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 216,
+              "line": 193,
               "column": 10
             },
             "end": {
-              "line": 220,
+              "line": 197,
               "column": 11
             }
           },
@@ -391,11 +1044,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 225,
+              "line": 202,
               "column": 10
             },
             "end": {
-              "line": 228,
+              "line": 205,
               "column": 11
             }
           },
@@ -413,11 +1066,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 233,
+              "line": 210,
               "column": 10
             },
             "end": {
-              "line": 236,
+              "line": 213,
               "column": 11
             }
           },
@@ -435,11 +1088,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 242,
+              "line": 219,
               "column": 10
             },
             "end": {
-              "line": 245,
+              "line": 222,
               "column": 11
             }
           },
@@ -457,11 +1110,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 249,
+              "line": 226,
               "column": 10
             },
             "end": {
-              "line": 252,
+              "line": 229,
               "column": 11
             }
           },
@@ -473,83 +1126,17 @@
           }
         },
         {
-          "name": "mimeTypes",
-          "type": "Array | null | undefined",
-          "description": "List of supported mime types by this endpoint.\nThis information is read from AMF data model.",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 257,
-              "column": 10
-            },
-            "end": {
-              "line": 261,
-              "column": 11
-            }
-          },
-          "metadata": {
-            "polymer": {
-              "readOnly": true,
-              "attributeType": "Array"
-            }
-          }
-        },
-        {
-          "name": "selectedMimeType",
-          "type": "Object | null | undefined",
-          "description": "RAML's type definition.\nA JSON editor uses it to create a schema definition (as a JSON object of {name: type}) to\ndisplay autosuggestions.",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 267,
-              "column": 10
-            },
-            "end": {
-              "line": 270,
-              "column": 11
-            }
-          },
-          "metadata": {
-            "polymer": {
-              "readOnly": true,
-              "attributeType": "Object"
-            }
-          }
-        },
-        {
-          "name": "singleMimeType",
-          "type": "Object",
-          "description": "Computed value.\nIt's `true` when the endpint supports single mime type.\nIn this case it won't render type selector.",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 278,
-              "column": 10
-            },
-            "end": {
-              "line": 281,
-              "column": 11
-            }
-          },
-          "metadata": {
-            "polymer": {
-              "readOnly": true,
-              "attributeType": "Object"
-            }
-          }
-        },
-        {
           "name": "readonly",
           "type": "boolean | null | undefined",
           "description": "When set the editor is in read only mode.",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 285,
+              "line": 233,
               "column": 10
             },
             "end": {
-              "line": 288,
+              "line": 236,
               "column": 11
             }
           },
@@ -640,11 +1227,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 318,
+              "line": 260,
               "column": 6
             },
             "end": {
-              "line": 321,
+              "line": 263,
               "column": 7
             }
           },
@@ -664,11 +1251,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 323,
+              "line": 265,
               "column": 6
             },
             "end": {
-              "line": 326,
+              "line": 268,
               "column": 7
             }
           },
@@ -683,8 +1270,8 @@
           }
         },
         {
-          "name": "_ensureAmfModel",
-          "description": "Ensures that the model is AMF object.",
+          "name": "_getAmfKey",
+          "description": "Returns compact model key for given value.",
           "privacy": "protected",
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
@@ -693,7 +1280,36 @@
               "column": 4
             },
             "end": {
-              "line": 157,
+              "line": 179,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "property",
+              "type": "String",
+              "description": "AMF orioginal property"
+            }
+          ],
+          "return": {
+            "type": "String",
+            "desc": "Compact model property name or the same value if\nvalue not found in the context."
+          },
+          "inheritedFrom": "ApiElements.AmfHelperMixin"
+        },
+        {
+          "name": "_ensureAmfModel",
+          "description": "Ensures that the model is AMF object.",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "../amf-helper-mixin/amf-helper-mixin.html",
+            "start": {
+              "line": 186,
+              "column": 4
+            },
+            "end": {
+              "line": 196,
               "column": 5
             }
           },
@@ -712,17 +1328,45 @@
           "inheritedFrom": "ApiElements.AmfHelperMixin"
         },
         {
+          "name": "_ensureArray",
+          "description": "Ensures that the value is an array.\nIt returns undefined when there's no value.\nIt returns the same array if the value is already an array.\nIt returns new array of the item is not an array.",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "../amf-helper-mixin/amf-helper-mixin.html",
+            "start": {
+              "line": 206,
+              "column": 4
+            },
+            "end": {
+              "line": 214,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "value",
+              "type": "(Array | any)",
+              "description": "An item to test"
+            }
+          ],
+          "return": {
+            "type": "(Array | undefined)"
+          },
+          "inheritedFrom": "ApiElements.AmfHelperMixin"
+        },
+        {
           "name": "_getValue",
           "description": "Gets a signle scalar value from a model.",
           "privacy": "protected",
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 164,
+              "line": 221,
               "column": 4
             },
             "end": {
-              "line": 174,
+              "line": 239,
               "column": 5
             }
           },
@@ -752,11 +1396,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 181,
+              "line": 246,
               "column": 4
             },
             "end": {
-              "line": 187,
+              "line": 253,
               "column": 5
             }
           },
@@ -786,11 +1430,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 194,
+              "line": 260,
               "column": 4
             },
             "end": {
-              "line": 202,
+              "line": 272,
               "column": 5
             }
           },
@@ -820,18 +1464,20 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 209,
+              "line": 279,
               "column": 4
             },
             "end": {
-              "line": 211,
+              "line": 282,
               "column": 5
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "model"
+              "name": "shape",
+              "type": "?Object",
+              "description": "The shape to test"
             },
             {
               "name": "key",
@@ -851,11 +1497,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 219,
+              "line": 290,
               "column": 4
             },
             "end": {
-              "line": 228,
+              "line": 300,
               "column": 5
             }
           },
@@ -884,11 +1530,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 237,
+              "line": 309,
               "column": 4
             },
             "end": {
-              "line": 240,
+              "line": 313,
               "column": 5
             }
           },
@@ -917,11 +1563,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 247,
+              "line": 320,
               "column": 4
             },
             "end": {
-              "line": 249,
+              "line": 322,
               "column": 5
             }
           },
@@ -945,11 +1591,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 256,
+              "line": 329,
               "column": 4
             },
             "end": {
-              "line": 258,
+              "line": 331,
               "column": 5
             }
           },
@@ -973,11 +1619,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 264,
+              "line": 337,
               "column": 4
             },
             "end": {
-              "line": 266,
+              "line": 339,
               "column": 5
             }
           },
@@ -1002,11 +1648,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 268,
+              "line": 341,
               "column": 4
             },
             "end": {
-              "line": 270,
+              "line": 343,
               "column": 5
             }
           },
@@ -1025,11 +1671,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 272,
+              "line": 345,
               "column": 4
             },
             "end": {
-              "line": 274,
+              "line": 347,
               "column": 5
             }
           },
@@ -1048,11 +1694,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 276,
+              "line": 349,
               "column": 4
             },
             "end": {
-              "line": 278,
+              "line": 351,
               "column": 5
             }
           },
@@ -1071,11 +1717,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 280,
+              "line": 353,
               "column": 4
             },
             "end": {
-              "line": 287,
+              "line": 360,
               "column": 5
             }
           },
@@ -1094,11 +1740,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 295,
+              "line": 368,
               "column": 4
             },
             "end": {
-              "line": 297,
+              "line": 370,
               "column": 5
             }
           },
@@ -1123,11 +1769,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 304,
+              "line": 377,
               "column": 4
             },
             "end": {
-              "line": 306,
+              "line": 379,
               "column": 5
             }
           },
@@ -1152,11 +1798,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 313,
+              "line": 386,
               "column": 4
             },
             "end": {
-              "line": 315,
+              "line": 388,
               "column": 5
             }
           },
@@ -1181,11 +1827,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 322,
+              "line": 395,
               "column": 4
             },
             "end": {
-              "line": 324,
+              "line": 397,
               "column": 5
             }
           },
@@ -1209,11 +1855,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 331,
+              "line": 404,
               "column": 4
             },
             "end": {
-              "line": 333,
+              "line": 406,
               "column": 5
             }
           },
@@ -1237,11 +1883,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 340,
+              "line": 413,
               "column": 4
             },
             "end": {
-              "line": 342,
+              "line": 415,
               "column": 5
             }
           },
@@ -1265,11 +1911,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 349,
+              "line": 422,
               "column": 4
             },
             "end": {
-              "line": 358,
+              "line": 434,
               "column": 5
             }
           },
@@ -1294,11 +1940,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 365,
+              "line": 441,
               "column": 4
             },
             "end": {
-              "line": 377,
+              "line": 454,
               "column": 5
             }
           },
@@ -1323,11 +1969,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 384,
+              "line": 461,
               "column": 4
             },
             "end": {
-              "line": 396,
+              "line": 474,
               "column": 5
             }
           },
@@ -1352,11 +1998,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 403,
+              "line": 481,
               "column": 4
             },
             "end": {
-              "line": 409,
+              "line": 489,
               "column": 5
             }
           },
@@ -1381,11 +2027,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 416,
+              "line": 496,
               "column": 4
             },
             "end": {
-              "line": 423,
+              "line": 504,
               "column": 5
             }
           },
@@ -1410,11 +2056,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 433,
+              "line": 514,
               "column": 4
             },
             "end": {
-              "line": 445,
+              "line": 526,
               "column": 5
             }
           },
@@ -1454,11 +2100,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 455,
+              "line": 536,
               "column": 4
             },
             "end": {
-              "line": 466,
+              "line": 547,
               "column": 5
             }
           },
@@ -1493,11 +2139,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 476,
+              "line": 557,
               "column": 4
             },
             "end": {
-              "line": 480,
+              "line": 561,
               "column": 5
             }
           },
@@ -1527,11 +2173,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 492,
+              "line": 573,
               "column": 4
             },
             "end": {
-              "line": 506,
+              "line": 587,
               "column": 5
             }
           },
@@ -1561,11 +2207,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 513,
+              "line": 594,
               "column": 4
             },
             "end": {
-              "line": 523,
+              "line": 600,
               "column": 5
             }
           },
@@ -1589,11 +2235,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 530,
+              "line": 607,
               "column": 4
             },
             "end": {
-              "line": 537,
+              "line": 615,
               "column": 5
             }
           },
@@ -1617,11 +2263,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 545,
+              "line": 623,
               "column": 4
             },
             "end": {
-              "line": 562,
+              "line": 641,
               "column": 5
             }
           },
@@ -1639,17 +2285,45 @@
           "inheritedFrom": "ApiElements.AmfHelperMixin"
         },
         {
+          "name": "_computeEndpoints",
+          "description": "Computes list of endpoints from a WebApi model.",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "../amf-helper-mixin/amf-helper-mixin.html",
+            "start": {
+              "line": 647,
+              "column": 4
+            },
+            "end": {
+              "line": 653,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "webApi",
+              "type": "Object"
+            }
+          ],
+          "return": {
+            "type": "Array",
+            "desc": "Always returns an array of endpoints."
+          },
+          "inheritedFrom": "ApiElements.AmfHelperMixin"
+        },
+        {
           "name": "_computeEndpointModel",
           "description": "Computes model for an endpoint documentation.",
           "privacy": "protected",
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 570,
+              "line": 661,
               "column": 4
             },
             "end": {
-              "line": 576,
+              "line": 664,
               "column": 5
             }
           },
@@ -1661,7 +2335,7 @@
               "description": "Current value of `webApi` property"
             },
             {
-              "name": "selected",
+              "name": "id",
               "type": "String",
               "description": "Selected shape ID"
             }
@@ -1673,17 +2347,51 @@
           "inheritedFrom": "ApiElements.AmfHelperMixin"
         },
         {
+          "name": "_computeEndpointByPath",
+          "description": "Computes model for an endpoint documentation using it's path.",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "../amf-helper-mixin/amf-helper-mixin.html",
+            "start": {
+              "line": 672,
+              "column": 4
+            },
+            "end": {
+              "line": 683,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "webApi",
+              "type": "Object",
+              "description": "Current value of `webApi` property"
+            },
+            {
+              "name": "path",
+              "type": "String",
+              "description": "Endpoint path"
+            }
+          ],
+          "return": {
+            "type": "(Object | undefined)",
+            "desc": "An endponit definition"
+          },
+          "inheritedFrom": "ApiElements.AmfHelperMixin"
+        },
+        {
           "name": "_computeMethodModel",
           "description": "Computes method for the method documentation.",
           "privacy": "protected",
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 584,
+              "line": 691,
               "column": 4
             },
             "end": {
-              "line": 590,
+              "line": 697,
               "column": 5
             }
           },
@@ -1707,29 +2415,105 @@
           "inheritedFrom": "ApiElements.AmfHelperMixin"
         },
         {
-          "name": "__computeMethodsListForMethod",
-          "description": "",
-          "privacy": "private",
+          "name": "_computeOperations",
+          "description": "Computes list of operations in an endpoint",
+          "privacy": "protected",
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 591,
+              "line": 704,
               "column": 4
             },
             "end": {
-              "line": 605,
+              "line": 711,
               "column": 5
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "webApi"
+              "name": "webApi",
+              "type": "Object",
+              "description": "The WebApi AMF model"
             },
             {
-              "name": "selected"
+              "name": "id",
+              "type": "String",
+              "description": "Endpoint ID"
             }
           ],
+          "return": {
+            "type": "Array.<Object>",
+            "desc": "List of SupportedOperation objects"
+          },
+          "inheritedFrom": "ApiElements.AmfHelperMixin"
+        },
+        {
+          "name": "_computeMethodEndpoint",
+          "description": "Computes an endpoint for a method.",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "../amf-helper-mixin/amf-helper-mixin.html",
+            "start": {
+              "line": 718,
+              "column": 4
+            },
+            "end": {
+              "line": 739,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "webApi",
+              "type": "Object",
+              "description": "The WebApi AMF model"
+            },
+            {
+              "name": "methodId",
+              "type": "String",
+              "description": "Method id"
+            }
+          ],
+          "return": {
+            "type": "(Object | undefined)",
+            "desc": "An endpoint model of undefined."
+          },
+          "inheritedFrom": "ApiElements.AmfHelperMixin"
+        },
+        {
+          "name": "__computeMethodsListForMethod",
+          "description": "Computes a list of methods for an endpoint that contains a method with\ngiven id.",
+          "privacy": "private",
+          "sourceRange": {
+            "file": "../amf-helper-mixin/amf-helper-mixin.html",
+            "start": {
+              "line": 748,
+              "column": 4
+            },
+            "end": {
+              "line": 755,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "webApi",
+              "type": "Object",
+              "description": "WebApi model"
+            },
+            {
+              "name": "methodId",
+              "type": "String",
+              "description": "Method id."
+            }
+          ],
+          "return": {
+            "type": "(Array.<Object> | undefined)",
+            "desc": "A list of sibling methods or undefined."
+          },
           "inheritedFrom": "ApiElements.AmfHelperMixin"
         },
         {
@@ -1739,11 +2523,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 614,
+              "line": 764,
               "column": 4
             },
             "end": {
-              "line": 631,
+              "line": 781,
               "column": 5
             }
           },
@@ -1778,11 +2562,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 632,
+              "line": 782,
               "column": 4
             },
             "end": {
-              "line": 638,
+              "line": 788,
               "column": 5
             }
           },
@@ -1804,11 +2588,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 646,
+              "line": 796,
               "column": 4
             },
             "end": {
-              "line": 651,
+              "line": 801,
               "column": 5
             }
           },
@@ -1838,11 +2622,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 659,
+              "line": 809,
               "column": 4
             },
             "end": {
-              "line": 665,
+              "line": 816,
               "column": 5
             }
           },
@@ -1872,11 +2656,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 672,
+              "line": 823,
               "column": 4
             },
             "end": {
-              "line": 709,
+              "line": 872,
               "column": 5
             }
           },
@@ -1901,11 +2685,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 711,
+              "line": 874,
               "column": 4
             },
             "end": {
-              "line": 733,
+              "line": 896,
               "column": 5
             }
           },
@@ -1927,11 +2711,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 735,
+              "line": 898,
               "column": 4
             },
             "end": {
-              "line": 761,
+              "line": 917,
               "column": 5
             }
           },
@@ -1953,11 +2737,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 763,
+              "line": 919,
               "column": 4
             },
             "end": {
-              "line": 774,
+              "line": 930,
               "column": 5
             }
           },
@@ -1979,11 +2763,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 783,
+              "line": 939,
               "column": 4
             },
             "end": {
-              "line": 795,
+              "line": 952,
               "column": 5
             }
           },
@@ -2012,11 +2796,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 802,
+              "line": 959,
               "column": 4
             },
             "end": {
-              "line": 823,
+              "line": 980,
               "column": 5
             }
           },
@@ -2041,11 +2825,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 829,
+              "line": 986,
               "column": 4
             },
             "end": {
-              "line": 854,
+              "line": 1012,
               "column": 5
             }
           },
@@ -2068,13 +2852,14 @@
           "description": "Computes value for `hasAmfBody`.",
           "privacy": "protected",
           "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 332,
-              "column": 6
+              "line": 104,
+              "column": 4
             },
             "end": {
-              "line": 334,
-              "column": 7
+              "line": 106,
+              "column": 5
             }
           },
           "metadata": {},
@@ -2087,19 +2872,354 @@
           ],
           "return": {
             "type": "Boolean"
-          }
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
         },
         {
-          "name": "_ctHandler",
+          "name": "_clearAmfSettings",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 108,
+              "column": 4
+            },
+            "end": {
+              "line": 110,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [],
+          "return": {
+            "type": "void"
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "_amfChanged",
+          "description": "Creates a debouncer for body change action so it can be sure that\n`amfModel` and `amfBody` properties are set.\n\nAfter debouncer timeout `__amfChanged()` is called with current value of\n`amfBody`",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 119,
+              "column": 4
+            },
+            "end": {
+              "line": 128,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [],
+          "return": {
+            "type": "void"
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "__amfChanged",
+          "description": "A handler for `amfBody` property change.\nResets `mediaTypes` property as defined in the model.",
+          "privacy": "private",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 135,
+              "column": 4
+            },
+            "end": {
+              "line": 153,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "bodyShape",
+              "type": "(Array | Object)",
+              "description": "Passed model"
+            }
+          ],
+          "return": {
+            "type": "void"
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "_ensurePayloadModel",
+          "description": "Ensures that the passed model is an array of\n`http://raml.org/vocabularies/http#Payload`\nin the AMF vocabulary.\nThe element accepts `http://www.w3.org/ns/hydra/core#Operation`,\n`http://raml.org/vocabularies/http#Request` or array of\n`http://raml.org/vocabularies/http#Payload` definitions.\nIt selectes the array from the model.",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 168,
+              "column": 4
+            },
+            "end": {
+              "line": 189,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "model",
+              "type": "(Array | Object)",
+              "description": "Passed model"
+            }
+          ],
+          "return": {
+            "type": "(Array | undefined)",
+            "desc": "Payload model of undefined if the model\nis invalid for this element."
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "_updateAmfMediaTypes",
+          "description": "Creates a list of media types supported by the endpoint as defined in\nAPI spec file.",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 196,
+              "column": 4
+            },
+            "end": {
+              "line": 204,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "model",
+              "type": "Array",
+              "description": "List of `Payload` definitions"
+            }
+          ],
+          "return": {
+            "type": "void"
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "_selectDefaultMediaType",
+          "description": "Sets a content type property based on AMF mode's available options.\nIt sets the first defined media type in the model.\n\nThis function **always** triggers the change by clearing `contentType`\nfirst and then assigning new value.\n\nIf the AMF model is a file model then it sets `fileAccept` property",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 216,
+              "column": 4
+            },
+            "end": {
+              "line": 242,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "model",
+              "type": "Array",
+              "description": "List of `Payload` definitions"
+            }
+          ],
+          "return": {
+            "type": "void"
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "_updatePanelAmf",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 244,
+              "column": 4
+            },
+            "end": {
+              "line": 255,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "hasAmfBody"
+            },
+            {
+              "name": "contentType"
+            }
+          ],
+          "return": {
+            "type": "void"
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "_schemaForMedia",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 257,
+              "column": 4
+            },
+            "end": {
+              "line": 281,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "mediaType"
+            }
+          ],
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "_typeHasModel",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 283,
+              "column": 4
+            },
+            "end": {
+              "line": 286,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "contentType"
+            }
+          ],
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "_updatePanelModel",
+          "description": "Updates view model on panels that support the model.",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 295,
+              "column": 4
+            },
+            "end": {
+              "line": 313,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "panel",
+              "type": "HTMLElement",
+              "description": "Current panel"
+            },
+            {
+              "name": "contentType",
+              "type": "String",
+              "description": "Current content type"
+            },
+            {
+              "name": "schema",
+              "type": "Object",
+              "description": "A schema for current payload."
+            }
+          ],
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "_getUnionObjectProperties",
+          "description": "To simplify things, this searches for first **object** from the union type\ndefinition and returns its properties.\n\nThe component do not offer an UI to selected union type.",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 323,
+              "column": 4
+            },
+            "end": {
+              "line": 339,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "schema",
+              "type": "Object",
+              "description": "Payload's schema definition"
+            }
+          ],
+          "return": {
+            "type": "(Array.<Object> | undefined)",
+            "desc": "Properies of first object, if any."
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "_updatePanelValue",
+          "description": "Updates panel value depending on examples or type schema availability.",
+          "privacy": "protected",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 348,
+              "column": 4
+            },
+            "end": {
+              "line": 354,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "panel",
+              "type": "HTMLElement",
+              "description": "Current panel"
+            },
+            {
+              "name": "type",
+              "type": "String",
+              "description": "Current content type"
+            },
+            {
+              "name": "schema",
+              "type": "Object",
+              "description": "A schema for current payload."
+            }
+          ],
+          "return": {
+            "type": "Promise"
+          },
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "_contentTypeHandler",
           "description": "Handler for content type changed event.",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 339,
+              "line": 273,
               "column": 6
             },
             "end": {
-              "line": 344,
+              "line": 278,
               "column": 7
             }
           },
@@ -2120,11 +3240,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 352,
+              "line": 286,
               "column": 6
             },
             "end": {
-              "line": 356,
+              "line": 290,
               "column": 7
             }
           },
@@ -2146,50 +3266,16 @@
           }
         },
         {
-          "name": "_updateAmfSelectedMime",
-          "description": "Updates selected model for AMF.",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 364,
-              "column": 6
-            },
-            "end": {
-              "line": 377,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "hasAmfBody",
-              "type": "Boolean"
-            },
-            {
-              "name": "contentType",
-              "type": "String",
-              "description": "New content type value."
-            },
-            {
-              "name": "selected",
-              "type": "Number"
-            }
-          ],
-          "return": {
-            "type": "void"
-          }
-        },
-        {
           "name": "_hideAllEditors",
           "description": "",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 379,
+              "line": 292,
               "column": 6
             },
             "end": {
-              "line": 384,
+              "line": 297,
               "column": 7
             }
           },
@@ -2205,11 +3291,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 386,
+              "line": 299,
               "column": 6
             },
             "end": {
-              "line": 391,
+              "line": 304,
               "column": 7
             }
           },
@@ -2225,11 +3311,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 397,
+              "line": 310,
               "column": 6
             },
             "end": {
-              "line": 431,
+              "line": 344,
               "column": 7
             }
           },
@@ -2256,11 +3342,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 438,
+              "line": 351,
               "column": 6
             },
             "end": {
-              "line": 448,
+              "line": 361,
               "column": 7
             }
           },
@@ -2285,11 +3371,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 454,
+              "line": 367,
               "column": 6
             },
             "end": {
-              "line": 466,
+              "line": 379,
               "column": 7
             }
           },
@@ -2311,11 +3397,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 470,
+              "line": 383,
               "column": 6
             },
             "end": {
-              "line": 484,
+              "line": 397,
               "column": 7
             }
           },
@@ -2331,11 +3417,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 486,
+              "line": 399,
               "column": 6
             },
             "end": {
-              "line": 494,
+              "line": 407,
               "column": 7
             }
           },
@@ -2355,11 +3441,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 501,
+              "line": 414,
               "column": 6
             },
             "end": {
-              "line": 510,
+              "line": 423,
               "column": 7
             }
           },
@@ -2385,11 +3471,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 514,
+              "line": 427,
               "column": 6
             },
             "end": {
-              "line": 518,
+              "line": 431,
               "column": 7
             }
           },
@@ -2405,11 +3491,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 523,
+              "line": 435,
               "column": 6
             },
             "end": {
-              "line": 527,
+              "line": 439,
               "column": 7
             }
           },
@@ -2425,11 +3511,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 532,
+              "line": 443,
               "column": 6
             },
             "end": {
-              "line": 536,
+              "line": 447,
               "column": 7
             }
           },
@@ -2445,11 +3531,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 541,
+              "line": 451,
               "column": 6
             },
             "end": {
-              "line": 545,
+              "line": 455,
               "column": 7
             }
           },
@@ -2461,15 +3547,15 @@
         },
         {
           "name": "_panelValueChanged",
-          "description": "Handler for the `value-changed` event dispatched by an editor panel.\nUpdates this element value reported back to the application and\ndispatches `body-value-changed` custom event so elements without\ndirect access to this element can act upon new information.",
+          "description": "Handler for the `value-changed` event dispatched by an editor panel.\nUpdates this element value reported back to the application and\ndispatches `body-value-changed` custom event so elements without\ndirect access to this element can use this information.",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 555,
+              "line": 464,
               "column": 6
             },
             "end": {
-              "line": 563,
+              "line": 472,
               "column": 7
             }
           },
@@ -2490,11 +3576,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 568,
+              "line": 477,
               "column": 6
             },
             "end": {
-              "line": 578,
+              "line": 485,
               "column": 7
             }
           },
@@ -2505,66 +3591,16 @@
           }
         },
         {
-          "name": "_propagateModel",
-          "description": "Attaches data model to an editor when content type changes.\n\nCurrently only `form-data-editor` and `multipart-payload-editor`\nsupport amf data model.",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 589,
-              "column": 6
-            },
-            "end": {
-              "line": 633,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "contentType",
-              "type": "String"
-            }
-          ],
-          "return": {
-            "type": "Promise",
-            "desc": "Resolved when model is set."
-          }
-        },
-        {
-          "name": "_prepareViewModel",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 635,
-              "column": 6
-            },
-            "end": {
-              "line": 654,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "contentType"
-            },
-            {
-              "name": "schema"
-            }
-          ]
-        },
-        {
           "name": "_analyticsEvent",
           "description": "Dispatches analytics event.",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 662,
+              "line": 493,
               "column": 6
             },
             "end": {
-              "line": 674,
+              "line": 505,
               "column": 7
             }
           },
@@ -2592,15 +3628,15 @@
         },
         {
           "name": "_payloadKeyDown",
-          "description": "Dispatches `send-request` custom event when the user pressed\n`meta+enter` on Mac or `ctrl+enter` otherwise keys combination.",
+          "description": "Dispatches `send-request` custom event when the user pressed\n`meta+enter` on Mac or `ctrl+enter` eklsewhere keys combination.",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 681,
+              "line": 512,
               "column": 6
             },
             "end": {
-              "line": 694,
+              "line": 525,
               "column": 7
             }
           },
@@ -2621,11 +3657,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 703,
+              "line": 533,
               "column": 6
             },
             "end": {
-              "line": 720,
+              "line": 550,
               "column": 7
             }
           },
@@ -2647,11 +3683,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 727,
+              "line": 557,
               "column": 6
             },
             "end": {
-              "line": 733,
+              "line": 563,
               "column": 7
             }
           },
@@ -2678,11 +3714,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 740,
+              "line": 570,
               "column": 6
             },
             "end": {
-              "line": 745,
+              "line": 575,
               "column": 7
             }
           },
@@ -2704,11 +3740,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 751,
+              "line": 581,
               "column": 6
             },
             "end": {
-              "line": 753,
+              "line": 583,
               "column": 7
             }
           },
@@ -2730,11 +3766,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 759,
+              "line": 589,
               "column": 6
             },
             "end": {
-              "line": 761,
+              "line": 591,
               "column": 7
             }
           },
@@ -2756,11 +3792,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 767,
+              "line": 597,
               "column": 6
             },
             "end": {
-              "line": 769,
+              "line": 599,
               "column": 7
             }
           },
@@ -2782,11 +3818,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 775,
+              "line": 605,
               "column": 6
             },
             "end": {
-              "line": 777,
+              "line": 607,
               "column": 7
             }
           },
@@ -2808,11 +3844,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 783,
+              "line": 613,
               "column": 6
             },
             "end": {
-              "line": 785,
+              "line": 615,
               "column": 7
             }
           },
@@ -2830,15 +3866,15 @@
         },
         {
           "name": "_copyToClipboard",
-          "description": "Coppies current body text value to clipboard.",
+          "description": "Copies current body text value to clipboard.",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 792,
+              "line": 621,
               "column": 6
             },
             "end": {
-              "line": 813,
+              "line": 642,
               "column": 7
             }
           },
@@ -2855,145 +3891,40 @@
         },
         {
           "name": "_resetCopyButtonState",
-          "description": "",
+          "description": "Resets state of the copy button.",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 815,
+              "line": 647,
               "column": 6
             },
             "end": {
-              "line": 817,
+              "line": 649,
               "column": 7
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "button"
+              "name": "button",
+              "type": "Element"
             }
           ],
           "return": {
             "type": "void"
-          }
-        },
-        {
-          "name": "_amfChanged",
-          "description": "A handler for `amfBody` property change.\nResets `mediaTypes` property as defined in the model.",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 824,
-              "column": 6
-            },
-            "end": {
-              "line": 841,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "model",
-              "type": "(Array | Object)",
-              "description": "Passed model"
-            }
-          ],
-          "return": {
-            "type": "void"
-          }
-        },
-        {
-          "name": "_ensurePayloadModel",
-          "description": "Ensures that the passed model is an array of\n`http://raml.org/vocabularies/http#Payload`\nin the AMF vocabulary.\nThe element accepts `http://www.w3.org/ns/hydra/core#Operation`,\n`http://raml.org/vocabularies/http#Request` or array of\n`http://raml.org/vocabularies/http#Payload` definitions.\nIt selectes the array from the model.",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 855,
-              "column": 6
-            },
-            "end": {
-              "line": 872,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "model",
-              "type": "(Array | Object)",
-              "description": "Passed model"
-            }
-          ],
-          "return": {
-            "type": "(Array | undefined)",
-            "desc": "Payload model of undefined if the model\nis invalid for this element."
-          }
-        },
-        {
-          "name": "_updateAmfMediaTypes",
-          "description": "Creates a list of media types supported by the endpoint as defined in\nAPI spec file.",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 878,
-              "column": 6
-            },
-            "end": {
-              "line": 901,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "model",
-              "type": "Array",
-              "description": "List of `Payload` definitions"
-            }
-          ],
-          "return": {
-            "type": "void"
-          }
-        },
-        {
-          "name": "_buildExampleValue",
-          "description": "Builds an example value form a properties model.",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 908,
-              "column": 6
-            },
-            "end": {
-              "line": 923,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "properties",
-              "type": "Array",
-              "description": "View data model"
-            }
-          ],
-          "return": {
-            "type": "String",
-            "desc": "Example for body"
           }
         },
         {
           "name": "_notifyContentTypeChange",
-          "description": "Dospatches `content-type-changed` custom event when CT changes by\nusing type selection.",
+          "description": "Dispatches `content-type-changed` custom event when CT changes by\nusing type selection.",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 929,
+              "line": 655,
               "column": 6
             },
             "end": {
-              "line": 940,
+              "line": 666,
               "column": 7
             }
           },
@@ -3015,11 +3946,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 945,
+              "line": 671,
               "column": 6
             },
             "end": {
-              "line": 950,
+              "line": 676,
               "column": 7
             }
           },
@@ -3045,11 +3976,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 137,
+          "line": 141,
           "column": 4
         },
         "end": {
-          "line": 969,
+          "line": 695,
           "column": 5
         }
       },
@@ -3086,7 +4017,7 @@
             },
             "end": {
               "line": 128,
-              "column": 24
+              "column": 32
             }
           },
           "metadata": {},
@@ -3112,15 +4043,105 @@
           "inheritedFrom": "ApiElements.AmfHelperMixin"
         },
         {
+          "name": "aware",
+          "description": "`raml-aware` scope property to use.",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 45,
+              "column": 8
+            },
+            "end": {
+              "line": 45,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "string | null | undefined",
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "amf-body",
+          "description": "AMF json/ld model for body.\nWhen set it resets editor settings and transform it to work with\ndata types defined in AMF only.",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 52,
+              "column": 8
+            },
+            "end": {
+              "line": 54,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "type": "Object",
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "has-amf-body",
+          "description": "Computed value, `true` when `amfBody` is set.\nThis controls how the view is rendered. AMF model has limited\nnumber of media types supported by the API. When not existing\nthe edtior renders all possible types.",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 65,
+              "column": 8
+            },
+            "end": {
+              "line": 69,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "type": "Object",
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "mime-types",
+          "description": "List of supported mime types by this endpoint.\nThis information is read from AMF data model.",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 74,
+              "column": 8
+            },
+            "end": {
+              "line": 77,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "type": "Array | null | undefined",
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
+          "name": "single-mime-type",
+          "description": "Computed value.\nIt's `true` when the endpint supports single mime type.\nIn this case it won't render type selector.",
+          "sourceRange": {
+            "file": "api-body-editor-amf-overlay.html",
+            "start": {
+              "line": 85,
+              "column": 8
+            },
+            "end": {
+              "line": 88,
+              "column": 9
+            }
+          },
+          "metadata": {},
+          "type": "Object",
+          "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
+        },
+        {
           "name": "selected",
           "description": "Currently selected editor.\n\n- 0 for Raw editor\n- 1 for Form data\n- 2 for Multipart\n- 3 for File",
           "sourceRange": {
             "start": {
-              "line": 150,
+              "line": 156,
               "column": 10
             },
             "end": {
-              "line": 154,
+              "line": 160,
               "column": 11
             }
           },
@@ -3132,11 +4153,11 @@
           "description": "A HTTP body.\n\nDepending of current editor selection the type can vary.",
           "sourceRange": {
             "start": {
-              "line": 162,
+              "line": 168,
               "column": 10
             },
             "end": {
-              "line": 167,
+              "line": 173,
               "column": 11
             }
           },
@@ -3145,78 +4166,30 @@
         },
         {
           "name": "content-type",
-          "description": "When set it will attempt to run associated code mirror mode\n(raw editor).\nThis element listens for the `content-type-changed` event and when\nhandled it will automatically update content type and `mode`.",
+          "description": "When set it attempts to run associated code mirror mode\n(raw editor).\nThis element listens for the `content-type-changed` event and when\nhandled it will automatically update content type and `mode`.",
           "sourceRange": {
             "start": {
-              "line": 174,
+              "line": 180,
               "column": 10
             },
             "end": {
-              "line": 177,
+              "line": 183,
               "column": 11
             }
           },
           "metadata": {},
           "type": "string | null | undefined"
-        },
-        {
-          "name": "aware",
-          "description": "`raml-aware` scope property to use.",
-          "sourceRange": {
-            "start": {
-              "line": 181,
-              "column": 10
-            },
-            "end": {
-              "line": 181,
-              "column": 23
-            }
-          },
-          "metadata": {},
-          "type": "string | null | undefined"
-        },
-        {
-          "name": "amf-body",
-          "description": "AMF json/ld model for body.\nWhen set it resets editor settings and transform it to work with\ndata types defined in AMF only.",
-          "sourceRange": {
-            "start": {
-              "line": 188,
-              "column": 10
-            },
-            "end": {
-              "line": 191,
-              "column": 11
-            }
-          },
-          "metadata": {},
-          "type": "Object"
-        },
-        {
-          "name": "has-amf-body",
-          "description": "Computed value, `true` when `amfBody` is set.\nThis controls how the view is rendered. AMF model has limited\nnumber of media types supported by the API. When not existing\nthe edtior renders all possible types.",
-          "sourceRange": {
-            "start": {
-              "line": 202,
-              "column": 10
-            },
-            "end": {
-              "line": 206,
-              "column": 11
-            }
-          },
-          "metadata": {},
-          "type": "Object"
         },
         {
           "name": "no-text-input",
           "description": "Computed value, if set then raw text input is hidden",
           "sourceRange": {
             "start": {
-              "line": 208,
+              "line": 185,
               "column": 10
             },
             "end": {
-              "line": 208,
+              "line": 185,
               "column": 30
             }
           },
@@ -3228,11 +4201,11 @@
           "description": "Computed value, if set then form data input is hidden",
           "sourceRange": {
             "start": {
-              "line": 210,
+              "line": 187,
               "column": 10
             },
             "end": {
-              "line": 210,
+              "line": 187,
               "column": 29
             }
           },
@@ -3244,11 +4217,11 @@
           "description": "Computed value, if set then multipart input is hidden",
           "sourceRange": {
             "start": {
-              "line": 212,
+              "line": 189,
               "column": 10
             },
             "end": {
-              "line": 212,
+              "line": 189,
               "column": 30
             }
           },
@@ -3260,11 +4233,11 @@
           "description": "Computed value, if set then file input is hidden",
           "sourceRange": {
             "start": {
-              "line": 214,
+              "line": 191,
               "column": 10
             },
             "end": {
-              "line": 214,
+              "line": 191,
               "column": 25
             }
           },
@@ -3276,11 +4249,11 @@
           "description": "Computed value, true if the editor type selector is hidden.",
           "sourceRange": {
             "start": {
-              "line": 216,
+              "line": 193,
               "column": 10
             },
             "end": {
-              "line": 220,
+              "line": 197,
               "column": 11
             }
           },
@@ -3292,11 +4265,11 @@
           "description": "If set it computes `hasOptional` property and shows checkbox in the\nform to show / hide optional properties.",
           "sourceRange": {
             "start": {
-              "line": 225,
+              "line": 202,
               "column": 10
             },
             "end": {
-              "line": 228,
+              "line": 205,
               "column": 11
             }
           },
@@ -3308,11 +4281,11 @@
           "description": "If set, enable / disable param checkbox is rendered next to each\nform item.",
           "sourceRange": {
             "start": {
-              "line": 233,
+              "line": 210,
               "column": 10
             },
             "end": {
-              "line": 236,
+              "line": 213,
               "column": 11
             }
           },
@@ -3324,11 +4297,11 @@
           "description": "When set, renders \"add custom\" item button.\nIf the element is to be used withouth AMF model this should always\nbe enabled. Otherwise users won't be able to add a parameter.",
           "sourceRange": {
             "start": {
-              "line": 242,
+              "line": 219,
               "column": 10
             },
             "end": {
-              "line": 245,
+              "line": 222,
               "column": 11
             }
           },
@@ -3340,11 +4313,11 @@
           "description": "Renders items in \"narrow\" view",
           "sourceRange": {
             "start": {
-              "line": 249,
+              "line": 226,
               "column": 10
             },
             "end": {
-              "line": 252,
+              "line": 229,
               "column": 11
             }
           },
@@ -3352,63 +4325,15 @@
           "type": "boolean | null | undefined"
         },
         {
-          "name": "mime-types",
-          "description": "List of supported mime types by this endpoint.\nThis information is read from AMF data model.",
-          "sourceRange": {
-            "start": {
-              "line": 257,
-              "column": 10
-            },
-            "end": {
-              "line": 261,
-              "column": 11
-            }
-          },
-          "metadata": {},
-          "type": "Array | null | undefined"
-        },
-        {
-          "name": "selected-mime-type",
-          "description": "RAML's type definition.\nA JSON editor uses it to create a schema definition (as a JSON object of {name: type}) to\ndisplay autosuggestions.",
-          "sourceRange": {
-            "start": {
-              "line": 267,
-              "column": 10
-            },
-            "end": {
-              "line": 270,
-              "column": 11
-            }
-          },
-          "metadata": {},
-          "type": "Object | null | undefined"
-        },
-        {
-          "name": "single-mime-type",
-          "description": "Computed value.\nIt's `true` when the endpint supports single mime type.\nIn this case it won't render type selector.",
-          "sourceRange": {
-            "start": {
-              "line": 278,
-              "column": 10
-            },
-            "end": {
-              "line": 281,
-              "column": 11
-            }
-          },
-          "metadata": {},
-          "type": "Object"
-        },
-        {
           "name": "readonly",
           "description": "When set the editor is in read only mode.",
           "sourceRange": {
             "start": {
-              "line": 285,
+              "line": 233,
               "column": 10
             },
             "end": {
-              "line": 288,
+              "line": 236,
               "column": 11
             }
           },
@@ -3450,7 +4375,8 @@
       "tagname": "api-body-editor",
       "mixins": [
         "ArcBehaviors.EventsTargetBehavior",
-        "ApiElements.AmfHelperMixin"
+        "ApiElements.AmfHelperMixin",
+        "ApiElements.ApiBodyEditorAmfOverlay"
       ]
     }
   ]
