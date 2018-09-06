@@ -251,6 +251,9 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
         return;
       }
       const schema = this._schemaForMedia(contentType);
+      if (!schema) {
+        return;
+      }
       this._updatePanelModel(panel, contentType, schema);
       this._updatePanelValue(panel, contentType, schema);
     }
