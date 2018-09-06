@@ -310,7 +310,7 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
       if (!data) {
         // It could be an array but it doesn't make any sens with this
         // media types.
-        return Promise.resolve();
+        return;
       }
       const model = this.$.transformer.computeViewModel(data);
       panel.model = model;
