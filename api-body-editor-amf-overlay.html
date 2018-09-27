@@ -135,11 +135,12 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
      */
     __amfChanged(bodyShape) {
       this._clearAmfSettings();
-      if (!bodyShape) {
+      if (!bodyShape || (bodyShape instanceof Array && !bodyShape.length)) {
         // Clears view model from the value.
         const panel = this.currentPanel;
         if (panel) {
           panel.model = undefined;
+          panel.value = '';
         }
         return;
       }
