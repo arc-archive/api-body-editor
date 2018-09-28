@@ -129,7 +129,7 @@ declare namespace ApiElements {
      * @param contentType Current content type
      * @param schema A schema for current payload.
      */
-    _updatePanelModel(panel: HTMLElement|null, contentType: String|null, schema: object|null): any;
+    _updatePanelModel(panel: HTMLElement|null, contentType: String|null, schema: object|null): void;
 
     /**
      * To simplify things, this searches for first **object** from the union type

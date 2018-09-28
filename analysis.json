@@ -230,7 +230,7 @@
                   "column": 4
                 },
                 "end": {
-                  "line": 153,
+                  "line": 154,
                   "column": 5
                 }
               },
@@ -252,11 +252,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 168,
+                  "line": 169,
                   "column": 4
                 },
                 "end": {
-                  "line": 189,
+                  "line": 190,
                   "column": 5
                 }
               },
@@ -279,11 +279,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 196,
+                  "line": 197,
                   "column": 4
                 },
                 "end": {
-                  "line": 204,
+                  "line": 205,
                   "column": 5
                 }
               },
@@ -305,11 +305,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 216,
+                  "line": 217,
                   "column": 4
                 },
                 "end": {
-                  "line": 242,
+                  "line": 243,
                   "column": 5
                 }
               },
@@ -331,11 +331,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 244,
+                  "line": 245,
                   "column": 4
                 },
                 "end": {
-                  "line": 255,
+                  "line": 259,
                   "column": 5
                 }
               },
@@ -358,11 +358,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 257,
+                  "line": 261,
                   "column": 4
                 },
                 "end": {
-                  "line": 281,
+                  "line": 285,
                   "column": 5
                 }
               },
@@ -379,11 +379,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 283,
+                  "line": 287,
                   "column": 4
                 },
                 "end": {
-                  "line": 286,
+                  "line": 290,
                   "column": 5
                 }
               },
@@ -400,11 +400,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 295,
+                  "line": 299,
                   "column": 4
                 },
                 "end": {
-                  "line": 313,
+                  "line": 317,
                   "column": 5
                 }
               },
@@ -425,7 +425,10 @@
                   "type": "Object",
                   "description": "A schema for current payload."
                 }
-              ]
+              ],
+              "return": {
+                "type": "void"
+              }
             },
             {
               "name": "_getUnionObjectProperties",
@@ -433,11 +436,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 323,
+                  "line": 327,
                   "column": 4
                 },
                 "end": {
-                  "line": 339,
+                  "line": 343,
                   "column": 5
                 }
               },
@@ -460,11 +463,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 348,
+                  "line": 352,
                   "column": 4
                 },
                 "end": {
-                  "line": 354,
+                  "line": 358,
                   "column": 5
                 }
               },
@@ -500,7 +503,7 @@
               "column": 0
             },
             "end": {
-              "line": 357,
+              "line": 361,
               "column": 2
             }
           },
@@ -2930,7 +2933,7 @@
               "column": 4
             },
             "end": {
-              "line": 153,
+              "line": 154,
               "column": 5
             }
           },
@@ -2954,11 +2957,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 168,
+              "line": 169,
               "column": 4
             },
             "end": {
-              "line": 189,
+              "line": 190,
               "column": 5
             }
           },
@@ -2983,11 +2986,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 196,
+              "line": 197,
               "column": 4
             },
             "end": {
-              "line": 204,
+              "line": 205,
               "column": 5
             }
           },
@@ -3011,11 +3014,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 216,
+              "line": 217,
               "column": 4
             },
             "end": {
-              "line": 242,
+              "line": 243,
               "column": 5
             }
           },
@@ -3039,11 +3042,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 244,
+              "line": 245,
               "column": 4
             },
             "end": {
-              "line": 255,
+              "line": 259,
               "column": 5
             }
           },
@@ -3068,11 +3071,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 257,
+              "line": 261,
               "column": 4
             },
             "end": {
-              "line": 281,
+              "line": 285,
               "column": 5
             }
           },
@@ -3091,11 +3094,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 283,
+              "line": 287,
               "column": 4
             },
             "end": {
-              "line": 286,
+              "line": 290,
               "column": 5
             }
           },
@@ -3114,11 +3117,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 295,
+              "line": 299,
               "column": 4
             },
             "end": {
-              "line": 313,
+              "line": 317,
               "column": 5
             }
           },
@@ -3140,6 +3143,9 @@
               "description": "A schema for current payload."
             }
           ],
+          "return": {
+            "type": "void"
+          },
           "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
         },
         {
@@ -3149,11 +3155,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 323,
+              "line": 327,
               "column": 4
             },
             "end": {
-              "line": 339,
+              "line": 343,
               "column": 5
             }
           },
@@ -3178,11 +3184,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 348,
+              "line": 352,
               "column": 4
             },
             "end": {
-              "line": 354,
+              "line": 358,
               "column": 5
             }
           },
