@@ -106,6 +106,8 @@
           <paper-listbox slot="dropdown-content" id="apisList" on-selected-changed="_apiChanged">
             <paper-item data-src="demo-api.json">Demo api</paper-item>
             <paper-item data-src="demo-api-compact.json">Demo api - compact model</paper-item>
+            <paper-item data-src="apic-169.json">apic-169</paper-item>
+            <paper-item data-src="apic-169-compact.json">apic-169 - compact model</paper-item>
           </paper-listbox>
         </paper-dropdown-menu>
         <div class="spacer"></div>
@@ -146,10 +148,9 @@
   <paper-toast id="toast"></paper-toast>
   <script>
     (function(app) {
-      class DemoElement extends ApiElements.AmfHelperMixin(Polymer.Element) {}
-      window.customElements.define('demo-element', DemoElement);
-
       app._load = function() {
+        class DemoElement extends ApiElements.AmfHelperMixin(Polymer.Element) {}
+        window.customElements.define('demo-element', DemoElement);
         document.getElementById('apisList').selected = 0;
       };
 
@@ -179,7 +180,6 @@
       app.setData = function(selected) {
         const webApi = app.$.helper._computeWebApi(app.amfModel);
         const body = app.$.helper._computeMethodModel(webApi, selected);
-        // console.log(body);
         app.selectedBody = body;
       };
 
