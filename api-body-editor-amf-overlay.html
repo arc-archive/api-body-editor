@@ -284,7 +284,12 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
         }
       }
     }
-
+    /**
+     * Tests if the panel that supports given content-type supports data model.
+     * XML and JSON do not use view data model to render the view.
+     * @param {String} contentType A content type value to test
+     * @return {Boolean} True if the content type's panel support data model
+     */
     _typeHasModel(contentType) {
       const allowed = ['application/x-www-form-urlencoded', 'multipart/form-data'];
       return allowed.indexOf(contentType) !== -1;
@@ -333,8 +338,12 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
       }
       const pKey = this._getAmfKey(this.ns.w3.shacl.name + 'property');
       for (let i = 0, len = list.length; i < len; i++) {
-        const item = list[i];
+        let item = list[i];
+        if (item instanceof Array) {
+          item = item[0];
+        }
         if (this._hasType(item, this.ns.w3.shacl.name + 'NodeShape')) {
+          item = this._resolve(item);
           const data = this._ensureArray(item[pKey]);
           if (data) {
             return data;
@@ -348,14 +357,16 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
      * @param {HTMLElement} panel Current panel
      * @param {String} type Current content type
      * @param {Object} schema A schema for current payload.
-     * @return {Promise}
      */
     _updatePanelValue(panel, type, schema) {
-      const example = this.$.exampleGenerator.computeExample(type, schema);
-      if (!example && this._typeHasModel(type)) {
-        return;
+      let example;
+      // if (!this._typeHasModel(type)) {
+      //   example = this.$.exampleGenerator.computeExample(type, schema);
+      // }
+      example = this.$.exampleGenerator.computeExample(type, schema);
+      if (example) {
+        panel.value = example;
       }
-      panel.value = example || '';
     }
   }
   return ABEAOmixin;
