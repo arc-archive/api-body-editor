@@ -77,7 +77,7 @@ the License.
     </template>
 
     <div class="content-actions">
-      <paper-icon-button icon="arc:content-copy" class="action-icon" on-tap="_copyToClipboard" title="Copy current editor value to clipboard"></paper-icon-button>
+      <paper-icon-button icon="arc:content-copy" class="action-icon copy-action" on-click="_copyToClipboard" title="Copy current editor value to clipboard"></paper-icon-button>
       <template is="dom-if" if="[[hasAmfBody]]">
         <template is="dom-if" if="[[!singleMimeType]]">
           <paper-dropdown-menu class="amf-types" label="Select content type" no-label-float>
@@ -201,7 +201,7 @@ the License.
            */
           allowHideOptional: {
             type: Boolean,
-            observer: '_allowDisableParamsChanged'
+            observer: '_allowHideOptionalChanged'
           },
           /**
            * If set, enable / disable param checkbox is rendered next to each
@@ -323,7 +323,7 @@ the License.
         if (oldValue && oldValue.indexOf('multipart/form-data') === 0) {
           this.value = '';
         }
-        if (contentType === 'application/octet-stream' || value instanceof Blob) {
+        if (contentType === 'application/octet-stream' || (value instanceof Blob && oldValue !== undefined)) {
           this.noFile = false;
           this.selected = 3;
           return;
@@ -386,7 +386,7 @@ the License.
           return;
         }
         const events = this.__currentListeners;
-        if (events && events.length) {
+        if (events && events.size) {
           for (let [type, fn] of events.entries()) {
             panel.removeEventListener(type, fn);
             events.delete(type);

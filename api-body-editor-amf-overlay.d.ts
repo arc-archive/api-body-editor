@@ -8,6 +8,10 @@
  *   api-body-editor-amf-overlay.html
  */
 
+
+// tslint:disable:variable-name Describing an API that's defined elsewhere.
+// tslint:disable:no-any describes the API as best we are able today
+
 /// <reference path="../polymer/types/lib/utils/mixin.d.ts" />
 /// <reference path="../polymer/types/lib/utils/render-status.d.ts" />
 
@@ -120,7 +124,15 @@ declare namespace ApiElements {
     _selectDefaultMediaType(model: any[]|null): void;
     _updatePanelAmf(hasAmfBody: any, contentType: any): void;
     _schemaForMedia(mediaType: any): any;
-    _typeHasModel(contentType: any): any;
+
+    /**
+     * Tests if the panel that supports given content-type supports data model.
+     * XML and JSON do not use view data model to render the view.
+     *
+     * @param contentType A content type value to test
+     * @returns True if the content type's panel support data model
+     */
+    _typeHasModel(contentType: String|null): Boolean|null;
 
     /**
      * Updates view model on panels that support the model.
@@ -149,6 +161,6 @@ declare namespace ApiElements {
      * @param type Current content type
      * @param schema A schema for current payload.
      */
-    _updatePanelValue(panel: HTMLElement|null, type: String|null, schema: object|null): Promise<any>|null;
+    _updatePanelValue(panel: HTMLElement|null, type: String|null, schema: object|null): void;
   }
 }

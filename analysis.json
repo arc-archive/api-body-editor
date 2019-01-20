@@ -256,7 +256,7 @@
                   "column": 4
                 },
                 "end": {
-                  "line": 190,
+                  "line": 189,
                   "column": 5
                 }
               },
@@ -279,11 +279,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 197,
+                  "line": 196,
                   "column": 4
                 },
                 "end": {
-                  "line": 205,
+                  "line": 204,
                   "column": 5
                 }
               },
@@ -305,11 +305,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 217,
+                  "line": 216,
                   "column": 4
                 },
                 "end": {
-                  "line": 243,
+                  "line": 242,
                   "column": 5
                 }
               },
@@ -331,11 +331,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 245,
+                  "line": 244,
                   "column": 4
                 },
                 "end": {
-                  "line": 259,
+                  "line": 258,
                   "column": 5
                 }
               },
@@ -358,11 +358,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 261,
+                  "line": 260,
                   "column": 4
                 },
                 "end": {
-                  "line": 285,
+                  "line": 284,
                   "column": 5
                 }
               },
@@ -375,24 +375,30 @@
             },
             {
               "name": "_typeHasModel",
-              "description": "",
+              "description": "Tests if the panel that supports given content-type supports data model.\nXML and JSON do not use view data model to render the view.",
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 287,
+                  "line": 291,
                   "column": 4
                 },
                 "end": {
-                  "line": 290,
+                  "line": 294,
                   "column": 5
                 }
               },
               "metadata": {},
               "params": [
                 {
-                  "name": "contentType"
+                  "name": "contentType",
+                  "type": "String",
+                  "description": "A content type value to test"
                 }
-              ]
+              ],
+              "return": {
+                "type": "Boolean",
+                "desc": "True if the content type's panel support data model"
+              }
             },
             {
               "name": "_updatePanelModel",
@@ -400,11 +406,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 299,
+                  "line": 303,
                   "column": 4
                 },
                 "end": {
-                  "line": 317,
+                  "line": 321,
                   "column": 5
                 }
               },
@@ -436,11 +442,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 327,
+                  "line": 331,
                   "column": 4
                 },
                 "end": {
-                  "line": 343,
+                  "line": 351,
                   "column": 5
                 }
               },
@@ -463,11 +469,11 @@
               "privacy": "protected",
               "sourceRange": {
                 "start": {
-                  "line": 352,
+                  "line": 359,
                   "column": 4
                 },
                 "end": {
-                  "line": 358,
+                  "line": 368,
                   "column": 5
                 }
               },
@@ -490,7 +496,7 @@
                 }
               ],
               "return": {
-                "type": "Promise"
+                "type": "void"
               }
             }
           ],
@@ -503,7 +509,7 @@
               "column": 0
             },
             "end": {
-              "line": 361,
+              "line": 371,
               "column": 2
             }
           },
@@ -850,11 +856,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 243,
+              "line": 242,
               "column": 6
             },
             "end": {
-              "line": 249,
+              "line": 248,
               "column": 7
             }
           },
@@ -871,11 +877,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 156,
+              "line": 155,
               "column": 10
             },
             "end": {
-              "line": 160,
+              "line": 159,
               "column": 11
             }
           },
@@ -894,11 +900,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 168,
+              "line": 167,
               "column": 10
             },
             "end": {
-              "line": 173,
+              "line": 172,
               "column": 11
             }
           },
@@ -918,11 +924,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 180,
+              "line": 179,
               "column": 10
             },
             "end": {
-              "line": 183,
+              "line": 182,
               "column": 11
             }
           },
@@ -940,11 +946,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 185,
+              "line": 184,
               "column": 10
             },
             "end": {
-              "line": 185,
+              "line": 184,
               "column": 30
             }
           },
@@ -961,11 +967,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 187,
+              "line": 186,
               "column": 10
             },
             "end": {
-              "line": 187,
+              "line": 186,
               "column": 29
             }
           },
@@ -982,11 +988,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 189,
+              "line": 188,
               "column": 10
             },
             "end": {
-              "line": 189,
+              "line": 188,
               "column": 30
             }
           },
@@ -1003,11 +1009,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 191,
+              "line": 190,
               "column": 10
             },
             "end": {
-              "line": 191,
+              "line": 190,
               "column": 25
             }
           },
@@ -1024,11 +1030,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 193,
+              "line": 192,
               "column": 10
             },
             "end": {
-              "line": 197,
+              "line": 196,
               "column": 11
             }
           },
@@ -1047,17 +1053,17 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 202,
+              "line": 201,
               "column": 10
             },
             "end": {
-              "line": 205,
+              "line": 204,
               "column": 11
             }
           },
           "metadata": {
             "polymer": {
-              "observer": "\"_allowDisableParamsChanged\"",
+              "observer": "\"_allowHideOptionalChanged\"",
               "attributeType": "Boolean"
             }
           }
@@ -1069,11 +1075,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 210,
+              "line": 209,
               "column": 10
             },
             "end": {
-              "line": 213,
+              "line": 212,
               "column": 11
             }
           },
@@ -1091,11 +1097,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 219,
+              "line": 218,
               "column": 10
             },
             "end": {
-              "line": 222,
+              "line": 221,
               "column": 11
             }
           },
@@ -1113,11 +1119,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 226,
+              "line": 225,
               "column": 10
             },
             "end": {
-              "line": 229,
+              "line": 228,
               "column": 11
             }
           },
@@ -1135,11 +1141,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 233,
+              "line": 232,
               "column": 10
             },
             "end": {
-              "line": 236,
+              "line": 235,
               "column": 11
             }
           },
@@ -1230,11 +1236,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 260,
+              "line": 259,
               "column": 6
             },
             "end": {
-              "line": 263,
+              "line": 262,
               "column": 7
             }
           },
@@ -1254,11 +1260,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 265,
+              "line": 264,
               "column": 6
             },
             "end": {
-              "line": 268,
+              "line": 267,
               "column": 7
             }
           },
@@ -2560,28 +2566,36 @@
         },
         {
           "name": "_computeReferenceType",
-          "description": "",
+          "description": "Computes a type model from a reference (library for example).",
           "privacy": "protected",
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 782,
+              "line": 788,
               "column": 4
             },
             "end": {
-              "line": 788,
+              "line": 803,
               "column": 5
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "reference"
+              "name": "reference",
+              "type": "(Object | Array)",
+              "description": "AMF model for a reference to extract the data from"
             },
             {
-              "name": "selected"
+              "name": "selected",
+              "type": "String",
+              "description": "Node ID to look for"
             }
           ],
+          "return": {
+            "type": "(Object | undefined)",
+            "desc": "Type definition or undefined if not found."
+          },
           "inheritedFrom": "ApiElements.AmfHelperMixin"
         },
         {
@@ -2591,11 +2605,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 796,
+              "line": 811,
               "column": 4
             },
             "end": {
-              "line": 801,
+              "line": 816,
               "column": 5
             }
           },
@@ -2625,11 +2639,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 809,
+              "line": 824,
               "column": 4
             },
             "end": {
-              "line": 816,
+              "line": 831,
               "column": 5
             }
           },
@@ -2659,11 +2673,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 823,
+              "line": 838,
               "column": 4
             },
             "end": {
-              "line": 872,
+              "line": 887,
               "column": 5
             }
           },
@@ -2688,11 +2702,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 874,
+              "line": 889,
               "column": 4
             },
             "end": {
-              "line": 896,
+              "line": 911,
               "column": 5
             }
           },
@@ -2714,11 +2728,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 898,
+              "line": 913,
               "column": 4
             },
             "end": {
-              "line": 917,
+              "line": 932,
               "column": 5
             }
           },
@@ -2740,11 +2754,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 919,
+              "line": 934,
               "column": 4
             },
             "end": {
-              "line": 930,
+              "line": 945,
               "column": 5
             }
           },
@@ -2766,11 +2780,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 939,
+              "line": 954,
               "column": 4
             },
             "end": {
-              "line": 952,
+              "line": 967,
               "column": 5
             }
           },
@@ -2799,11 +2813,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 959,
+              "line": 974,
               "column": 4
             },
             "end": {
-              "line": 980,
+              "line": 995,
               "column": 5
             }
           },
@@ -2828,11 +2842,11 @@
           "sourceRange": {
             "file": "../amf-helper-mixin/amf-helper-mixin.html",
             "start": {
-              "line": 986,
+              "line": 1001,
               "column": 4
             },
             "end": {
-              "line": 1012,
+              "line": 1027,
               "column": 5
             }
           },
@@ -2961,7 +2975,7 @@
               "column": 4
             },
             "end": {
-              "line": 190,
+              "line": 189,
               "column": 5
             }
           },
@@ -2986,11 +3000,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 197,
+              "line": 196,
               "column": 4
             },
             "end": {
-              "line": 205,
+              "line": 204,
               "column": 5
             }
           },
@@ -3014,11 +3028,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 217,
+              "line": 216,
               "column": 4
             },
             "end": {
-              "line": 243,
+              "line": 242,
               "column": 5
             }
           },
@@ -3042,11 +3056,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 245,
+              "line": 244,
               "column": 4
             },
             "end": {
-              "line": 259,
+              "line": 258,
               "column": 5
             }
           },
@@ -3071,11 +3085,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 261,
+              "line": 260,
               "column": 4
             },
             "end": {
-              "line": 285,
+              "line": 284,
               "column": 5
             }
           },
@@ -3089,25 +3103,31 @@
         },
         {
           "name": "_typeHasModel",
-          "description": "",
+          "description": "Tests if the panel that supports given content-type supports data model.\nXML and JSON do not use view data model to render the view.",
           "privacy": "protected",
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 287,
+              "line": 291,
               "column": 4
             },
             "end": {
-              "line": 290,
+              "line": 294,
               "column": 5
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "contentType"
+              "name": "contentType",
+              "type": "String",
+              "description": "A content type value to test"
             }
           ],
+          "return": {
+            "type": "Boolean",
+            "desc": "True if the content type's panel support data model"
+          },
           "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
         },
         {
@@ -3117,11 +3137,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 299,
+              "line": 303,
               "column": 4
             },
             "end": {
-              "line": 317,
+              "line": 321,
               "column": 5
             }
           },
@@ -3155,11 +3175,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 327,
+              "line": 331,
               "column": 4
             },
             "end": {
-              "line": 343,
+              "line": 351,
               "column": 5
             }
           },
@@ -3184,11 +3204,11 @@
           "sourceRange": {
             "file": "api-body-editor-amf-overlay.html",
             "start": {
-              "line": 352,
+              "line": 359,
               "column": 4
             },
             "end": {
-              "line": 358,
+              "line": 368,
               "column": 5
             }
           },
@@ -3211,7 +3231,7 @@
             }
           ],
           "return": {
-            "type": "Promise"
+            "type": "void"
           },
           "inheritedFrom": "ApiElements.ApiBodyEditorAmfOverlay"
         },
@@ -3221,11 +3241,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 273,
+              "line": 272,
               "column": 6
             },
             "end": {
-              "line": 278,
+              "line": 277,
               "column": 7
             }
           },
@@ -3246,11 +3266,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 286,
+              "line": 285,
               "column": 6
             },
             "end": {
-              "line": 290,
+              "line": 289,
               "column": 7
             }
           },
@@ -3277,11 +3297,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 292,
+              "line": 291,
               "column": 6
             },
             "end": {
-              "line": 297,
+              "line": 296,
               "column": 7
             }
           },
@@ -3297,11 +3317,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 299,
+              "line": 298,
               "column": 6
             },
             "end": {
-              "line": 304,
+              "line": 303,
               "column": 7
             }
           },
@@ -3317,11 +3337,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 310,
+              "line": 309,
               "column": 6
             },
             "end": {
-              "line": 344,
+              "line": 343,
               "column": 7
             }
           },
@@ -3348,11 +3368,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 351,
+              "line": 350,
               "column": 6
             },
             "end": {
-              "line": 361,
+              "line": 360,
               "column": 7
             }
           },
@@ -3377,11 +3397,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 367,
+              "line": 366,
               "column": 6
             },
             "end": {
-              "line": 379,
+              "line": 378,
               "column": 7
             }
           },
@@ -3403,11 +3423,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 383,
+              "line": 382,
               "column": 6
             },
             "end": {
-              "line": 397,
+              "line": 396,
               "column": 7
             }
           },
@@ -3423,11 +3443,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 399,
+              "line": 398,
               "column": 6
             },
             "end": {
-              "line": 407,
+              "line": 406,
               "column": 7
             }
           },
@@ -3447,11 +3467,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 414,
+              "line": 413,
               "column": 6
             },
             "end": {
-              "line": 423,
+              "line": 422,
               "column": 7
             }
           },
@@ -3477,11 +3497,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 427,
+              "line": 426,
               "column": 6
             },
             "end": {
-              "line": 431,
+              "line": 430,
               "column": 7
             }
           },
@@ -3497,11 +3517,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 435,
+              "line": 434,
               "column": 6
             },
             "end": {
-              "line": 439,
+              "line": 438,
               "column": 7
             }
           },
@@ -3517,11 +3537,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 443,
+              "line": 442,
               "column": 6
             },
             "end": {
-              "line": 447,
+              "line": 446,
               "column": 7
             }
           },
@@ -3537,11 +3557,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 451,
+              "line": 450,
               "column": 6
             },
             "end": {
-              "line": 455,
+              "line": 454,
               "column": 7
             }
           },
@@ -3557,11 +3577,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 464,
+              "line": 463,
               "column": 6
             },
             "end": {
-              "line": 472,
+              "line": 471,
               "column": 7
             }
           },
@@ -3582,11 +3602,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 477,
+              "line": 476,
               "column": 6
             },
             "end": {
-              "line": 485,
+              "line": 484,
               "column": 7
             }
           },
@@ -3602,11 +3622,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 493,
+              "line": 492,
               "column": 6
             },
             "end": {
-              "line": 505,
+              "line": 504,
               "column": 7
             }
           },
@@ -3638,11 +3658,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 512,
+              "line": 511,
               "column": 6
             },
             "end": {
-              "line": 525,
+              "line": 524,
               "column": 7
             }
           },
@@ -3663,11 +3683,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 533,
+              "line": 532,
               "column": 6
             },
             "end": {
-              "line": 550,
+              "line": 549,
               "column": 7
             }
           },
@@ -3689,11 +3709,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 557,
+              "line": 556,
               "column": 6
             },
             "end": {
-              "line": 563,
+              "line": 562,
               "column": 7
             }
           },
@@ -3720,11 +3740,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 570,
+              "line": 569,
               "column": 6
             },
             "end": {
-              "line": 575,
+              "line": 574,
               "column": 7
             }
           },
@@ -3746,11 +3766,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 581,
+              "line": 580,
               "column": 6
             },
             "end": {
-              "line": 583,
+              "line": 582,
               "column": 7
             }
           },
@@ -3772,11 +3792,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 589,
+              "line": 588,
               "column": 6
             },
             "end": {
-              "line": 591,
+              "line": 590,
               "column": 7
             }
           },
@@ -3798,11 +3818,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 597,
+              "line": 596,
               "column": 6
             },
             "end": {
-              "line": 599,
+              "line": 598,
               "column": 7
             }
           },
@@ -3824,11 +3844,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 605,
+              "line": 604,
               "column": 6
             },
             "end": {
-              "line": 607,
+              "line": 606,
               "column": 7
             }
           },
@@ -3850,11 +3870,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 613,
+              "line": 612,
               "column": 6
             },
             "end": {
-              "line": 615,
+              "line": 614,
               "column": 7
             }
           },
@@ -3876,11 +3896,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 621,
+              "line": 620,
               "column": 6
             },
             "end": {
-              "line": 642,
+              "line": 641,
               "column": 7
             }
           },
@@ -3901,11 +3921,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 647,
+              "line": 646,
               "column": 6
             },
             "end": {
-              "line": 649,
+              "line": 648,
               "column": 7
             }
           },
@@ -3926,11 +3946,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 655,
+              "line": 654,
               "column": 6
             },
             "end": {
-              "line": 666,
+              "line": 665,
               "column": 7
             }
           },
@@ -3952,11 +3972,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 671,
+              "line": 670,
               "column": 6
             },
             "end": {
-              "line": 676,
+              "line": 675,
               "column": 7
             }
           },
@@ -3982,11 +4002,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 141,
+          "line": 140,
           "column": 4
         },
         "end": {
-          "line": 695,
+          "line": 694,
           "column": 5
         }
       },
@@ -4143,11 +4163,11 @@
           "description": "Currently selected editor.\n\n- 0 for Raw editor\n- 1 for Form data\n- 2 for Multipart\n- 3 for File",
           "sourceRange": {
             "start": {
-              "line": 156,
+              "line": 155,
               "column": 10
             },
             "end": {
-              "line": 160,
+              "line": 159,
               "column": 11
             }
           },
@@ -4159,11 +4179,11 @@
           "description": "A HTTP body.\n\nDepending of current editor selection the type can vary.",
           "sourceRange": {
             "start": {
-              "line": 168,
+              "line": 167,
               "column": 10
             },
             "end": {
-              "line": 173,
+              "line": 172,
               "column": 11
             }
           },
@@ -4175,11 +4195,11 @@
           "description": "When set it attempts to run associated code mirror mode\n(raw editor).\nThis element listens for the `content-type-changed` event and when\nhandled it will automatically update content type and `mode`.",
           "sourceRange": {
             "start": {
-              "line": 180,
+              "line": 179,
               "column": 10
             },
             "end": {
-              "line": 183,
+              "line": 182,
               "column": 11
             }
           },
@@ -4191,11 +4211,11 @@
           "description": "Computed value, if set then raw text input is hidden",
           "sourceRange": {
             "start": {
-              "line": 185,
+              "line": 184,
               "column": 10
             },
             "end": {
-              "line": 185,
+              "line": 184,
               "column": 30
             }
           },
@@ -4207,11 +4227,11 @@
           "description": "Computed value, if set then form data input is hidden",
           "sourceRange": {
             "start": {
-              "line": 187,
+              "line": 186,
               "column": 10
             },
             "end": {
-              "line": 187,
+              "line": 186,
               "column": 29
             }
           },
@@ -4223,11 +4243,11 @@
           "description": "Computed value, if set then multipart input is hidden",
           "sourceRange": {
             "start": {
-              "line": 189,
+              "line": 188,
               "column": 10
             },
             "end": {
-              "line": 189,
+              "line": 188,
               "column": 30
             }
           },
@@ -4239,11 +4259,11 @@
           "description": "Computed value, if set then file input is hidden",
           "sourceRange": {
             "start": {
-              "line": 191,
+              "line": 190,
               "column": 10
             },
             "end": {
-              "line": 191,
+              "line": 190,
               "column": 25
             }
           },
@@ -4255,11 +4275,11 @@
           "description": "Computed value, true if the editor type selector is hidden.",
           "sourceRange": {
             "start": {
-              "line": 193,
+              "line": 192,
               "column": 10
             },
             "end": {
-              "line": 197,
+              "line": 196,
               "column": 11
             }
           },
@@ -4271,11 +4291,11 @@
           "description": "If set it computes `hasOptional` property and shows checkbox in the\nform to show / hide optional properties.",
           "sourceRange": {
             "start": {
-              "line": 202,
+              "line": 201,
               "column": 10
             },
             "end": {
-              "line": 205,
+              "line": 204,
               "column": 11
             }
           },
@@ -4287,11 +4307,11 @@
           "description": "If set, enable / disable param checkbox is rendered next to each\nform item.",
           "sourceRange": {
             "start": {
-              "line": 210,
+              "line": 209,
               "column": 10
             },
             "end": {
-              "line": 213,
+              "line": 212,
               "column": 11
             }
           },
@@ -4303,11 +4323,11 @@
           "description": "When set, renders \"add custom\" item button.\nIf the element is to be used withouth AMF model this should always\nbe enabled. Otherwise users won't be able to add a parameter.",
           "sourceRange": {
             "start": {
-              "line": 219,
+              "line": 218,
               "column": 10
             },
             "end": {
-              "line": 222,
+              "line": 221,
               "column": 11
             }
           },
@@ -4319,11 +4339,11 @@
           "description": "Renders items in \"narrow\" view",
           "sourceRange": {
             "start": {
-              "line": 226,
+              "line": 225,
               "column": 10
             },
             "end": {
-              "line": 229,
+              "line": 228,
               "column": 11
             }
           },
@@ -4335,11 +4355,11 @@
           "description": "When set the editor is in read only mode.",
           "sourceRange": {
             "start": {
-              "line": 233,
+              "line": 232,
               "column": 10
             },
             "end": {
-              "line": 236,
+              "line": 235,
               "column": 11
             }
           },

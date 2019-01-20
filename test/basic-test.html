@@ -6,6 +6,7 @@
     <title>api-body-editor test</title>
     <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../../iron-test-helpers/mock-interactions.html">
     <link rel="import" href="../../arc-polyfills/arc-polyfills.html">
     <link rel="import" href="../api-body-editor.html">
   </head>
@@ -16,6 +17,7 @@
       </template>
     </test-fixture>
     <script>
+      /* global MockInteractions */
       suite('Initialization', () => {
         let element;
         suiteSetup((done) => {
@@ -68,6 +70,111 @@
         test('AMF types selector is not renered', () => {
           const node = element.shadowRoot.querySelector('.amf-types');
           assert.notOk(node);
+        });
+      });
+
+      suite('_renderAllEditors()', () => {
+        let element;
+        setup((done) => {
+          element = fixture('Basic');
+          element.noTextInput = true;
+          element.noFormData = true;
+          element.noMultipart = true;
+          element.noFile = true;
+          flush(() => done());
+        });
+
+        ['noTextInput', 'noFormData', 'noMultipart', 'noFile']
+        .forEach((key) => {
+          test(`Sets ${key} true`, () => {
+            assert.isTrue(element[key]);
+          });
+        });
+      });
+
+      suite('_copyToClipboard()', () => {
+        let element;
+        setup((done) => {
+          element = fixture('Basic');
+          element.selected = 0;
+          element.value = 'test';
+          flush(() => done());
+        });
+
+        test('Calls _copyToClipboard()', () => {
+          const button = element.shadowRoot.querySelector('.copy-action');
+          const spy = sinon.spy(element, '_copyToClipboard');
+          MockInteractions.tap(button);
+          assert.isTrue(spy.called);
+        });
+
+        test('Changes the icon', () => {
+          const button = element.shadowRoot.querySelector('.copy-action');
+          MockInteractions.tap(button);
+          assert.notEqual(button.icon, 'arc:content-copy');
+        });
+
+        test('Restores the icon', (done) => {
+          const button = element.shadowRoot.querySelector('.copy-action');
+          MockInteractions.tap(button);
+          setTimeout(() => {
+            assert.equal(button.icon, 'arc:content-copy');
+            done();
+          }, 1001);
+        });
+      });
+
+      suite('_typeSelectedChanged()', () => {
+        let element;
+        setup((done) => {
+          element = fixture('Basic');
+          element.selected = 0;
+          element.value = 'test';
+          flush(() => done());
+        });
+
+        test('Calls _notifyContentTypeChange()', () => {
+          const spy = sinon.spy(element, '_notifyContentTypeChange');
+          element._typeSelectedChanged({
+            detail: {
+              value: 'application/json'
+            }
+          });
+          assert.isTrue(spy.called);
+        });
+
+        test('Does nothing when no value', () => {
+          const spy = sinon.spy(element, '_notifyContentTypeChange');
+          element._typeSelectedChanged({
+            detail: {}
+          });
+          assert.isFalse(spy.called);
+        });
+      });
+
+      suite('_notifyContentTypeChange()', () => {
+        let element;
+        setup((done) => {
+          element = fixture('Basic');
+          element.selected = 0;
+          element.value = 'test';
+          flush(() => done());
+        });
+
+        test('Dispatches "content-type-changed" event', () => {
+          const spy = sinon.spy();
+          element.addEventListener('content-type-changed', spy);
+          element._notifyContentTypeChange('test-ct');
+          assert.isTrue(spy.called);
+          assert.equal(spy.args[0][0].detail.value, 'test-ct');
+        });
+
+        test('Does nothing when readony', () => {
+          const spy = sinon.spy();
+          element.readonly = true;
+          element.addEventListener('content-type-changed', spy);
+          element._notifyContentTypeChange('test-ct');
+          assert.isFalse(spy.called);
         });
       });
     </script>
