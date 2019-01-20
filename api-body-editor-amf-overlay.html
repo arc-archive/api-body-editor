@@ -169,25 +169,24 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
      */
     _ensurePayloadModel(model) {
       if (model instanceof Array) {
-        return model;
+        if (this._hasType(model[0], this.ns.raml.vocabularies.http + 'Payload')) {
+          return model;
+        }
+        model = model[0];
       }
-      if (this._hasType(model, this.ns.w3.hydra.core + 'Operation')) {
-        const opKey = this._getAmfKey(this.ns.w3.hydra.core + 'expects');
-        model = model[opKey];
-      }
-      if (!model) {
+      if (!this._hasType(model, this.ns.w3.hydra.core + 'Operation')) {
         return;
       }
+      const opKey = this._getAmfKey(this.ns.w3.hydra.core + 'expects');
+      model = model[opKey];
       if (model instanceof Array) {
         model = model[0];
       }
-      if (this._hasType(model, this.ns.raml.vocabularies.http + 'Request')) {
-        const pKey = this._getAmfKey(this.ns.raml.vocabularies.http + 'payload');
-        model = this._ensureArray(model[pKey]);
+      if (!this._hasType(model, this.ns.raml.vocabularies.http + 'Request')) {
+        return;
       }
-      if (model instanceof Array) {
-        return model;
-      }
+      const pKey = this._getAmfKey(this.ns.raml.vocabularies.http + 'payload');
+      return this._ensureArray(model[pKey]);
     }
 
     /**

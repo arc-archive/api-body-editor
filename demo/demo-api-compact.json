@@ -22,7 +22,7 @@
 ],
 "raml-http:server": [
 {
-"@id": "#447",
+"@id": "#452",
 "@type": [
 "raml-http:Server",
 "doc:DomainElement"
@@ -34,7 +34,7 @@
 ],
 "sourcemaps:sources": [
 {
-"@id": "#447/source-map",
+"@id": "#452/source-map",
 "@type": [
 "sourcemaps:SourceMap"
 ],
@@ -56,7 +56,7 @@
 {
 "sourcemaps:element": [
 {
-"@value": "amf://id#447"
+"@value": "amf://id#452"
 }
 ],
 "sourcemaps:value": [
@@ -8757,7 +8757,7 @@
 ],
 "sourcemaps:value": [
 {
-"@value": "[(137,0)-(148,0)]"
+"@value": "[(137,0)-(153,0)]"
 }
 ]
 }
@@ -9160,6 +9160,186 @@
 ]
 }
 ]
+},
+{
+"@id": "#447",
+"@type": [
+"raml-http:EndPoint",
+"doc:DomainElement"
+],
+"raml-http:path": [
+{
+"@value": "/files/file"
+}
+],
+"hydra:supportedOperation": [
+{
+"@id": "#448",
+"@type": [
+"hydra:Operation",
+"doc:DomainElement"
+],
+"hydra:method": [
+{
+"@value": "post"
+}
+],
+"hydra:expects": [
+{
+"@id": "#449",
+"@type": [
+"raml-http:Request",
+"doc:DomainElement"
+],
+"raml-http:payload": [
+{
+"@id": "#450",
+"@type": [
+"raml-http:Payload",
+"doc:DomainElement"
+],
+"raml-http:mediaType": [
+{
+"@value": "image/png"
+}
+],
+"raml-http:schema": [
+{
+"@id": "#451",
+"@type": [
+"raml-shapes:FileShape",
+"shacl:Shape",
+"raml-shapes:Shape"
+],
+"shacl:name": [
+{
+"@value": "schema"
+}
+],
+"sourcemaps:sources": [
+{
+"@id": "#451/source-map",
+"@type": [
+"sourcemaps:SourceMap"
+],
+"sourcemaps:type-property-lexical-info": [
+{
+"sourcemaps:element": [
+{
+"@value": "amf://id#451"
+}
+],
+"sourcemaps:value": [
+{
+"@value": "[(152,10)-(152,14)]"
+}
+]
+}
+],
+"sourcemaps:lexical": [
+{
+"sourcemaps:element": [
+{
+"@value": "amf://id#451"
+}
+],
+"sourcemaps:value": [
+{
+"@value": "[(152,0)-(153,0)]"
+}
+]
+}
+]
+}
+]
+}
+],
+"sourcemaps:sources": [
+{
+"@id": "#450/source-map",
+"@type": [
+"sourcemaps:SourceMap"
+],
+"sourcemaps:lexical": [
+{
+"sourcemaps:element": [
+{
+"@value": "amf://id#450"
+}
+],
+"sourcemaps:value": [
+{
+"@value": "[(151,8)-(153,0)]"
+}
+]
+}
+]
+}
+]
+}
+]
+}
+],
+"sourcemaps:sources": [
+{
+"@id": "#448/source-map",
+"@type": [
+"sourcemaps:SourceMap"
+],
+"sourcemaps:lexical": [
+{
+"sourcemaps:element": [
+{
+"@value": "amf://id#448"
+}
+],
+"sourcemaps:value": [
+{
+"@value": "[(149,4)-(153,0)]"
+}
+]
+}
+]
+}
+]
+}
+],
+"sourcemaps:sources": [
+{
+"@id": "#447/source-map",
+"@type": [
+"sourcemaps:SourceMap"
+],
+"sourcemaps:parent-end-point": [
+{
+"sourcemaps:element": [
+{
+"@value": "amf://id#447"
+}
+],
+"sourcemaps:value": [
+{
+"@value": "file://demo/demo-api/demo-api.raml#/web-api/end-points/%2Ffiles"
+}
+]
+}
+],
+"sourcemaps:lexical": [
+{
+"sourcemaps:element": [
+{
+"@value": "amf://id#447"
+}
+],
+"sourcemaps:value": [
+{
+"@value": "[(148,2)-(153,0)]"
+}
+]
+}
+]
+}
+]
 }
 ],
 "sourcemaps:sources": [
@@ -9215,7 +9395,7 @@
 ],
 "sourcemaps:value": [
 {
-"@value": "[(2,0)-(148,0)]"
+"@value": "[(2,0)-(153,0)]"
 }
 ]
 },

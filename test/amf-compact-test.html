@@ -91,7 +91,7 @@
         element.amfModel = amfModel;
         element.amfBody = body;
         flush(() => {
-          Polymer.RenderStatus.afterNextRender(this, () => {
+          Polymer.RenderStatus.afterNextRender(element, () => {
             done();
           });
         });
@@ -136,7 +136,248 @@
           done();
         });
       });
+    });
 
+    suite('__amfChanged()', () => {
+      let body;
+      let amfModel;
+      suiteSetup(() => {
+        return AmfLoader.load(4, 0, true)
+        .then((data) => {
+          amfModel = data[0];
+          body = data[1];
+        });
+      });
+
+      let element;
+      setup(() => {
+        element = fixture('Basic');
+        element.amfModel = amfModel;
+      });
+
+      test('Calls _clearAmfSettings()', () => {
+        const spy = sinon.spy(element, '_clearAmfSettings');
+        element.__amfChanged();
+        assert.isTrue(spy.called);
+      });
+
+      test('Does nothing when no model', () => {
+        const spy = sinon.spy(element, '_ensurePayloadModel');
+        element.__amfChanged();
+        assert.isFalse(spy.called);
+      });
+
+      test('Does nothing when empty array', () => {
+        const spy = sinon.spy(element, '_ensurePayloadModel');
+        element.__amfChanged([]);
+        assert.isFalse(spy.called);
+      });
+
+      test('Clears panel model', (done) => {
+        flush(() => {
+          element.currentPanel.model = [];
+          element.__amfChanged();
+          assert.isUndefined(element.currentPanel.model);
+          done();
+        });
+      });
+
+      test('Clears panel value', (done) => {
+        flush(() => {
+          element.currentPanel.value = 'test';
+          element.__amfChanged();
+          assert.equal(element.currentPanel.value, '');
+          done();
+        });
+      });
+
+      test('No error when panel not ready', () => {
+        element.__amfChanged();
+      });
+
+      test('Does nothing when passed argument is not a body definition', () => {
+        const spy = sinon.spy(element, '_updateAmfMediaTypes');
+        element.__amfChanged({});
+        assert.isFalse(spy.called);
+      });
+
+      test('Calls _updateAmfMediaTypes()', () => {
+        const spy = sinon.spy(element, '_updateAmfMediaTypes');
+        element.__amfChanged(body);
+        assert.isTrue(spy.called);
+      });
+
+      test('Calls _selectDefaultMediaType()', () => {
+        const spy = sinon.spy(element, '_selectDefaultMediaType');
+        element.__amfChanged(body);
+        assert.isTrue(spy.called);
+      });
+
+      test('Sets _effectiveModel', () => {
+        element.__amfChanged(body);
+        assert.typeOf(element._effectiveModel, 'array');
+        assert.lengthOf(element._effectiveModel, 1);
+      });
+    });
+
+    suite('_ensurePayloadModel()', () => {
+      let body;
+      let amfModel;
+      let element;
+      setup(() => {
+        element = fixture('Basic');
+        return AmfLoader.load(4, 0, true)
+        .then((data) => {
+          amfModel = data[0];
+          body = data[1];
+          element.amfModel = amfModel;
+        });
+      });
+
+      test('Returns array of objects', () => {
+        const result = element._ensurePayloadModel(body);
+        assert.typeOf(result, 'array', 'Returns array');
+        assert.lengthOf(result, 1, 'Array has one item');
+        assert.typeOf(result[0], 'object', 'Array item is an object');
+      });
+
+      test('Returns payload object', () => {
+        const result = element._ensurePayloadModel(body);
+        assert.isTrue(element._hasType(result[0], element.ns.raml.vocabularies.http + 'Payload'));
+      });
+
+      test('Returns the same input when it\'s already payload model', () => {
+        const result1 = element._ensurePayloadModel(body);
+        const result2 = element._ensurePayloadModel(result1);
+        assert.isTrue(result1 === result2);
+      });
+
+      test('Processes array input', () => {
+        const result = element._ensurePayloadModel([body]);
+        assert.typeOf(result, 'array', 'Returns array');
+        assert.lengthOf(result, 1, 'Array has one item');
+        assert.typeOf(result[0], 'object', 'Array item is an object');
+      });
+
+      test('Returns undefined if passed model is not an Oparation', () => {
+        const result = element._ensurePayloadModel({});
+        assert.isUndefined(result);
+      });
+
+      test('Returns undefined if passed model has no Request', () => {
+        const opKey = element._getAmfKey(element.ns.w3.hydra.core + 'Operation');
+        const param = {};
+        param['@type'] = [opKey];
+        const result = element._ensurePayloadModel(param);
+        assert.isUndefined(result);
+      });
+    });
+
+    suite('Updating panel model when union type', () => {
+      let body;
+      let amfModel;
+      let element;
+      setup(() => {
+        element = fixture('Basic');
+        return AmfLoader.load(10, 0, true)
+        .then((data) => {
+          amfModel = data[0];
+          body = data[1];
+          element.amfModel = amfModel;
+        });
+      });
+
+      test('Calls _getUnionObjectProperties()', () => {
+        const spy = sinon.spy(element, '_getUnionObjectProperties');
+        element.__amfChanged(body);
+        assert.isTrue(spy.called);
+      });
+
+      test('Sets panel model', () => {
+        element.__amfChanged(body);
+        assert.typeOf(element.currentPanel.model, 'array');
+        assert.lengthOf(element.currentPanel.model, 6);
+      });
+    });
+
+    suite('Updating panel model when node type', () => {
+      let body;
+      let amfModel;
+      let element;
+      setup(() => {
+        element = fixture('Basic');
+        return AmfLoader.load(8, 0, true)
+        .then((data) => {
+          amfModel = data[0];
+          body = data[1];
+          element.amfModel = amfModel;
+        });
+      });
+
+      test('Calls _updatePanelModel()', () => {
+        const spy = sinon.spy(element, '_updatePanelModel');
+        element.__amfChanged(body);
+        assert.isTrue(spy.called);
+      });
+
+      test('Wont set a model on panel that does not support models', () => {
+        element.__amfChanged(body);
+        assert.isUndefined(element.currentPanel.model);
+      });
+    });
+
+    suite('Updating panel model when node type and panel with model', () => {
+      let body;
+      let amfModel;
+      let element;
+      setup(() => {
+        element = fixture('Basic');
+        return AmfLoader.load(9, 0, true)
+        .then((data) => {
+          amfModel = data[0];
+          body = data[1];
+          element.amfModel = amfModel;
+        });
+      });
+
+      test('Calls _updatePanelModel()', () => {
+        const spy = sinon.spy(element, '_updatePanelModel');
+        element.__amfChanged(body);
+        assert.isTrue(spy.called);
+      });
+
+      test('Set a model on panel that supports models', () => {
+        element.__amfChanged(body);
+        assert.typeOf(element.currentPanel.model, 'array');
+        assert.lengthOf(element.currentPanel.model, 7);
+      });
+    });
+
+    suite('Updating panel model when file type', () => {
+      let body;
+      let amfModel;
+      let element;
+      setup(() => {
+        element = fixture('Basic');
+        return AmfLoader.load(12, 0, true)
+        .then((data) => {
+          amfModel = data[0];
+          body = data[1];
+          element.amfModel = amfModel;
+        });
+      });
+
+      test('Calls _updatePanelModel()', () => {
+        const spy = sinon.spy(element, '_updatePanelModel');
+        element.__amfChanged(body);
+        assert.isTrue(spy.called);
+      });
+
+      test('Set a model on panel that supports models', () => {
+        element.__amfChanged(body);
+        assert.typeOf(element.currentPanel.model, 'array');
+        assert.lengthOf(element.currentPanel.model, 2);
+      });
     });
     </script>
   </body>

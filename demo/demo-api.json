@@ -22,7 +22,7 @@
 ],
 "http://a.ml/vocabularies/http#server": [
 {
-"@id": "amf://id#447",
+"@id": "amf://id#452",
 "@type": [
 "http://a.ml/vocabularies/http#Server",
 "http://a.ml/vocabularies/document#DomainElement"
@@ -3462,6 +3462,70 @@
 "http://schema.org/description": [
 {
 "@value": "The file to be uploaded."
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+},
+{
+"@id": "amf://id#447",
+"@type": [
+"http://a.ml/vocabularies/http#EndPoint",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/http#path": [
+{
+"@value": "/files/file"
+}
+],
+"http://www.w3.org/ns/hydra/core#supportedOperation": [
+{
+"@id": "amf://id#448",
+"@type": [
+"http://www.w3.org/ns/hydra/core#Operation",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/hydra/core#method": [
+{
+"@value": "post"
+}
+],
+"http://www.w3.org/ns/hydra/core#expects": [
+{
+"@id": "amf://id#449",
+"@type": [
+"http://a.ml/vocabularies/http#Request",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/http#payload": [
+{
+"@id": "amf://id#450",
+"@type": [
+"http://a.ml/vocabularies/http#Payload",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/http#mediaType": [
+{
+"@value": "image/png"
+}
+],
+"http://a.ml/vocabularies/http#schema": [
+{
+"@id": "amf://id#451",
+"@type": [
+"http://a.ml/vocabularies/shapes#FileShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape"
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "schema"
 }
 ]
 }
