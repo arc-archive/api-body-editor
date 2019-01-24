@@ -134,6 +134,7 @@ the License.
      * @customElement
      * @polymer
      * @demo demo/index.html
+     * @memberof ApiElements
      * @appliesMixin ArcBehaviors.EventsTargetBehavior
      * @appliesMixin ApiElements.AmfHelperMixin
      * @appliesMixin ApiElements.ApiBodyEditorAmfOverlay
@@ -142,7 +143,9 @@ the License.
       ApiElements.ApiBodyEditorAmfOverlay(
         ApiElements.AmfHelperMixin(
           ArcBehaviors.EventsTargetBehavior(Polymer.Element))) {
-      static get is() {return 'api-body-editor';}
+      static get is() {
+        return 'api-body-editor';
+      }
       static get properties() {
         return {
           /**
@@ -673,6 +676,20 @@ the License.
           return;
         }
         this._notifyContentTypeChange(e.detail.value);
+      }
+      /**
+       * A function to be called to refres current state of editor panel.
+       * It is only called for the panels that support refreshing (raw editor)
+       */
+      refreshPanel() {
+        switch (this.selected) {
+          case 0:
+            const panel = this.currentPanel;
+            if (panel) {
+              panel.refresh();
+            }
+            break;
+        }
       }
       /**
        * Fires when the value change.

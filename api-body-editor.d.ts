@@ -8,10 +8,6 @@
  *   api-body-editor.html
  */
 
-
-// tslint:disable:variable-name Describing an API that's defined elsewhere.
-// tslint:disable:no-any describes the API as best we are able today
-
 /// <reference path="../polymer/types/polymer-element.d.ts" />
 /// <reference path="../polymer/types/lib/elements/dom-if.d.ts" />
 /// <reference path="../polymer/types/lib/utils/render-status.d.ts" />
@@ -35,282 +31,291 @@
 /// <reference path="../api-example-generator/api-example-generator.d.ts" />
 /// <reference path="api-body-editor-amf-overlay.d.ts" />
 
-/**
- * `api-body-editor`
- * Renders different types of body editors. It works with AMF data model
- * but can be used separately.
- *
- * ## AMF support
- *
- * The element supports [AMF](https://github.com/mulesoft/amf/)
- * `json-ld` model. The model can be generated from OAS or RAML spec by
- * default and other specs with appropriate plugin.
- *
- * The element accepts `http://www.w3.org/ns/hydra/core#Operation`,
- * `http://raml.org/vocabularies/http#Request` or array of
- * `http://raml.org/vocabularies/http#Payload` definitions in AMF
- * vocabulary.
- *
- * When AMF model is accepted it alters the UI to render only allowed
- * by the spec content types and therefore editors.
- */
-declare class ApiBodyEditor extends
-  ArcBehaviors.EventsTargetBehavior(
-  ApiElements.AmfHelperMixin(
-  ApiElements.ApiBodyEditorAmfOverlay(
-  Object))) {
-  readonly currentPanel: HTMLElement|null;
+declare namespace ApiElements {
 
   /**
-   * Currently selected editor.
+   * `api-body-editor`
+   * Renders different types of body editors. It works with AMF data model
+   * but can be used separately.
    *
-   * - 0 for Raw editor
-   * - 1 for Form data
-   * - 2 for Multipart
-   * - 3 for File
-   */
-  selected: number|null|undefined;
-
-  /**
-   * A HTTP body.
+   * ## AMF support
    *
-   * Depending of current editor selection the type can vary.
-   */
-  value: String|FormData|File|null;
-
-  /**
-   * When set it attempts to run associated code mirror mode
-   * (raw editor).
-   * This element listens for the `content-type-changed` event and when
-   * handled it will automatically update content type and `mode`.
-   */
-  contentType: string|null|undefined;
-
-  /**
-   * Computed value, if set then raw text input is hidden
-   */
-  noTextInput: boolean|null|undefined;
-
-  /**
-   * Computed value, if set then form data input is hidden
-   */
-  noFormData: boolean|null|undefined;
-
-  /**
-   * Computed value, if set then multipart input is hidden
-   */
-  noMultipart: boolean|null|undefined;
-
-  /**
-   * Computed value, if set then file input is hidden
-   */
-  noFile: boolean|null|undefined;
-
-  /**
-   * Computed value, true if the editor type selector is hidden.
-   */
-  readonly editorSelectorHidden: boolean|null|undefined;
-
-  /**
-   * If set it computes `hasOptional` property and shows checkbox in the
-   * form to show / hide optional properties.
-   */
-  allowHideOptional: boolean|null|undefined;
-
-  /**
-   * If set, enable / disable param checkbox is rendered next to each
-   * form item.
-   */
-  allowDisableParams: boolean|null|undefined;
-
-  /**
-   * When set, renders "add custom" item button.
-   * If the element is to be used withouth AMF model this should always
-   * be enabled. Otherwise users won't be able to add a parameter.
-   */
-  allowCustom: boolean|null|undefined;
-
-  /**
-   * Renders items in "narrow" view
-   */
-  narrow: boolean|null|undefined;
-
-  /**
-   * When set the editor is in read only mode.
-   */
-  readonly: boolean|null|undefined;
-  _attachListeners(node: any): void;
-  _detachListeners(node: any): void;
-
-  /**
-   * Handler for content type changed event.
-   */
-  _contentTypeHandler(e: CustomEvent|null): void;
-
-  /**
-   * Handler for content type change.
-   * Updates state of the UI depending on AMF model.
+   * The element supports [AMF](https://github.com/mulesoft/amf/)
+   * `json-ld` model. The model can be generated from OAS or RAML spec by
+   * default and other specs with appropriate plugin.
    *
-   * @param contentType New content type value.
-   * @param oldValue Previous value
-   */
-  _contentTypeChanged(contentType: String|null, oldValue: String|null): void;
-  _hideAllEditors(): void;
-  _renderAllEditors(): void;
-
-  /**
-   * Updates editors availability state depending on content type.
+   * The element accepts `http://www.w3.org/ns/hydra/core#Operation`,
+   * `http://raml.org/vocabularies/http#Request` or array of
+   * `http://raml.org/vocabularies/http#Payload` definitions in AMF
+   * vocabulary.
    *
-   * @param contentType New content type value.
-   * @param oldValue Previous value
+   * When AMF model is accepted it alters the UI to render only allowed
+   * by the spec content types and therefore editors.
    */
-  _updateEditorsState(contentType: String|null, oldValue: String|null): void;
+  class ApiBodyEditor extends
+    ArcBehaviors.EventsTargetBehavior(
+    ApiElements.AmfHelperMixin(
+    ApiElements.ApiBodyEditorAmfOverlay(
+    Object))) {
+    readonly currentPanel: HTMLElement|null;
 
-  /**
-   * Replaces active body editor with new one.
-   */
-  _selectedChanged(selected: Number|null, oldValue: Number|null): void;
+    /**
+     * Currently selected editor.
+     *
+     * - 0 for Raw editor
+     * - 1 for Form data
+     * - 2 for Multipart
+     * - 3 for File
+     */
+    selected: number|null|undefined;
 
-  /**
-   * Notifies application about body change.
-   *
-   * @param value Value to notify
-   */
-  _notifyBodyChanged(value: String|FormData|File|null|undefined): void;
+    /**
+     * A HTTP body.
+     *
+     * Depending of current editor selection the type can vary.
+     */
+    value: String|FormData|File|null;
 
-  /**
-   * Creates instance of Raw body panel and adds it to local DOM.
-   */
-  _createRawPanel(): void;
+    /**
+     * When set it attempts to run associated code mirror mode
+     * (raw editor).
+     * This element listens for the `content-type-changed` event and when
+     * handled it will automatically update content type and `mode`.
+     */
+    contentType: string|null|undefined;
 
-  /**
-   * Creates instance of Raw body panel and adds it to local DOM.
-   */
-  _createFormDataPanel(): void;
+    /**
+     * Computed value, if set then raw text input is hidden
+     */
+    noTextInput: boolean|null|undefined;
 
-  /**
-   * Creates instance of Raw body panel and adds it to local DOM.
-   */
-  _createFilePanel(): void;
+    /**
+     * Computed value, if set then form data input is hidden
+     */
+    noFormData: boolean|null|undefined;
 
-  /**
-   * Creates instance of Raw body panel and adds it to local DOM.
-   */
-  _createMultipartPanel(): void;
+    /**
+     * Computed value, if set then multipart input is hidden
+     */
+    noMultipart: boolean|null|undefined;
 
-  /**
-   * Handler for the `value-changed` event dispatched by an editor panel.
-   * Updates this element value reported back to the application and
-   * dispatches `body-value-changed` custom event so elements without
-   * direct access to this element can use this information.
-   */
-  _panelValueChanged(e: CustomEvent|null): void;
+    /**
+     * Computed value, if set then file input is hidden
+     */
+    noFile: boolean|null|undefined;
 
-  /**
-   * Attaches value and value change listeners to current editor
-   * after it's created.
-   */
-  _attachValues(): void;
+    /**
+     * Computed value, true if the editor type selector is hidden.
+     */
+    readonly editorSelectorHidden: boolean|null|undefined;
 
-  /**
-   * Dispatches analytics event.
-   *
-   * @param category Event category
-   * @param action Event action
-   * @param label Event label
-   */
-  _analyticsEvent(category: String|null, action: String|null, label: String|null): void;
+    /**
+     * If set it computes `hasOptional` property and shows checkbox in the
+     * form to show / hide optional properties.
+     */
+    allowHideOptional: boolean|null|undefined;
 
-  /**
-   * Dispatches `send-request` custom event when the user pressed
-   * `meta+enter` on Mac or `ctrl+enter` eklsewhere keys combination.
-   */
-  _payloadKeyDown(e: CustomEvent|null): void;
+    /**
+     * If set, enable / disable param checkbox is rendered next to each
+     * form item.
+     */
+    allowDisableParams: boolean|null|undefined;
 
-  /**
-   * Computes a value of the hidden attribute of the editory type selector.
-   * Some content types are supported by only one type of the editor so in
-   * this cases the editor should be hidden.
-   *
-   * @param contentType Current content type.
-   */
-  _updateEditorSelectorHidden(contentType: String|null): void;
+    /**
+     * When set, renders "add custom" item button.
+     * If the element is to be used withouth AMF model this should always
+     * be enabled. Otherwise users won't be able to add a parameter.
+     */
+    allowCustom: boolean|null|undefined;
 
-  /**
-   * Updates property value on current panel.
-   *
-   * @param prop Name of the proeprty to set
-   * @param value New value to set.
-   */
-  _propertyChangeHandler(prop: String|null, value: any|null): void;
+    /**
+     * Renders items in "narrow" view
+     */
+    narrow: boolean|null|undefined;
 
-  /**
-   * Updates value of the panel if `value` change and it is not
-   * internal change.
-   *
-   * @param value New value to set.
-   */
-  _valueChanged(value: String|FormData|File|null): void;
+    /**
+     * When set the editor is in read only mode.
+     */
+    readonly: boolean|null|undefined;
+    _attachListeners(node: any): void;
+    _detachListeners(node: any): void;
 
-  /**
-   * Updates `allowHideOptional` on a panel.
-   *
-   * @param value New value to set.
-   */
-  _allowHideOptionalChanged(value: Boolean|null): void;
+    /**
+     * Handler for content type changed event.
+     */
+    _contentTypeHandler(e: CustomEvent|null): void;
 
-  /**
-   * Updates `allowDisableParams` on a panel.
-   *
-   * @param value New value to set.
-   */
-  _allowDisableParamsChanged(value: Boolean|null): void;
+    /**
+     * Handler for content type change.
+     * Updates state of the UI depending on AMF model.
+     *
+     * @param contentType New content type value.
+     * @param oldValue Previous value
+     */
+    _contentTypeChanged(contentType: String|null, oldValue: String|null): void;
+    _hideAllEditors(): void;
+    _renderAllEditors(): void;
 
-  /**
-   * Updates `allowCustom` on a panel.
-   *
-   * @param value New value to set.
-   */
-  _allowCustomChanged(value: Boolean|null): void;
+    /**
+     * Updates editors availability state depending on content type.
+     *
+     * @param contentType New content type value.
+     * @param oldValue Previous value
+     */
+    _updateEditorsState(contentType: String|null, oldValue: String|null): void;
 
-  /**
-   * Updates `narrow` on a panel.
-   *
-   * @param value New value to set.
-   */
-  _narrowChanged(value: Boolean|null): void;
+    /**
+     * Replaces active body editor with new one.
+     */
+    _selectedChanged(selected: Number|null, oldValue: Number|null): void;
 
-  /**
-   * Updates `readonly` on a panel.
-   *
-   * @param value New value to set.
-   */
-  _readonlyChanged(value: Boolean|null): void;
+    /**
+     * Notifies application about body change.
+     *
+     * @param value Value to notify
+     */
+    _notifyBodyChanged(value: String|FormData|File|null|undefined): void;
 
-  /**
-   * Copies current body text value to clipboard.
-   */
-  _copyToClipboard(e: Event|null): void;
+    /**
+     * Creates instance of Raw body panel and adds it to local DOM.
+     */
+    _createRawPanel(): void;
 
-  /**
-   * Resets state of the copy button.
-   */
-  _resetCopyButtonState(button: Element|null): void;
+    /**
+     * Creates instance of Raw body panel and adds it to local DOM.
+     */
+    _createFormDataPanel(): void;
 
-  /**
-   * Dispatches `content-type-changed` custom event when CT changes by
-   * using type selection.
-   *
-   * @param type Content type value to announce.
-   */
-  _notifyContentTypeChange(type: String|null): void;
+    /**
+     * Creates instance of Raw body panel and adds it to local DOM.
+     */
+    _createFilePanel(): void;
 
-  /**
-   * Notifies about content type change when type selection changes.
-   */
-  _typeSelectedChanged(e: CustomEvent|null): void;
+    /**
+     * Creates instance of Raw body panel and adds it to local DOM.
+     */
+    _createMultipartPanel(): void;
+
+    /**
+     * Handler for the `value-changed` event dispatched by an editor panel.
+     * Updates this element value reported back to the application and
+     * dispatches `body-value-changed` custom event so elements without
+     * direct access to this element can use this information.
+     */
+    _panelValueChanged(e: CustomEvent|null): void;
+
+    /**
+     * Attaches value and value change listeners to current editor
+     * after it's created.
+     */
+    _attachValues(): void;
+
+    /**
+     * Dispatches analytics event.
+     *
+     * @param category Event category
+     * @param action Event action
+     * @param label Event label
+     */
+    _analyticsEvent(category: String|null, action: String|null, label: String|null): void;
+
+    /**
+     * Dispatches `send-request` custom event when the user pressed
+     * `meta+enter` on Mac or `ctrl+enter` eklsewhere keys combination.
+     */
+    _payloadKeyDown(e: CustomEvent|null): void;
+
+    /**
+     * Computes a value of the hidden attribute of the editory type selector.
+     * Some content types are supported by only one type of the editor so in
+     * this cases the editor should be hidden.
+     *
+     * @param contentType Current content type.
+     */
+    _updateEditorSelectorHidden(contentType: String|null): void;
+
+    /**
+     * Updates property value on current panel.
+     *
+     * @param prop Name of the proeprty to set
+     * @param value New value to set.
+     */
+    _propertyChangeHandler(prop: String|null, value: any|null): void;
+
+    /**
+     * Updates value of the panel if `value` change and it is not
+     * internal change.
+     *
+     * @param value New value to set.
+     */
+    _valueChanged(value: String|FormData|File|null): void;
+
+    /**
+     * Updates `allowHideOptional` on a panel.
+     *
+     * @param value New value to set.
+     */
+    _allowHideOptionalChanged(value: Boolean|null): void;
+
+    /**
+     * Updates `allowDisableParams` on a panel.
+     *
+     * @param value New value to set.
+     */
+    _allowDisableParamsChanged(value: Boolean|null): void;
+
+    /**
+     * Updates `allowCustom` on a panel.
+     *
+     * @param value New value to set.
+     */
+    _allowCustomChanged(value: Boolean|null): void;
+
+    /**
+     * Updates `narrow` on a panel.
+     *
+     * @param value New value to set.
+     */
+    _narrowChanged(value: Boolean|null): void;
+
+    /**
+     * Updates `readonly` on a panel.
+     *
+     * @param value New value to set.
+     */
+    _readonlyChanged(value: Boolean|null): void;
+
+    /**
+     * Copies current body text value to clipboard.
+     */
+    _copyToClipboard(e: Event|null): void;
+
+    /**
+     * Resets state of the copy button.
+     */
+    _resetCopyButtonState(button: Element|null): void;
+
+    /**
+     * Dispatches `content-type-changed` custom event when CT changes by
+     * using type selection.
+     *
+     * @param type Content type value to announce.
+     */
+    _notifyContentTypeChange(type: String|null): void;
+
+    /**
+     * Notifies about content type change when type selection changes.
+     */
+    _typeSelectedChanged(e: CustomEvent|null): void;
+
+    /**
+     * A function to be called to refres current state of editor panel.
+     * It is only called for the panels that support refreshing (raw editor)
+     */
+    refreshPanel(): void;
+  }
 }
 
 interface HTMLElementTagNameMap {
-  "api-body-editor": ApiBodyEditor;
+  "api-body-editor": ApiElements.ApiBodyEditor;
 }
