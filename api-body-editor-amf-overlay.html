@@ -358,13 +358,19 @@ ApiElements.ApiBodyEditorAmfOverlay = Polymer.dedupingMixin((base) => {
      * @param {Object} schema A schema for current payload.
      */
     _updatePanelValue(panel, type, schema) {
-      let example;
-      // if (!this._typeHasModel(type)) {
-      //   example = this.$.exampleGenerator.computeExample(type, schema);
-      // }
-      example = this.$.exampleGenerator.computeExample(type, schema);
-      if (example) {
-        panel.value = example;
+      const examples = this.$.exampleGenerator.computeExamples(schema, type);
+      if (!examples) {
+        return;
+      }
+      for (let i = 0, len = examples.length; i < len; i++) {
+        const item = examples[i];
+        if (typeof item.value !== 'undefined') {
+          panel.value = item.value;
+          return;
+        }
+        if (item.values) {
+          panel.value = item.values[0].value;
+        }
       }
     }
   }

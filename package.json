@@ -1,7 +1,7 @@
 {
   "name": "@api-components/api-body-editor",
   "description": "Renders different types of body editors. It works with AMF data model",
-  "version": "2.0.11",
+  "version": "2.1.0",
   "license": "Apache-2.0",
   "authors": [
     "Pawel Psztyc",

@@ -100,12 +100,13 @@
 <body>
   <dom-bind id="demo">
     <template>
-
       <header>
         <paper-dropdown-menu label="Select demo endpoint">
           <paper-listbox slot="dropdown-content" id="apisList" on-selected-changed="_apiChanged">
             <paper-item data-src="demo-api.json">Demo api</paper-item>
             <paper-item data-src="demo-api-compact.json">Demo api - compact model</paper-item>
+            <paper-item data-src="examples-api.json">Examples render demo api</paper-item>
+            <paper-item data-src="examples-api-compact.json">Examples render demo - compact model</paper-item>
             <paper-item data-src="apic-169.json">apic-169</paper-item>
             <paper-item data-src="apic-169-compact.json">apic-169 - compact model</paper-item>
           </paper-listbox>
