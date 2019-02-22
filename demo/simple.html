@@ -4,17 +4,28 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
     <title>api-body-editor demo</title>
-    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
-    <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
-    <link rel="import" href="../../neon-animation/web-animations.html">
-    <link rel="import" href="../../iron-form/iron-form.html">
-    <link rel="import" href="../../paper-input/paper-input.html">
-    <link rel="import" href="../../paper-button/paper-button.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
-    <link rel="import" href="../../api-console-default-theme/api-console-default-theme.html">
-    <link rel="import" href="../api-body-editor.html">
-    <custom-style>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script type="module" src="../../../@polymer/polymer/lib/elements/dom-bind.js"></script>
+    <script type="module" src="../../../@polymer/neon-animation/web-animations.js"></script>
+    <script type="module" src="../../../@polymer/iron-form/iron-form.js"></script>
+    <script type="module" src="../../../@polymer/paper-input/paper-input.js"></script>
+    <script type="module" src="../../../@polymer/paper-button/paper-button.js"></script>
+    <script type="module" src="../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js"></script>
+    <script type="module" src="../../../@polymer/paper-toggle-button/paper-toggle-button.js"></script>
+    <script type="module" src="../../../api-console-default-theme/api-console-default-theme.js"></script>
+    <script type="module" src="../api-body-editor.js"></script>
+    <!-- FIXME(polymer-modulizer):
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+        -->
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<custom-style>
       <style is="custom-style" include="demo-pages-shared-styles">
       body,
       html {
@@ -45,19 +56,19 @@
         margin-bottom: 12px;
       }
       </style>
-    </custom-style>
+    </custom-style>`;
+
+document.body.appendChild($_documentContainer.content);
+</script>
   </head>
   <body>
-    <dom-bind id="demo">
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<dom-bind id="demo">
       <template>
         <section role="main" class="vertical-section-container centered card">
-          <api-body-editor
-            value="{{value}}"
-            narrow="[[narrow]]"
-            readonly="[[readonly]]"
-            allow-hide-optional
-            allow-disable-params
-            allow-custom="[[allowCustom]]"></api-body-editor>
+          <api-body-editor value="{{value}}" narrow="[[narrow]]" readonly="[[readonly]]" allow-hide-optional="" allow-disable-params="" allow-custom="[[allowCustom]]"></api-body-editor>
         </section>
 
         <section class="vertical-section-container centered card">
@@ -79,28 +90,40 @@
             <iron-form id="ctForm">
               <form enctype="application/json" autocomplete="on">
                 <paper-input name="ct" label="Content type value" value="{{eventContentType}}"></paper-input>
-                <paper-button raised on-click="_sendEvent">Send event</paper-button>
+                <paper-button raised="" on-click="_sendEvent">Send event</paper-button>
               </form>
             </iron-form>
           </fieldset>
         </section>
       </template>
-    </dom-bind>
-    <script>
-    (function(demo) {
-      demo.eventContentType = 'application/json';
-      demo._sendEvent = function() {
-        const ctForm = document.getElementById('ctForm');
-        const data = ctForm.serializeForm();
-        document.body.dispatchEvent(new CustomEvent('content-type-changed', {
-          detail: {
-            value: data.ct
-          },
-          bubbles: true,
-          composed: true
-        }));
-      };
-    })(document.getElementById('demo'));
-    </script>
+    </dom-bind>`;
+
+document.body.appendChild($_documentContainer.content);
+</script>
+    <script type="module">
+import '../../../@polymer/polymer/lib/elements/dom-bind.js';
+import '../../../@polymer/neon-animation/web-animations.js';
+import '../../../@polymer/iron-form/iron-form.js';
+import '../../../@polymer/paper-input/paper-input.js';
+import '../../../@polymer/paper-button/paper-button.js';
+import '../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js';
+import '../../../@polymer/paper-toggle-button/paper-toggle-button.js';
+import '../../../api-console-default-theme/api-console-default-theme.js';
+import '../api-body-editor.js';
+(function(demo) {
+  demo.eventContentType = 'application/json';
+  demo._sendEvent = function() {
+    const ctForm = document.getElementById('ctForm');
+    const data = ctForm.serializeForm();
+    document.body.dispatchEvent(new CustomEvent('content-type-changed', {
+      detail: {
+        value: data.ct
+      },
+      bubbles: true,
+      composed: true
+    }));
+  };
+})(document.getElementById('demo'));
+</script>
   </body>
 </html>

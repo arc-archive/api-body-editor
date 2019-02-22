@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
     <title>api-body-editor test</title>
-    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
-    <link rel="import" href="../../arc-polyfills/arc-polyfills.html">
-    <link rel="import" href="../api-body-editor.html">
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../../wct-browser-legacy/browser.js"></script>
+    <script type="module" src="../../../arc-polyfills/arc-polyfills.js"></script>
+    <script type="module" src="../api-body-editor.js"></script>
   </head>
   <body>
     <test-fixture id="File">
@@ -21,27 +21,29 @@
         <api-body-editor selected="3"></api-body-editor>
       </template>
     </test-fixture>
-    <script>
-    suite('Panel rendering', () => {
-      test('Renders panel from selection change', (done) => {
-        const element = fixture('File');
-        flush(() => {
-          const node = element.shadowRoot.querySelector('files-payload-editor');
-          assert.ok(node);
-          done();
-        });
-      });
-
-      test('Renders panel from content-type change', (done) => {
-        const element = fixture('NoSelection');
-        element.contentType = 'application/octet-stream';
-        flush(() => {
-          const node = element.shadowRoot.querySelector('files-payload-editor');
-          assert.ok(node);
-          done();
-        });
-      });
+    <script type="module">
+import '../../../arc-polyfills/arc-polyfills.js';
+import '../api-body-editor.js';
+suite('Panel rendering', () => {
+  test('Renders panel from selection change', (done) => {
+    const element = fixture('File');
+    flush(() => {
+      const node = element.shadowRoot.querySelector('files-payload-editor');
+      assert.ok(node);
+      done();
     });
-    </script>
+  });
+
+  test('Renders panel from content-type change', (done) => {
+    const element = fixture('NoSelection');
+    element.contentType = 'application/octet-stream';
+    flush(() => {
+      const node = element.shadowRoot.querySelector('files-payload-editor');
+      assert.ok(node);
+      done();
+    });
+  });
+});
+</script>
   </body>
 </html>

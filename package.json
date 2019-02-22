@@ -1,7 +1,18 @@
 {
-  "name": "@api-components/api-body-editor",
   "description": "Renders different types of body editors. It works with AMF data model",
-  "version": "2.1.0",
+  "keywords": [
+    "payload",
+    "body",
+    "editor",
+    "formdata",
+    "wwwurlencoded"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/advanced-rest-client/api-body-editor.git"
+  },
+  "name": "@api-components/api-body-editor",
+  "version": "3.0.0-preview.1",
   "license": "Apache-2.0",
   "authors": [
     "Pawel Psztyc",
@@ -9,21 +20,43 @@
   ],
   "devDependencies": {
     "@api-components/api-model-generator": "^0.1.8",
-    "@polymer/gen-typescript-declarations": "^1.6.0"
+    "@polymer/gen-typescript-declarations": "^1.6.0",
+    "@polymer/iron-demo-helpers": "^3.0.0",
+    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "@polymer/iron-component-page": "^4.0.0",
+    "web-animations-js": "^2.3.1",
+    "@polymer/iron-test-helpers": "^3.0.0",
+    "@polymer/paper-toggle-button": "^3.0.0",
+    "@polymer/paper-dropdown-menu": "^3.0.0",
+    "@polymer/paper-listbox": "^3.0.0",
+    "@polymer/paper-item": "^3.0.0",
+    "@polymer/test-fixture": "^4.0.2",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "sinon": "^7.2.3",
+    "wct-mocha": "^1.0.0"
   },
-  "private": false,
   "scripts": {
     "lint": "polymer lint api-body-editor.html",
     "test-sauce": "polymer test --plugin sauce --job-name \"api-body-editor:local-test\"",
     "test": "polymer test --plugin local",
     "update-types": "gen-typescript-declarations --deleteExisting --outDir ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/advanced-rest-client/api-body-editor.git"
-  },
   "bugs": {
     "url": "https://github.com/advanced-rest-client/api-body-editor/issues",
     "email": "arc@mulesoft.com"
+  },
+  "main": "api-body-editor.js",
+  "contributors": [
+    "Pawel Psztyc",
+    "The Advanced REST client authors <arc@mulesoft.com>"
+  ],
+  "dependencies": {
+    "@polymer/polymer": "^3.0.0",
+    "@polymer/iron-flex-layout": "^3.0.0",
+    "@polymer/paper-dropdown-menu": "^3.0.0",
+    "@polymer/paper-listbox": "^3.0.0",
+    "@polymer/paper-item": "^3.0.0",
+    "@polymer/paper-icon-button": "^3.0.0"
   }
 }
