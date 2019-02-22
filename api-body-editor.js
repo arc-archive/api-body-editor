@@ -11,30 +11,29 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 */
-import { PolymerElement } from '../../@polymer/polymer/polymer-element.js';
-
-import '../../@polymer/polymer/lib/elements/dom-if.js';
-import '../../@polymer/polymer/lib/utils/render-status.js';
-import '../../@polymer/iron-flex-layout/iron-flex-layout.js';
-import '../../@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
-import '../../@polymer/paper-listbox/paper-listbox.js';
-import '../../@polymer/paper-item/paper-item.js';
-import '../../@polymer/paper-icon-button/paper-icon-button.js';
-import '../../arc-icons/arc-icons.js';
-import '../../clipboard-copy/clipboard-copy.js';
-import '../../form-data-editor/form-data-editor.js';
-import '../../raw-payload-editor/raw-payload-editor.js';
-import '../../multipart-payload-editor/multipart-payload-editor.js';
-import '../../files-payload-editor/files-payload-editor.js';
-import '../../content-type-selector/content-type-selector.js';
-import { EventsTargetBehavior } from '../../events-target-behavior/events-target-behavior.js';
-import '../../api-form-mixin/api-form-styles.js';
-import '../../api-view-model-transformer/api-view-model-transformer.js';
-import '../../amf-helper-mixin/amf-helper-mixin.js';
-import '../../raml-aware/raml-aware.js';
-import '../../api-example-generator/api-example-generator.js';
-import './api-body-editor-amf-overlay.js';
-import { html } from '../../@polymer/polymer/lib/utils/html-tag.js';
+import {PolymerElement} from '@polymer/polymer/polymer-element.js';
+import {EventsTargetMixin} from '@advanced-rest-client/events-target-mixin/events-target-mixin.js';
+import {AmfHelperMixin} from '@api-components/amf-helper-mixin/amf-helper-mixin.js';
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+import '@polymer/polymer/lib/elements/dom-if.js';
+import '@polymer/polymer/lib/utils/render-status.js';
+import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
+import '@polymer/paper-listbox/paper-listbox.js';
+import '@polymer/paper-item/paper-item.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@advanced-rest-client/arc-icons/arc-icons.js';
+import '@api-components/clipboard-copy/clipboard-copy.js';
+import '@advanced-rest-client/form-data-editor/form-data-editor.js';
+import '@advanced-rest-client/raw-payload-editor/raw-payload-editor.js';
+import '@advanced-rest-client/multipart-payload-editor/multipart-payload-editor.js';
+import '@advanced-rest-client/files-payload-editor/files-payload-editor.js';
+import '@advanced-rest-client/content-type-selector/content-type-selector.js';
+import '@api-components/api-form-mixin/api-form-styles.js';
+import '@api-components/api-view-model-transformer/api-view-model-transformer.js';
+import '@api-components/raml-aware/raml-aware.js';
+import '@api-components/api-example-generator/api-example-generator.js';
+import {ApiBodyEditorAmfOverlay} from './api-body-editor-amf-overlay.js';
 /**
  * `api-body-editor`
  * Renders different types of body editors. It works with AMF data model
@@ -58,14 +57,12 @@ import { html } from '../../@polymer/polymer/lib/utils/html-tag.js';
  * @polymer
  * @demo demo/index.html
  * @memberof ApiElements
- * @appliesMixin ArcBehaviors.EventsTargetBehavior
- * @appliesMixin ApiElements.AmfHelperMixin
- * @appliesMixin ApiElements.ApiBodyEditorAmfOverlay
+ * @appliesMixin EventsTargetBehavior
+ * @appliesMixin AmfHelperMixin
+ * @appliesMixin ApiBodyEditorAmfOverlay
  */
 class ApiBodyEditor extends
-  ApiElements.ApiBodyEditorAmfOverlay(
-    ApiElements.AmfHelperMixin(
-      EventsTargetBehavior(PolymerElement))) {
+  ApiBodyEditorAmfOverlay(AmfHelperMixin(EventsTargetMixin(PolymerElement))) {
   static get template() {
     return html`
     <style include="api-form-styles">
@@ -110,11 +107,13 @@ class ApiBodyEditor extends
     </template>
 
     <div class="content-actions">
-      <paper-icon-button icon="arc:content-copy" class="action-icon copy-action" on-click="_copyToClipboard" title="Copy current editor value to clipboard"></paper-icon-button>
+      <paper-icon-button icon="arc:content-copy" class="action-icon copy-action"
+        on-click="_copyToClipboard" title="Copy current editor value to clipboard"></paper-icon-button>
       <template is="dom-if" if="[[hasAmfBody]]">
         <template is="dom-if" if="[[!singleMimeType]]">
           <paper-dropdown-menu class="amf-types" label="Select content type" no-label-float="">
-            <paper-listbox slot="dropdown-content" attr-for-selected="data-mime" selected="{{contentType}}" on-selected-changed="_typeSelectedChanged">
+            <paper-listbox slot="dropdown-content" attr-for-selected="data-mime"
+              selected="{{contentType}}" on-selected-changed="_typeSelectedChanged">
               <template is="dom-repeat" items="[[mimeTypes]]">
                 <paper-item data-mime\$="[[item]]">[[item]]</paper-item>
               </template>
@@ -133,7 +132,8 @@ class ApiBodyEditor extends
           <paper-listbox slot="dropdown-content" selected="{{selected}}">
             <paper-item data-source="raw" hidden\$="[[noTextInput]]">Raw input</paper-item>
             <paper-item data-source="urlencode" hidden\$="[[noFormData]]">Form data (www-url-form-encoded)</paper-item>
-            <paper-item data-source="multipart" hidden\$="[[noMultipart]]">Multipart form data (multipart/form-data)</paper-item>
+            <paper-item data-source="multipart"
+              hidden\$="[[noMultipart]]">Multipart form data (multipart/form-data)</paper-item>
             <paper-item data-source="file" hidden\$="[[noFile]]">Single file</paper-item>
           </paper-listbox>
         </paper-dropdown-menu>

@@ -11,17 +11,8 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 */
-import { dedupingMixin } from '../../@polymer/polymer/lib/utils/mixin.js';
-
-import { afterNextRender } from '../../@polymer/polymer/lib/utils/render-status.js';
-(function(global) {
-'use strict';
-if (!global.ApiElements) {
-  /**
-   * @namespace ApiElements
-   */
-  global.ApiElements = {};
-}
+import {dedupingMixin} from '@polymer/polymer/lib/utils/mixin.js';
+import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
 /**
  * Adds AMF support to body editor.
  *
@@ -32,7 +23,7 @@ if (!global.ApiElements) {
  * @mixinFunction
  * @memberof ApiElements
  */
-ApiElements.ApiBodyEditorAmfOverlay = dedupingMixin((base) => {
+export const ApiBodyEditorAmfOverlay = dedupingMixin((base) => {
   /**
    * @polymer
    * @mixinClass
@@ -376,4 +367,3 @@ ApiElements.ApiBodyEditorAmfOverlay = dedupingMixin((base) => {
   }
   return ABEAOmixin;
 });
-})(window);

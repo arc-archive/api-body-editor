@@ -5,11 +5,18 @@
  *   https://github.com/Polymer/tools/tree/master/packages/gen-typescript-declarations
  *
  * To modify these typings, edit the source file(s):
- *   api-body-editor-amf-overlay.html
+ *   api-body-editor-amf-overlay.js
  */
 
-/// <reference path="../polymer/types/lib/utils/mixin.d.ts" />
-/// <reference path="../polymer/types/lib/utils/render-status.d.ts" />
+
+// tslint:disable:variable-name Describing an API that's defined elsewhere.
+// tslint:disable:no-any describes the API as best we are able today
+
+import {dedupingMixin} from '@polymer/polymer/lib/utils/mixin.js';
+
+import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+
+export {ApiBodyEditorAmfOverlay};
 
 declare namespace ApiElements {
 
@@ -160,3 +167,5 @@ declare namespace ApiElements {
     _updatePanelValue(panel: HTMLElement|null, type: String|null, schema: object|null): void;
   }
 }
+
+export {ApiBodyEditorAmfOverlayConstructor};

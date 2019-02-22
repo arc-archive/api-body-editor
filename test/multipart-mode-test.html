@@ -4,10 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
     <title>api-body-editor test</title>
-    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-    <script src="../../../wct-browser-legacy/browser.js"></script>
-    <script type="module" src="../../../arc-polyfills/arc-polyfills.js"></script>
-    <script type="module" src="../api-body-editor.js"></script>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/@polymer/test-fixture/test-fixture.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="../node_modules/wct-mocha/wct-mocha.js"></script>
+
+    <script src="../../../jsonlint/lib/jsonlint.js"></script>
+    <script src="../../../codemirror/lib/codemirror.js"></script>
+    <script src="../../../codemirror/addon/mode/loadmode.js"></script>
+    <script src="../../../codemirror/mode/meta.js"></script>
+    <script src="../../../codemirror/mode/javascript/javascript.js"></script>
+    <script src="../../../codemirror/mode/xml/xml.js"></script>
+    <script src="../../../codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    <script src="../../../codemirror/addon/lint/lint.js"></script>
+    <script src="../../../codemirror/addon/lint/json-lint.js"></script>
+
   </head>
   <body>
     <test-fixture id="Multipart">
@@ -16,46 +29,45 @@
       </template>
     </test-fixture>
     <script type="module">
-import '../../../arc-polyfills/arc-polyfills.js';
-import '../api-body-editor.js';
-import { afterNextRender } from '../../../@polymer/polymer/lib/utils/render-status.js';
-suite('Form mode', () => {
-  test('Value is passed to the form element before initializing the element', (done) => {
-    const element = fixture('Multipart');
-    const value = new FormData();
-    element.value = value;
-    flush(() => {
-      afterNextRender(window, () => {
-        const editor = element.currentPanel;
-        assert.isTrue(editor.value === value);
-        done();
-      });
-    });
-  });
-
-  test('Value is passed to the form element after initializing the element', (done) => {
-    const element = fixture('Multipart');
-    flush(() => {
-      afterNextRender(window, () => {
+    import '../api-body-editor.js';
+    import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+    suite('Form mode', () => {
+      test('Value is passed to the form element before initializing the element', (done) => {
+        const element = fixture('Multipart');
         const value = new FormData();
         element.value = value;
-        const editor = element.currentPanel;
-        assert.isTrue(editor.value === value);
-        done();
+        flush(() => {
+          afterNextRender(window, () => {
+            const editor = element.currentPanel;
+            assert.isTrue(editor.value === value);
+            done();
+          });
+        });
+      });
+
+      test('Value is passed to the form element after initializing the element', (done) => {
+        const element = fixture('Multipart');
+        flush(() => {
+          afterNextRender(window, () => {
+            const value = new FormData();
+            element.value = value;
+            const editor = element.currentPanel;
+            assert.isTrue(editor.value === value);
+            done();
+          });
+        });
+      });
+
+      test('Removing the panel when changin editor', (done) => {
+        const element = fixture('Multipart');
+        flush(() => {
+          element.selected = 0;
+          const editor = element.shadowRoot.querySelector('multipart-payload-editor');
+          assert.notOk(editor);
+          done();
+        });
       });
     });
-  });
-
-  test('Removing the panel when changin editor', (done) => {
-    const element = fixture('Multipart');
-    flush(() => {
-      element.selected = 0;
-      const editor = element.shadowRoot.querySelector('multipart-payload-editor');
-      assert.notOk(editor);
-      done();
-    });
-  });
-});
-</script>
+    </script>
   </body>
 </html>
