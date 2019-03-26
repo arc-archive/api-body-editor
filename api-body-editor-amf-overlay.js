@@ -11,8 +11,8 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 */
-import {dedupingMixin} from '@polymer/polymer/lib/utils/mixin.js';
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+import {dedupingMixin} from '../../@polymer/polymer/lib/utils/mixin.js';
+import {afterNextRender} from '../../@polymer/polymer/lib/utils/render-status.js';
 /**
  * Adds AMF support to body editor.
  *

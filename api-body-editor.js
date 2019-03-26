@@ -11,28 +11,28 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 */
-import {PolymerElement} from '@polymer/polymer/polymer-element.js';
-import {EventsTargetMixin} from '@advanced-rest-client/events-target-mixin/events-target-mixin.js';
-import {AmfHelperMixin} from '@api-components/amf-helper-mixin/amf-helper-mixin.js';
-import {html} from '@polymer/polymer/lib/utils/html-tag.js';
-import '@polymer/polymer/lib/elements/dom-if.js';
-import '@polymer/polymer/lib/utils/render-status.js';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
-import '@polymer/paper-listbox/paper-listbox.js';
-import '@polymer/paper-item/paper-item.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@advanced-rest-client/arc-icons/arc-icons.js';
-import '@advanced-rest-client/clipboard-copy/clipboard-copy.js';
-import '@advanced-rest-client/form-data-editor/form-data-editor.js';
-import '@advanced-rest-client/raw-payload-editor/raw-payload-editor.js';
-import '@advanced-rest-client/multipart-payload-editor/multipart-payload-editor.js';
-import '@advanced-rest-client/files-payload-editor/files-payload-editor.js';
-import '@advanced-rest-client/content-type-selector/content-type-selector.js';
-import '@api-components/api-form-mixin/api-form-styles.js';
-import '@api-components/api-view-model-transformer/api-view-model-transformer.js';
-import '@api-components/raml-aware/raml-aware.js';
-import '@api-components/api-example-generator/api-example-generator.js';
+import {PolymerElement} from '../../@polymer/polymer/polymer-element.js';
+import {EventsTargetMixin} from '../../@advanced-rest-client/events-target-mixin/events-target-mixin.js';
+import {AmfHelperMixin} from '../../@api-components/amf-helper-mixin/amf-helper-mixin.js';
+import {html} from '../../@polymer/polymer/lib/utils/html-tag.js';
+import '../../@polymer/polymer/lib/elements/dom-if.js';
+import '../../@polymer/polymer/lib/utils/render-status.js';
+import '../../@polymer/iron-flex-layout/iron-flex-layout.js';
+import '../../@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
+import '../../@polymer/paper-listbox/paper-listbox.js';
+import '../../@polymer/paper-item/paper-item.js';
+import '../../@polymer/paper-icon-button/paper-icon-button.js';
+import '../../@advanced-rest-client/arc-icons/arc-icons.js';
+import '../../@advanced-rest-client/clipboard-copy/clipboard-copy.js';
+import '../../@advanced-rest-client/form-data-editor/form-data-editor.js';
+import '../../@advanced-rest-client/raw-payload-editor/raw-payload-editor.js';
+import '../../@advanced-rest-client/multipart-payload-editor/multipart-payload-editor.js';
+import '../../@advanced-rest-client/files-payload-editor/files-payload-editor.js';
+import '../../@advanced-rest-client/content-type-selector/content-type-selector.js';
+import '../../@api-components/api-form-mixin/api-form-styles.js';
+import '../../@api-components/api-view-model-transformer/api-view-model-transformer.js';
+import '../../@api-components/raml-aware/raml-aware.js';
+import '../../@api-components/api-example-generator/api-example-generator.js';
 import {ApiBodyEditorAmfOverlay} from './api-body-editor-amf-overlay.js';
 /**
  * `api-body-editor`
