@@ -23,7 +23,7 @@ import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@advanced-rest-client/arc-icons/arc-icons.js';
-import '@api-components/clipboard-copy/clipboard-copy.js';
+import '@advanced-rest-client/clipboard-copy/clipboard-copy.js';
 import '@advanced-rest-client/form-data-editor/form-data-editor.js';
 import '@advanced-rest-client/raw-payload-editor/raw-payload-editor.js';
 import '@advanced-rest-client/multipart-payload-editor/multipart-payload-editor.js';

@@ -53,6 +53,7 @@
   ],
   "dependencies": {
     "@advanced-rest-client/arc-icons": "^3.0.0-preview.2",
+    "@advanced-rest-client/clipboard-copy": "^3.0.0-preview.1",
     "@advanced-rest-client/content-type-selector": "^3.0.0-preview.1",
     "@advanced-rest-client/events-target-mixin": "^3.0.0-preview.2",
     "@advanced-rest-client/files-payload-editor": "^3.0.0-preview.1",
@@ -63,7 +64,6 @@
     "@api-components/api-example-generator": "^3.0.0-preview.4",
     "@api-components/api-form-mixin": "^3.0.0-preview.1",
     "@api-components/api-view-model-transformer": "^3.0.0-preview.1",
-    "@api-components/clipboard-copy": "^3.0.0-preview.1",
     "@api-components/raml-aware": "^3.0.0-preview.1",
     "@polymer/iron-flex-layout": "^3.0.0",
     "@polymer/paper-dropdown-menu": "^3.0.0",
