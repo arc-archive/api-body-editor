@@ -15,52 +15,6 @@
   body.styled .centered {
     max-width: 1400px;
   }
-
-  body.styled {
-    --code-mirror-background-color: #FFF8E1;
-    /* --code-mirror-string-color: #C3E88D;
-    --code-mirror-punctuation-color: #EEFFFF;
-    --code-mirror-atom-color: #F07178;
-    --code-mirror-number-color: #F78C6A;
-    --code-mirror-cursor-color: #009688; */
-  }
-
-  body.styled.dark {
-    --secondary-text-color: #616161;
-    --primary-background-color: #424242;
-
-    --anypoint-input-legacy-label-color: #F5F5F5;
-    --anypoint-input-background-color: rgba(255, 255, 255, 0.04);
-    --anypoint-input-label-color: #fff;
-    --anypoint-input-input-color: #fff;
-    --anypoint-input-border-bottom-color: #fff;
-    --anypoint-input-focused-border-bottom-color: #fff;
-    --anypoint-input-label-background-color: rgb(66, 66, 66);
-    --anypoint-input-legacy-focus-background-color: #3a3b3c;
-    --anypoint-input-legacy-focus-border-color: #178bea;
-    --anypoint-input-info-message-color: #fff;
-
-    --anypoint-dropdown-menu-background-color: #494949;
-    --anypoint-dropdown-menu-label-background-color: var(--primary-background-color);
-    --anypoint-listbox-background-color: #494949;
-    --anypoint-dropdown-menu-focus-background-color: #9E9E9E;
-    --anypoint-dropdown-menu-label-color: #fff;
-    --anypoint-dropdown-menu-info-message-color: #fff;
-    --anypoint-item-hover-background-color: #9E9E9E;
-    --anypoint-icon-button-emphasis-low-color: #fff;
-
-    --code-mirror-background-color: #37474F;
-    --code-mirror-string-color: #C3E88D;
-    --code-mirror-punctuation-color: #EEFFFF;
-    --code-mirror-atom-color: #F07178;
-    --code-mirror-number-color: #F78C6A;
-    --code-mirror-cursor-color: #009688;
-    --paper-listbox-background-color: #37474F;
-  }
-
-  output {
-    white-space: pre-wrap;
-  }
   </style>
   <!--
    With HTML imports this was relatively easy task to perform inside web component.
@@ -89,11 +43,15 @@
    </script>
    <!-- And finally linter popup -->
    <link rel="stylesheet" href="../node_modules/codemirror/addon/lint/lint.css" />
+
+   <script type="module">
+   import '@advanced-rest-client/arc-demo-helper/arc-demo-helper.js';
+   import '../api-body-editor.js';
+   </script>
 </head>
 
 <body>
-  <div id="demo"></div>
-  <script type="module" src="index.js"></script>
+  <api-body-editor selected="1" value="param=value" allowCustom></api-body-editor>
 </body>
 
 </html>
