@@ -12,13 +12,9 @@
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 // tslint:disable:no-any describes the API as best we are able today
 
-import {PolymerElement} from '@polymer/polymer/polymer-element.js';
+import {html, css, LitElement} from 'lit-element';
 
 import {EventsTargetMixin} from '@advanced-rest-client/events-target-mixin/events-target-mixin.js';
-
-import {AmfHelperMixin} from '@api-components/amf-helper-mixin/amf-helper-mixin.js';
-
-import {html} from '@polymer/polymer/lib/utils/html-tag.js';
 
 import {ApiBodyEditorAmfOverlay} from './api-body-editor-amf-overlay.js';
 
@@ -45,9 +41,8 @@ declare namespace ApiElements {
    */
   class ApiBodyEditor extends
     EventsTargetBehavior(
-    AmfHelperMixin(
     ApiBodyEditorAmfOverlay(
-    Object))) {
+    Object)) {
     readonly currentPanel: HTMLElement|null;
 
     /**
@@ -98,7 +93,7 @@ declare namespace ApiElements {
     /**
      * Computed value, true if the editor type selector is hidden.
      */
-    readonly editorSelectorHidden: boolean|null|undefined;
+    _editorSelectorHidden: boolean|null|undefined;
 
     /**
      * If set it computes `hasOptional` property and shows checkbox in the
@@ -125,16 +120,30 @@ declare namespace ApiElements {
     narrow: boolean|null|undefined;
 
     /**
-     * When set the editor is in read only mode.
+     * Enables Anypoint legacy styling
      */
-    readonly: boolean|null|undefined;
-    _attachListeners(node: any): void;
-    _detachListeners(node: any): void;
+    legacy: boolean|null|undefined;
 
     /**
-     * Handler for content type changed event.
+     * Enables Material Design outlined style
      */
-    _contentTypeHandler(e: CustomEvent|null): void;
+    outlined: boolean|null|undefined;
+
+    /**
+     * When set the editor is in read only mode.
+     */
+    readOnly: boolean|null|undefined;
+
+    /**
+     * When set all controls are disabled in the form
+     */
+    disabled: boolean|null|undefined;
+
+    /**
+     * Prohibits rendering of the documentation (the icon and the
+     * description).
+     */
+    noDocs: boolean|null|undefined;
 
     /**
      * Handler for content type change.
@@ -144,6 +153,36 @@ declare namespace ApiElements {
      * @param oldValue Previous value
      */
     _contentTypeChanged(contentType: String|null, oldValue: String|null): void;
+    render(): any;
+    _attachListeners(node: any): void;
+    _detachListeners(node: any): void;
+    _getApiMimeSelector(): any;
+    _getDefaultMimeSelector(): any;
+
+    /**
+     * Creates instance of Raw body panel in a TemplateResult
+     */
+    _createRawPanel(): TemplateResult|null;
+
+    /**
+     * Creates instance of x-www-urlencoded body panel.
+     */
+    _createFormDataPanel(): TemplateResult|null;
+
+    /**
+     * Creates instance of File body panel.
+     */
+    _createFilePanel(): TemplateResult|null;
+
+    /**
+     * Creates instance of Multipart body panel.
+     */
+    _createMultipartPanel(): TemplateResult|null;
+
+    /**
+     * Handler for content type changed event.
+     */
+    _contentTypeHandler(e: CustomEvent|null): void;
     _hideAllEditors(): void;
     _renderAllEditors(): void;
 
@@ -166,40 +205,6 @@ declare namespace ApiElements {
      * @param value Value to notify
      */
     _notifyBodyChanged(value: String|FormData|File|null|undefined): void;
-
-    /**
-     * Creates instance of Raw body panel and adds it to local DOM.
-     */
-    _createRawPanel(): void;
-
-    /**
-     * Creates instance of Raw body panel and adds it to local DOM.
-     */
-    _createFormDataPanel(): void;
-
-    /**
-     * Creates instance of Raw body panel and adds it to local DOM.
-     */
-    _createFilePanel(): void;
-
-    /**
-     * Creates instance of Raw body panel and adds it to local DOM.
-     */
-    _createMultipartPanel(): void;
-
-    /**
-     * Handler for the `value-changed` event dispatched by an editor panel.
-     * Updates this element value reported back to the application and
-     * dispatches `body-value-changed` custom event so elements without
-     * direct access to this element can use this information.
-     */
-    _panelValueChanged(e: CustomEvent|null): void;
-
-    /**
-     * Attaches value and value change listeners to current editor
-     * after it's created.
-     */
-    _attachValues(): void;
 
     /**
      * Dispatches analytics event.
@@ -226,65 +231,10 @@ declare namespace ApiElements {
     _updateEditorSelectorHidden(contentType: String|null): void;
 
     /**
-     * Updates property value on current panel.
-     *
-     * @param prop Name of the proeprty to set
-     * @param value New value to set.
-     */
-    _propertyChangeHandler(prop: String|null, value: any|null): void;
-
-    /**
-     * Updates value of the panel if `value` change and it is not
-     * internal change.
-     *
-     * @param value New value to set.
-     */
-    _valueChanged(value: String|FormData|File|null): void;
-
-    /**
-     * Updates `allowHideOptional` on a panel.
-     *
-     * @param value New value to set.
-     */
-    _allowHideOptionalChanged(value: Boolean|null): void;
-
-    /**
-     * Updates `allowDisableParams` on a panel.
-     *
-     * @param value New value to set.
-     */
-    _allowDisableParamsChanged(value: Boolean|null): void;
-
-    /**
-     * Updates `allowCustom` on a panel.
-     *
-     * @param value New value to set.
-     */
-    _allowCustomChanged(value: Boolean|null): void;
-
-    /**
-     * Updates `narrow` on a panel.
-     *
-     * @param value New value to set.
-     */
-    _narrowChanged(value: Boolean|null): void;
-
-    /**
-     * Updates `readonly` on a panel.
-     *
-     * @param value New value to set.
-     */
-    _readonlyChanged(value: Boolean|null): void;
-
-    /**
-     * Copies current body text value to clipboard.
+     * Coppies current response text value to clipboard.
      */
     _copyToClipboard(e: Event|null): void;
-
-    /**
-     * Resets state of the copy button.
-     */
-    _resetCopyButtonState(button: Element|null): void;
+    _resetCopyButtonState(button: any): void;
 
     /**
      * Dispatches `content-type-changed` custom event when CT changes by
@@ -304,6 +254,9 @@ declare namespace ApiElements {
      * It is only called for the panels that support refreshing (raw editor)
      */
     refreshPanel(): void;
+    _modelHandler(e: any): void;
+    _typeSelectionHandler(e: any): void;
+    _panelValueChanged(e: any): void;
   }
 }
 

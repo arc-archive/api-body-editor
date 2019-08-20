@@ -1,0 +1,10 @@
+[
+  {
+    "email": "test@domain.com",
+    "message": "This is another example message. Hello.",
+    "timestamp": 1496757380,
+    "attachements": [
+      "https://attc.domain.com/test"
+    ]
+  }
+]

@@ -11,6 +11,12 @@ uses:
 types:
   AppPerson: !include resourceTypes/app-person.raml
   Product: !include resourceTypes/product.raml
+  NoExamples:
+    type: object
+    properties:
+      prop1: string
+      prop2: number
+      prop3: integer
   NewDataType:
     description: This is a new DataType
     type: object
@@ -112,6 +118,7 @@ traits:
           items: !include resourceTypes/message-sent-type.raml
           examples:
             Example1: !include examples/messages-sent-example.json
+            Example2: !include examples/messages-sent-example2.json
 /arrayBody:
   post:
     body:
@@ -150,3 +157,15 @@ traits:
       body:
         image/png:
           type: file
+/no-body:
+  get:
+    responses:
+      200:
+        description: Test
+/no-examples:
+  put:
+    body:
+      application/json:
+        type: NoExamples
+      application/xml:
+        type: NoExamples

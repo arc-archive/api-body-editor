@@ -6,17 +6,11 @@
 
 # api-body-editor
 
-Renders different types of body editors. It works with AMF data model.
+Renders body editor that correspond to selected media type.
+
+It works with AMF data model to produce pre-populated view with values.
 
 **See breaking changes and list of required dependencies at the bottom of this document**
-
-```html
-<api-body-editor value="{{body}}"></api-body-editor>
-```
-
-### API components
-
-This components is a part of [API components ecosystem](https://elements.advancedrestclient.com/)
 
 ## Usage
 
@@ -36,55 +30,68 @@ npm install --save @api-components/api-body-editor
   </head>
   <body>
     <api-body-editor></api-body-editor>
+    <script>
+    {
+      document.querySelector('api-body-editor').addEventListener('value-changed', (e) => {
+        console.log(e.detail.value);
+      });
+    }
+    </script>
   </body>
 </html>
 ```
 
-### In a Polymer 3 element
+### In a LitElement
 
 ```js
-import {PolymerElement, html} from '@polymer/polymer';
+import { LitElement, html } from 'lit-element';
 import '@api-components/api-body-editor/api-body-editor.js';
 
 class SampleElement extends PolymerElement {
-  static get template() {
+  render() {
     return html`
-    <api-body-editor content-type="application/json" value="{{body}}"></api-body-editor>
+    <api-body-editor
+      allowdisableparams
+      allowcustom
+      allowhideoptional
+      .contentType="${this.contentType}"
+      @value-changed="${this._handleValue}"></api-headers-editor>
     `;
+  }
+
+  _handleValue(e) {
+    this.bodyValue = e.target.value;
   }
 }
 customElements.define('sample-element', SampleElement);
 ```
 
-### Installation
+### Development
 
-```sh
-git clone https://github.com/advanced-rest-client/api-body-editor
-cd api-url-editor
-npm install
-npm install -g polymer-cli
-```
 
 ### Running the demo locally
 
 ```sh
-polymer serve --npm
-open http://127.0.0.1:<port>/demo/
+npm start
 ```
 
 ### Running the tests
 ```sh
-polymer test --npm
+npm test
 ```
+
+### API components
+
+This components is a part of [API components ecosystem](https://elements.advancedrestclient.com/)
 
 ## Breaking Changes in v3
 
-Due to completely different dependencies import algorithm the CodeMirror and it's dependencies has to
-be included to the web application manually, outside the component.
+You need to include CodeMirror into the document before importing this element
+as it expect this global variable to be already set.
 
-Web Components are ES6 modules and libraries like CodeMirror are not adjusted to
-new spec. Therefore importing the library inside the component won't make it work
-(no reference is created).
+This is due CodeMirror not being able to run as ES module.
+
+Use your build system to bundle CodeMirror into the build and don't forget to export global variable.
 
 ```html
 <!-- CodeMirror + modes loader -->
@@ -100,9 +107,17 @@ new spec. Therefore importing the library inside the component won't make it wor
 <script src="node_modules/codemirror/addon/lint/lint.js"></script>
 <script src="node_modules/codemirror/addon/lint/json-lint.js"></script>
 ```
+
+Add linter popup styles:
+
+```html
+<link rel="stylesheet" href="node_modules/codemirror/addon/lint/lint.css" />
+```
+
 Finally, you should set the path to CodeMirror modes. When content type change
 this path is used to load syntax highlighter. If you list all modes in the scripts
 above then this is not required.
+
 ```html
 <script>
 CodeMirror.modeURL = 'node_modules/codemirror/mode/%N/%N.js';

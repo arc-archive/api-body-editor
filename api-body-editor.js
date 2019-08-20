@@ -11,29 +11,24 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 */
-import {PolymerElement} from '../../@polymer/polymer/polymer-element.js';
-import {EventsTargetMixin} from '../../@advanced-rest-client/events-target-mixin/events-target-mixin.js';
-import {AmfHelperMixin} from '../../@api-components/amf-helper-mixin/amf-helper-mixin.js';
-import {html} from '../../@polymer/polymer/lib/utils/html-tag.js';
-import '../../@polymer/polymer/lib/elements/dom-if.js';
-import '../../@polymer/polymer/lib/utils/render-status.js';
-import '../../@polymer/iron-flex-layout/iron-flex-layout.js';
-import '../../@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
-import '../../@polymer/paper-listbox/paper-listbox.js';
-import '../../@polymer/paper-item/paper-item.js';
-import '../../@polymer/paper-icon-button/paper-icon-button.js';
-import '../../@advanced-rest-client/arc-icons/arc-icons.js';
-import '../../@advanced-rest-client/clipboard-copy/clipboard-copy.js';
-import '../../@advanced-rest-client/form-data-editor/form-data-editor.js';
-import '../../@advanced-rest-client/raw-payload-editor/raw-payload-editor.js';
-import '../../@advanced-rest-client/multipart-payload-editor/multipart-payload-editor.js';
-import '../../@advanced-rest-client/files-payload-editor/files-payload-editor.js';
-import '../../@advanced-rest-client/content-type-selector/content-type-selector.js';
-import '../../@api-components/api-form-mixin/api-form-styles.js';
-import '../../@api-components/api-view-model-transformer/api-view-model-transformer.js';
-import '../../@api-components/raml-aware/raml-aware.js';
-import '../../@api-components/api-example-generator/api-example-generator.js';
-import {ApiBodyEditorAmfOverlay} from './api-body-editor-amf-overlay.js';
+import { html, css, LitElement } from 'lit-element';
+import { EventsTargetMixin } from '@advanced-rest-client/events-target-mixin/events-target-mixin.js';
+import formStyles from '@api-components/api-form-mixin/api-form-styles.js';
+import '@anypoint-web-components/anypoint-dropdown-menu/anypoint-dropdown-menu.js';
+import '@anypoint-web-components/anypoint-listbox/anypoint-listbox.js';
+import '@anypoint-web-components/anypoint-item/anypoint-item.js';
+import '@anypoint-web-components/anypoint-button/anypoint-button.js';
+import '@advanced-rest-client/clipboard-copy/clipboard-copy.js';
+import '@advanced-rest-client/form-data-editor/form-data-editor.js';
+import '@advanced-rest-client/raw-payload-editor/raw-payload-editor.js';
+import '@advanced-rest-client/multipart-payload-editor/multipart-payload-editor.js';
+import '@advanced-rest-client/files-payload-editor/files-payload-editor.js';
+import '@advanced-rest-client/content-type-selector/content-type-selector.js';
+import '@api-components/api-view-model-transformer/api-view-model-transformer.js';
+import '@api-components/raml-aware/raml-aware.js';
+import '@api-components/api-example-generator/api-example-generator.js';
+import { ApiBodyEditorAmfOverlay } from './api-body-editor-amf-overlay.js';
+
 /**
  * `api-body-editor`
  * Renders different types of body editors. It works with AMF data model
@@ -54,101 +49,69 @@ import {ApiBodyEditorAmfOverlay} from './api-body-editor-amf-overlay.js';
  * by the spec content types and therefore editors.
  *
  * @customElement
- * @polymer
  * @demo demo/index.html
  * @memberof ApiElements
  * @appliesMixin EventsTargetBehavior
- * @appliesMixin AmfHelperMixin
  * @appliesMixin ApiBodyEditorAmfOverlay
  */
-class ApiBodyEditor extends
-  ApiBodyEditorAmfOverlay(AmfHelperMixin(EventsTargetMixin(PolymerElement))) {
-  static get template() {
+class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(LitElement)) {
+  static get styles() {
+    return [
+      formStyles,
+      css`:host {
+        display: block;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .content-actions {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      anypoint-dropdown-menu {
+        margin-right: 12px;
+      }
+
+      anypoint-dropdown-menu.type {
+        margin: 0 12px;
+        min-width: 280px;
+      }
+
+      .single-ct-label {
+        margin: 12px 0px;
+        font-size: var(--arc-font-body1-font-size);
+        font-weight: var(--arc-font-body1-font-weight);
+        line-height: var(--arc-font-body1-line-height);
+        color: var(--api-body-editor-single-media-type-label);
+      }`
+    ];
+  }
+
+  render() {
+    const {
+      aware,
+      amf,
+      _effectiveModel,
+      value
+    } = this;
     return html`
-    <style include="api-form-styles">
-    :host {
-      display: block;
-      @apply --api-body-editor;
-    }
-
-    [hidden] {
-      display: none !important;
-    }
-
-    .content-actions {
-      @apply --layout-horizontal;
-      @apply --layout-center;
-      @apply --api-body-editor-content-actions;
-    }
-
-    paper-dropdown-menu {
-      margin-right: 12px;
-      @apply --payload-editor-dropdown;
-    }
-
-    paper-dropdown-menu.type {
-      margin: 0 12px;
-      min-width: 280px;
-      @apply --payload-editor-dropdown-type;
-    }
-
-    .single-ct-label {
-      @apply --arc-font-body1;
-      margin: 0;
-      color: var(--api-body-editor-single-media-type-label);
-    }
-
-    paper-item:hover {
-      @apply --paper-item-hover;
-    }
-    </style>
-    <template is="dom-if" if="[[aware]]">
-      <raml-aware raml="{{amfModel}}" scope="[[aware]]"></raml-aware>
-    </template>
+    <api-view-model-transformer .amf="${amf}"></api-view-model-transformer>
+    <api-example-generator .amf="${amf}"></api-example-generator>
+    ${aware ? html`<raml-aware .api-changed="${this._modelHandler}" .scope="${aware}"></raml-aware>` : ''}
 
     <div class="content-actions">
-      <paper-icon-button icon="arc:content-copy" class="action-icon copy-action"
-        on-click="_copyToClipboard" title="Copy current editor value to clipboard"></paper-icon-button>
-      <template is="dom-if" if="[[hasAmfBody]]">
-        <template is="dom-if" if="[[!singleMimeType]]">
-          <paper-dropdown-menu class="amf-types" label="Select content type" no-label-float="">
-            <paper-listbox slot="dropdown-content" attr-for-selected="data-mime"
-              selected="{{contentType}}" on-selected-changed="_typeSelectedChanged">
-              <template is="dom-repeat" items="[[mimeTypes]]">
-                <paper-item data-mime\$="[[item]]">[[item]]</paper-item>
-              </template>
-            </paper-listbox>
-          </paper-dropdown-menu>
-        </template>
-        <template is="dom-if" if="[[singleMimeType]]">
-          <p class="single-ct-label">Media type: [[contentType]]</p>
-        </template>
-      </template>
-      <template is="dom-if" if="[[!hasAmfBody]]">
-        <content-type-selector content-type="{{contentType}}" events-target="[[eventsTarget]]">
-          <paper-item data-type="application/octet-stream">Any file data</paper-item>
-        </content-type-selector>
-        <paper-dropdown-menu class="type" label="Editor view" hidden\$="[[editorSelectorHidden]]">
-          <paper-listbox slot="dropdown-content" selected="{{selected}}">
-            <paper-item data-source="raw" hidden\$="[[noTextInput]]">Raw input</paper-item>
-            <paper-item data-source="urlencode" hidden\$="[[noFormData]]">Form data (www-url-form-encoded)</paper-item>
-            <paper-item data-source="multipart"
-              hidden\$="[[noMultipart]]">Multipart form data (multipart/form-data)</paper-item>
-            <paper-item data-source="file" hidden\$="[[noFile]]">Single file</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
-      </template>
+      ${_effectiveModel ? this._getApiMimeSelector() : this._getDefaultMimeSelector()}
     </div>
-    <section class="body-panel"></section>
-    <clipboard-copy></clipboard-copy>
-    <api-view-model-transformer amf-model="[[amfModel]]" id="transformer"></api-view-model-transformer>
-    <api-example-generator amf-model="[[amfModel]]" id="exampleGenerator"></api-example-generator>
-`;
+
+    <section class="body-panel">${this.__createBodyPanel()}</section>
+
+    <clipboard-copy .content="${value}"></clipboard-copy>`;
   }
 
-  static get is() {
-    return 'api-body-editor';
-  }
   static get properties() {
     return {
       /**
@@ -159,11 +122,7 @@ class ApiBodyEditor extends
        * - 2 for Multipart
        * - 3 for File
        */
-      selected: {
-        type: Number,
-        value: 0,
-        observer: '_selectedChanged'
-      },
+      selected: { type: Number },
       /**
        * A HTTP body.
        *
@@ -171,75 +130,65 @@ class ApiBodyEditor extends
        *
        * @type {String|FormData|File}
        */
-      value: {
-        type: String,
-        value: '',
-        notify: true,
-        observer: '_valueChanged'
-      },
+      value: { },
       /**
        * When set it attempts to run associated code mirror mode
        * (raw editor).
        * This element listens for the `content-type-changed` event and when
        * handled it will automatically update content type and `mode`.
        */
-      contentType: {
-        type: String,
-        observer: '_contentTypeChanged'
-      },
+      contentType: { type: String },
       // Computed value, if set then raw text input is hidden
-      noTextInput: Boolean,
+      noTextInput: { type: Boolean },
       // Computed value, if set then form data input is hidden
-      noFormData: Boolean,
+      noFormData: { type: Boolean },
       // Computed value, if set then multipart input is hidden
-      noMultipart: Boolean,
+      noMultipart: { type: Boolean },
       // Computed value, if set then file input is hidden
-      noFile: Boolean,
+      noFile: { type: Boolean },
       // Computed value, true if the editor type selector is hidden.
-      editorSelectorHidden: {
-        type: Boolean,
-        readOnly: true,
-        value: true
-      },
+      _editorSelectorHidden: { type: Boolean },
       /**
        * If set it computes `hasOptional` property and shows checkbox in the
        * form to show / hide optional properties.
        */
-      allowHideOptional: {
-        type: Boolean,
-        observer: '_allowHideOptionalChanged'
-      },
+      allowHideOptional: { type: Boolean },
       /**
        * If set, enable / disable param checkbox is rendered next to each
        * form item.
        */
-      allowDisableParams: {
-        type: Boolean,
-        observer: '_allowDisableParamsChanged'
-      },
+      allowDisableParams: { type: Boolean },
       /**
        * When set, renders "add custom" item button.
        * If the element is to be used withouth AMF model this should always
        * be enabled. Otherwise users won't be able to add a parameter.
        */
-      allowCustom: {
-        type: Boolean,
-        observer: '_allowCustomChanged'
-      },
+      allowCustom: { type: Boolean },
       /**
        * Renders items in "narrow" view
        */
-      narrow: {
-        type: Boolean,
-        observer: '_narrowChanged'
-      },
+      narrow: { type: Boolean },
+      /**
+       * Enables Anypoint legacy styling
+       */
+      legacy: { type: Boolean },
+      /**
+       * Enables Material Design outlined style
+       */
+      outlined: { type: Boolean },
       /**
        * When set the editor is in read only mode.
        */
-      readonly: {
-        type: Boolean,
-        observer: '_readonlyChanged'
-      }
+      readOnly: { type: Boolean },
+      /**
+       * When set all controls are disabled in the form
+       */
+      disabled: { type: Boolean },
+      /**
+       * Prohibits rendering of the documentation (the icon and the
+       * description).
+       */
+      noDocs: { type: Boolean }
     };
   }
 
@@ -247,12 +196,59 @@ class ApiBodyEditor extends
    * @return {HTMLElement} Currently rendered body panel.
    */
   get currentPanel() {
-    if (!this.shadowRoot) {
-      return;
-    }
-    const selector = '[data-body-panel]';
+    const selector = '[data-bodypanel]';
     return this.shadowRoot.querySelector(selector);
   }
+
+  get selected() {
+    return this._selected;
+  }
+
+  set selected(value) {
+    const old = this._selected;
+    /* istanbul ignore if */
+    if (old === value || isNaN(value)) {
+      return;
+    }
+    this._selected = value;
+    this.requestUpdate('selected', old);
+    this._selectedChanged(value, old);
+  }
+
+  get value() {
+    return this._value;
+  }
+
+  set value(value) {
+    const old = this._value;
+    /* istanbul ignore if */
+    if (old === value) {
+      return;
+    }
+    this._value = value;
+    this.requestUpdate('value', old);
+    this.dispatchEvent(new CustomEvent('value-changed', {
+      detail: {
+        value
+      }
+    }));
+  }
+
+  get contentType() {
+    return this._contentType;
+  }
+
+  set contentType(value) {
+    const old = this._contentType;
+    /* istanbul ignore if */
+    if (old === value) {
+      return;
+    }
+    this._contentType = value;
+    this.requestUpdate('contentType', old);
+    this._contentTypeChanged(value, old);
+  }
+
   /**
    * @constructor
    */
@@ -260,7 +256,9 @@ class ApiBodyEditor extends
     super();
     this._contentTypeHandler = this._contentTypeHandler.bind(this);
     this._payloadKeyDown = this._payloadKeyDown.bind(this);
-    this._panelValueChanged = this._panelValueChanged.bind(this);
+
+    this.selected = 0;
+    this.value = '';
   }
 
   _attachListeners(node) {
@@ -272,6 +270,272 @@ class ApiBodyEditor extends
     node.removeEventListener('content-type-changed', this._contentTypeHandler);
     this.removeEventListener('keydown', this._payloadKeyDown);
   }
+
+  _getApiMimeSelector() {
+    const {
+      _singleMimeType,
+      contentType,
+      readOnly,
+      disabled,
+      legacy,
+      outlined,
+    } = this;
+    if (!_singleMimeType) {
+      const item = this._mimeTypes || [];
+      return html`<anypoint-dropdown-menu
+        class="amf-types"
+        .outlined="${outlined}"
+        .legacy="${legacy}"
+        .readOnly="${readOnly}"
+        .disabled="${disabled}">
+        <label slot="label">Body content type</label>
+        <anypoint-listbox
+          slot="dropdown-content"
+          attrforselected="data-mime"
+          .selected="${contentType}"
+          .disabled="${disabled}"
+          @selected-changed="${this._typeSelectedChanged}">
+          ${item.map((item) => html`<anypoint-item .legacy="${legacy}" data-mime="${item}">${item}</anypoint-item>`)}
+        </anypoint-listbox>
+      </anypoint-dropdown-menu>`;
+    }
+  }
+
+  _getDefaultMimeSelector() {
+    const {
+      contentType,
+      eventsTarget,
+      _editorSelectorHidden,
+      selected,
+      noTextInput,
+      noFormData,
+      noMultipart,
+      noFile,
+      readOnly,
+      disabled,
+      legacy,
+      outlined
+    } = this;
+    return html`<content-type-selector
+      .contentType="${contentType}"
+      .eventsTarget="${eventsTarget}"
+      .outlined="${outlined}"
+      .legacy="${legacy}"
+      .readOnly="${readOnly}"
+      .disabled="${disabled}">
+        <anypoint-item .legacy="${legacy}" data-type="application/octet-stream">Any file data</anypoint-item>
+      </content-type-selector>
+      ${!_editorSelectorHidden ? html`<anypoint-dropdown-menu
+        class="type"
+        .outlined="${outlined}"
+        .legacy="${legacy}"
+        .readOnly="${readOnly}"
+        .disabled="${disabled}">
+        <label slot="label">Editor view</label>
+        <anypoint-listbox
+          slot="dropdown-content"
+          .selected="${selected}"
+          .disabled="${disabled}"
+          @selected-changed="${this._typeSelectionHandler}">
+          <anypoint-item
+            data-source="raw"
+            .legacy="${legacy}"
+            ?hidden="${noTextInput}">Raw input</anypoint-item>
+          <anypoint-item
+            data-source="urlencode"
+            .legacy="${legacy}"
+            ?hidden="${noFormData}">Form data (www-url-form-encoded)</anypoint-item>
+          <anypoint-item
+            data-source="multipart"
+            .legacy="${legacy}"
+            ?hidden="${noMultipart}">Multipart form data (multipart/form-data)</anypoint-item>
+          <anypoint-item
+            data-source="file"
+            .legacy="${legacy}"
+            ?hidden="${noFile}">Single file</anypoint-item>
+        </anypoint-listbox>
+      </anypoint-dropdown-menu>` : ''}
+    `;
+  }
+
+  __createBodyPanel() {
+    switch (this.selected) {
+      case 0: return this._createRawPanel();
+      case 1: return this._createFormDataPanel();
+      case 2: return this._createMultipartPanel();
+      case 3: return this._createFilePanel();
+    }
+  }
+
+  /**
+   * Creates instance of Raw body panel in a TemplateResult
+   *
+   * @return {TemplateResult}
+   */
+  _createRawPanel() {
+    const {
+      eventsTarget,
+      allowDisableParams,
+      allowCustom,
+      allowHideOptional,
+      contentType,
+      narrow,
+      readOnly,
+      disabled,
+      legacy,
+      outlined,
+      value,
+      noDocs
+    } = this;
+    return html`<raw-payload-editor
+      data-type="raw"
+      data-bodypanel
+      .contentType="${contentType}"
+      .value="${value}"
+      .allowDisableParams="${allowDisableParams}"
+      .allowCustom="${allowCustom}"
+      .allowHideOptional="${allowHideOptional}"
+      .noDocs="${noDocs}"
+      .eventsTarget="${eventsTarget}"
+      .narrow="${narrow}"
+      .outlined="${outlined}"
+      .legacy="${legacy}"
+      .readOnly="${readOnly}"
+      .disabled="${disabled}"
+      @value-changed="${this._panelValueChanged}"
+    >
+    <anypoint-button
+      part="content-action-button, code-content-action-button"
+      class="action-button"
+      data-action="copy"
+      emphasis="low"
+      slot="content-action"
+      @click="${this._copyToClipboard}"
+      aria-label="Press to copy payload to clipboard"
+      title="Copy payload to clipboard"
+    >Copy</anypoint-button>
+    </raw-payload-editor>`;
+  }
+  /**
+   * Creates instance of x-www-urlencoded body panel.
+   *
+   * @return {TemplateResult}
+   */
+  _createFormDataPanel() {
+    const {
+      eventsTarget,
+      allowDisableParams,
+      allowCustom,
+      allowHideOptional,
+      contentType,
+      narrow,
+      readOnly,
+      disabled,
+      legacy,
+      outlined,
+      value,
+      noDocs,
+      _panelModel
+    } = this;
+    return html`<form-data-editor
+    data-type="urlencode"
+    data-bodypanel
+    .value="${value}"
+    .model="${_panelModel}"
+    .allowDisableParams="${allowDisableParams}"
+    .allowCustom="${allowCustom}"
+    .allowHideOptional="${allowHideOptional}"
+    .noDocs="${noDocs}"
+    .eventsTarget="${eventsTarget}"
+    .narrow="${narrow}"
+    .contentType="${contentType}"
+    .outlined="${outlined}"
+    .legacy="${legacy}"
+    .readOnly="${readOnly}"
+    .disabled="${disabled}"
+    @value-changed="${this._panelValueChanged}">
+      <anypoint-button
+        part="content-action-button, code-content-action-button"
+        class="action-button"
+        data-action="copy"
+        emphasis="low"
+        slot="content-action"
+        @click="${this._copyToClipboard}"
+        aria-label="Press to copy payload to clipboard"
+        title="Copy payload to clipboard"
+      >Copy</anypoint-button>
+    </form-data-editor>`;
+  }
+  /**
+   * Creates instance of File body panel.
+   * @return {TemplateResult}
+   */
+  _createFilePanel() {
+    const {
+      eventsTarget,
+      allowDisableParams,
+      allowCustom,
+      allowHideOptional,
+      contentType,
+      narrow,
+      value,
+      noDocs,
+      _panelModel
+    } = this;
+    return html`<files-payload-editor
+    data-type="file"
+    data-bodypanel
+    .value="${value}"
+    .allowDisableParams="${allowDisableParams}"
+    .allowCustom="${allowCustom}"
+    .allowHideOptional="${allowHideOptional}"
+    .noDocs="${noDocs}"
+    .eventsTarget="${eventsTarget}"
+    .narrow="${narrow}"
+    .contentType="${contentType}"
+    .model="${_panelModel}"
+    @value-changed="${this._panelValueChanged}">
+    </files-payload-editor>`;
+  }
+  /**
+   * Creates instance of Multipart body panel.
+   * @return {TemplateResult}
+   */
+  _createMultipartPanel() {
+    const {
+      eventsTarget,
+      allowDisableParams,
+      allowCustom,
+      allowHideOptional,
+      contentType,
+      narrow,
+      readOnly,
+      disabled,
+      legacy,
+      outlined,
+      value,
+      noDocs,
+      _panelModel
+    } = this;
+    return html`<multipart-payload-editor
+    data-type="formdata"
+    data-bodypanel
+    .value="${value}"
+    .allowDisableParams="${allowDisableParams}"
+    .allowCustom="${allowCustom}"
+    .allowHideOptional="${allowHideOptional}"
+    .noDocs="${noDocs}"
+    .eventsTarget="${eventsTarget}"
+    .narrow="${narrow}"
+    .contentType="${contentType}"
+    .outlined="${outlined}"
+    .legacy="${legacy}"
+    .readOnly="${readOnly}"
+    .disabled="${disabled}"
+    .model="${_panelModel}"
+    @value-changed="${this._panelValueChanged}">
+    </multipart-payload-editor>`;
+  }
   /**
    * Handler for content type changed event.
    * @param {CustomEvent} e
@@ -280,7 +544,7 @@ class ApiBodyEditor extends
     if (this.readonly) {
       return;
     }
-    this.set('contentType', e.detail.value);
+    this.contentType = e.detail.value;
   }
   /**
    * Handler for content type change.
@@ -290,9 +554,9 @@ class ApiBodyEditor extends
    * @param {String} oldValue Previous value
    */
   _contentTypeChanged(contentType, oldValue) {
+    super._contentTypeChanged(contentType, oldValue);
     this._updateEditorsState(contentType, oldValue);
     this._updateEditorSelectorHidden(contentType);
-    this._propertyChangeHandler('contentType', contentType);
   }
 
   _hideAllEditors() {
@@ -329,7 +593,8 @@ class ApiBodyEditor extends
     if (oldValue && oldValue.indexOf('multipart/form-data') === 0) {
       this.value = '';
     }
-    if (contentType === 'application/octet-stream' || (value instanceof Blob && oldValue !== undefined)) {
+    const blobValue = value instanceof Blob;
+    if (contentType === 'application/octet-stream' || (blobValue && oldValue !== undefined)) {
       this.noFile = false;
       this.selected = 3;
       return;
@@ -355,7 +620,6 @@ class ApiBodyEditor extends
    * @param {Number} oldValue
    */
   _selectedChanged(selected, oldValue) {
-    this.__removeExistingPanel();
     if (selected === -1 || selected === undefined || selected === null) {
       this._notifyBodyChanged();
       return;
@@ -363,7 +627,6 @@ class ApiBodyEditor extends
     if (oldValue !== undefined) {
       this._analyticsEvent('api-body-editor', 'usage-selection', selected);
     }
-    this.__createBodyPanel(selected);
   }
   /**
    * Notifies application about body change.
@@ -382,112 +645,6 @@ class ApiBodyEditor extends
       composed: true
     });
     this.dispatchEvent(e);
-  }
-  /**
-   * Removes any existing body panel from local DOM.
-   */
-  __removeExistingPanel() {
-    const panel = this.currentPanel;
-    if (!panel) {
-      return;
-    }
-    const events = this.__currentListeners;
-    if (events && events.size) {
-      for (let [type, fn] of events.entries()) {
-        panel.removeEventListener(type, fn);
-        events.delete(type);
-      }
-      this.__currentListeners = undefined;
-    }
-    panel.parentNode.removeChild(panel);
-  }
-
-  __createBodyPanel(selected) {
-    switch (selected) {
-      case 0: this._createRawPanel(); break;
-      case 1: this._createFormDataPanel(); break;
-      case 2: this._createMultipartPanel(); break;
-      case 3: this._createFilePanel(); break;
-    }
-    this._attachValues();
-  }
-  /**
-   * Adds shared properties for all panels.
-   *
-   * @param {HTMLElement} panel
-   * @param {String} type Body type.
-   */
-  __addCommonProperties(panel, type) {
-    panel.eventsTarget = this.eventsTarget;
-    panel.dataset.type = type;
-    panel.dataset.bodyPanel = true;
-    panel.allowDisableParams = this.allowDisableParams;
-    panel.allowCustom = this.allowCustom;
-    panel.narrow = this.narrow;
-    panel.contentType = this.contentType;
-    panel.allowHideOptional = this.allowHideOptional;
-  }
-  /**
-   * Creates instance of Raw body panel and adds it to local DOM.
-   */
-  _createRawPanel() {
-    const panel = document.createElement('raw-payload-editor');
-    this.__addCommonProperties(panel, 'raw');
-    this.shadowRoot.querySelector('.body-panel').appendChild(panel);
-  }
-  /**
-   * Creates instance of Raw body panel and adds it to local DOM.
-   */
-  _createFormDataPanel() {
-    const panel = document.createElement('form-data-editor');
-    this.__addCommonProperties(panel, 'urlencode');
-    this.shadowRoot.querySelector('.body-panel').appendChild(panel);
-  }
-  /**
-   * Creates instance of Raw body panel and adds it to local DOM.
-   */
-  _createFilePanel() {
-    const panel = document.createElement('files-payload-editor');
-    this.__addCommonProperties(panel, 'file');
-    this.shadowRoot.querySelector('.body-panel').appendChild(panel);
-  }
-  /**
-   * Creates instance of Raw body panel and adds it to local DOM.
-   */
-  _createMultipartPanel() {
-    const panel = document.createElement('multipart-payload-editor');
-    this.__addCommonProperties(panel, 'formdata');
-    this.shadowRoot.querySelector('.body-panel').appendChild(panel);
-  }
-  /**
-   * Handler for the `value-changed` event dispatched by an editor panel.
-   * Updates this element value reported back to the application and
-   * dispatches `body-value-changed` custom event so elements without
-   * direct access to this element can use this information.
-   *
-   * @param {CustomEvent} e
-   */
-  _panelValueChanged(e) {
-    if (this.readonly) {
-      return;
-    }
-    this._cancelValueSetOnPanel = true;
-    this.value = e.detail.value;
-    this._cancelValueSetOnPanel = false;
-    this._notifyBodyChanged(e.detail.value);
-  }
-  /**
-   * Attaches value and value change listeners to current editor
-   * after it's created.
-   */
-  _attachValues() {
-    const panel = this.currentPanel;
-    this.__currentListeners = new Map();
-    this.__currentListeners.set('value-changed', this._panelValueChanged);
-    panel.addEventListener('value-changed', this._panelValueChanged);
-    if (!this.hasAmfBody) {
-      panel.value = this.value;
-    }
   }
   /**
    * Dispatches analytics event.
@@ -519,8 +676,7 @@ class ApiBodyEditor extends
     if (e.key !== 'Enter') {
       return;
     }
-    const actionKey = navigator.platform === 'MacIntel' ? 'metaKey' : 'ctrlKey';
-    if (!e[actionKey]) {
+    if (!e.metaKey && !e.ctrlKey) {
       return;
     }
     this.dispatchEvent(new CustomEvent('send-request', {
@@ -552,106 +708,46 @@ class ApiBodyEditor extends
     } else {
       result = true;
     }
-    this._setEditorSelectorHidden(result);
+    this._editorSelectorHidden = result;
   }
   /**
-   * Updates property value on current panel.
-   *
-   * @param {String} prop Name of the proeprty to set
-   * @param {any} value New value to set.
-   */
-  _propertyChangeHandler(prop, value) {
-    const panel = this.currentPanel;
-    if (!panel) {
-      return;
-    }
-    panel[prop] = value;
-  }
-  /**
-   * Updates value of the panel if `value` change and it is not
-   * internal change.
-   *
-   * @param {String|FormData|File} value New value to set.
-   */
-  _valueChanged(value) {
-    if (this._cancelValueSetOnPanel) {
-      return;
-    }
-    this._propertyChangeHandler('value', value);
-  }
-  /**
-   * Updates `allowHideOptional` on a panel.
-   *
-   * @param {Boolean} value New value to set.
-   */
-  _allowHideOptionalChanged(value) {
-    this._propertyChangeHandler('allowHideOptional', value);
-  }
-  /**
-   * Updates `allowDisableParams` on a panel.
-   *
-   * @param {Boolean} value New value to set.
-   */
-  _allowDisableParamsChanged(value) {
-    this._propertyChangeHandler('allowDisableParams', value);
-  }
-  /**
-   * Updates `allowCustom` on a panel.
-   *
-   * @param {Boolean} value New value to set.
-   */
-  _allowCustomChanged(value) {
-    this._propertyChangeHandler('allowCustom', value);
-  }
-  /**
-   * Updates `narrow` on a panel.
-   *
-   * @param {Boolean} value New value to set.
-   */
-  _narrowChanged(value) {
-    this._propertyChangeHandler('narrow', value);
-  }
-  /**
-   * Updates `readonly` on a panel.
-   *
-   * @param {Boolean} value New value to set.
-   */
-  _readonlyChanged(value) {
-    this._propertyChangeHandler('readonly', value);
-  }
-  /**
-   * Copies current body text value to clipboard.
-   *
+   * Coppies current response text value to clipboard.
    * @param {Event} e
    */
   _copyToClipboard(e) {
     const button = e.target;
     const copy = this.shadowRoot.querySelector('clipboard-copy');
-    copy.content = this.value;
     if (copy.copy()) {
-      button.icon = 'arc:done';
+      button.innerText = 'Done';
     } else {
-      button.icon = 'arc:error';
-      this.dispatchEvent(new CustomEvent('send-analytics', {
-        cancelable: true,
-        bubbles: true,
-        composed: true,
-        detail: {
-          type: 'exception',
-          description: 'Copy to clipboard error - raml-body-editor',
-          fatal: false
-        }
-      }));
+      button.innerText = 'Error';
+    }
+    button.disabled = true;
+    if ('part' in button) {
+      button.part.add('content-action-button-disabled');
+      button.part.add('code-content-action-button-disabled');
     }
     setTimeout(() => this._resetCopyButtonState(button), 1000);
-    this._analyticsEvent('api-body-editor', 'Copy to clipboard');
+    const ev = new CustomEvent('send-analytics', {
+      detail: {
+        type: 'event',
+        category: 'Usage',
+        action: 'Click',
+        label: 'Multipart payload editor clipboard copy',
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(ev);
   }
-  /**
-   * Resets state of the copy button.
-   * @param {Element} button
-   */
+
   _resetCopyButtonState(button) {
-    button.icon = 'arc:content-copy';
+    button.innerText = 'Copy';
+    button.disabled = false;
+    if ('part' in button) {
+      button.part.remove('content-action-button-disabled');
+      button.part.remove('code-content-action-button-disabled');
+    }
   }
   /**
    * Dispatches `content-type-changed` custom event when CT changes by
@@ -659,7 +755,7 @@ class ApiBodyEditor extends
    * @param {String} type Content type value to announce.
    */
   _notifyContentTypeChange(type) {
-    if (this.readonly) {
+    if (this.readOnly) {
       return;
     }
     this.dispatchEvent(new CustomEvent('content-type-changed', {
@@ -685,14 +781,26 @@ class ApiBodyEditor extends
    * It is only called for the panels that support refreshing (raw editor)
    */
   refreshPanel() {
-    switch (this.selected) {
-      case 0:
-        const panel = this.currentPanel;
-        if (panel) {
-          panel.refresh();
-        }
-        break;
+    if (this.selected === 0) {
+      const panel = this.currentPanel;
+      if (panel) {
+        panel.refresh();
+      }
     }
+  }
+
+  _modelHandler(e) {
+    this.amf = e.detail.value;
+  }
+
+  _typeSelectionHandler(e) {
+    this.selected = e.detail.value;
+  }
+
+  _panelValueChanged(e) {
+    const { value } = e.detail;
+    this.value = value;
+    this._notifyBodyChanged(value);
   }
   /**
    * Fires when the value change.
@@ -714,4 +822,4 @@ class ApiBodyEditor extends
    */
 }
 
-window.customElements.define(ApiBodyEditor.is, ApiBodyEditor);
+window.customElements.define('api-body-editor', ApiBodyEditor);

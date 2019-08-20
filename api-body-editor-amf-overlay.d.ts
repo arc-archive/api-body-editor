@@ -12,9 +12,7 @@
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 // tslint:disable:no-any describes the API as best we are able today
 
-import {dedupingMixin} from '@polymer/polymer/lib/utils/mixin.js';
-
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+import {AmfHelperMixin} from '@api-components/amf-helper-mixin/amf-helper-mixin.js';
 
 export {ApiBodyEditorAmfOverlay};
 
@@ -34,11 +32,12 @@ declare namespace ApiElements {
   }
 
   interface ApiBodyEditorAmfOverlay {
+    amf: any;
 
     /**
-     * `raml-aware` scope property to use.
+     * Computed final model for payload.
      */
-    aware: string|null|undefined;
+    _effectiveModel: object|null|undefined;
 
     /**
      * AMF json/ld model for body.
@@ -48,38 +47,25 @@ declare namespace ApiElements {
     amfBody: object|null;
 
     /**
-     * Computed final model for payload.
+     * `raml-aware` scope property to use.
      */
-    _effectiveModel: object|null|undefined;
-
-    /**
-     * Computed value, `true` when `amfBody` is set.
-     * This controls how the view is rendered. AMF model has limited
-     * number of media types supported by the API. When not existing
-     * the edtior renders all possible types.
-     */
-    readonly hasAmfBody: object|null;
+    aware: string|null|undefined;
 
     /**
      * List of supported mime types by this endpoint.
      * This information is read from AMF data model.
      */
-    readonly mimeTypes: any[]|null|undefined;
+    _mimeTypes: any[]|null|undefined;
 
     /**
      * Computed value.
      * It's `true` when the endpint supports single mime type.
      * In this case it won't render type selector.
      */
-    readonly singleMimeType: object|null;
-
-    /**
-     * Computes value for `hasAmfBody`.
-     *
-     * @param amf AMF model for body.
-     */
-    _computeHasAmf(amf: object|null): Boolean|null;
-    _clearAmfSettings(): void;
+    _singleMimeType: object|null;
+    _panelModel: object|null|undefined;
+    firstUpdated(): void;
+    _contentTypeChanged(contentType: any): void;
 
     /**
      * Creates a debouncer for body change action so it can be sure that
@@ -125,7 +111,7 @@ declare namespace ApiElements {
      * @param model List of `Payload` definitions
      */
     _selectDefaultMediaType(model: any[]|null): void;
-    _updatePanelAmf(hasAmfBody: any, contentType: any): void;
+    _updatePanelAmf(contentType: any): void;
     _schemaForMedia(mediaType: any): any;
 
     /**
@@ -140,11 +126,10 @@ declare namespace ApiElements {
     /**
      * Updates view model on panels that support the model.
      *
-     * @param panel Current panel
      * @param contentType Current content type
      * @param schema A schema for current payload.
      */
-    _updatePanelModel(panel: HTMLElement|null, contentType: String|null, schema: object|null): void;
+    _updatePanelModel(contentType: String|null, schema: object|null): void;
 
     /**
      * To simplify things, this searches for first **object** from the union type
@@ -160,11 +145,10 @@ declare namespace ApiElements {
     /**
      * Updates panel value depending on examples or type schema availability.
      *
-     * @param panel Current panel
      * @param type Current content type
      * @param schema A schema for current payload.
      */
-    _updatePanelValue(panel: HTMLElement|null, type: String|null, schema: object|null): void;
+    _updatePanelValue(type: String|null, schema: object|null): void;
   }
 }
 

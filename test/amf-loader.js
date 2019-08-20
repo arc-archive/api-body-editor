@@ -1,12 +1,25 @@
-import {ns} from '../../../@api-components/amf-helper-mixin/amf-helper-mixin.js';
+import { AmfHelperMixin } from '@api-components/amf-helper-mixin/amf-helper-mixin.js';
+import { LitElement } from 'lit-element';
+
 export const AmfLoader = {};
-AmfLoader.load = function(endpointIndex, operationIndex, compact) {
-  endpointIndex = endpointIndex || 0;
-  operationIndex = operationIndex || 0;
+
+class HelperElement extends AmfHelperMixin(LitElement) {}
+window.customElements.define('helper-element', HelperElement);
+
+AmfLoader.lookupOperation = function(model, endpoint, operation) {
+  const helper = new HelperElement();
+  helper.amf = model;
+  const webApi = helper._computeWebApi(model);
+  const endPoint = helper._computeEndpointByPath(webApi, endpoint);
+  const opKey = helper._getAmfKey(helper.ns.w3.hydra.supportedOperation);
+  const ops = helper._ensureArray(endPoint[opKey]);
+  return ops.find((item) => helper._getValue(item, helper.ns.w3.hydra.core + 'method') === operation);
+};
+
+AmfLoader.load = async function(compact) {
   const file = '/demo-api' + (compact ? '-compact' : '') + '.json';
-  const url = location.protocol + '//' + location.host +
-    location.pathname.substr(0, location.pathname.lastIndexOf('/'))
-    .replace('/test', '/demo') + file;
+  const url = location.protocol + '//' + location.host + '/base/demo/' + file;
+
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.addEventListener('load', (e) => {
@@ -17,35 +30,18 @@ AmfLoader.load = function(endpointIndex, operationIndex, compact) {
         reject(e);
         return;
       }
-      const original = data;
-      if (data instanceof Array) {
-        data = data[0];
-      }
-      const encKey = compact ? 'doc:encodes' :
-        ns.raml.vocabularies.document + 'encodes';
-      let encodes = data[encKey];
-      if (encodes instanceof Array) {
-        encodes = encodes[0];
-      }
-      const endKey = compact ? 'raml-http:endpoint' :
-        ns.raml.vocabularies.http + 'endpoint';
-      let endpoints = encodes[endKey];
-      if (endpoints && !(endpoints instanceof Array)) {
-        endpoints = [endpoints];
-      }
-      const endpoint = endpoints[endpointIndex];
-      const opKey = compact ? 'hydra:supportedOperation' :
-        ns.w3.hydra.core + 'supportedOperation';
-      let methods = endpoint[opKey];
-      if (!(methods instanceof Array)) {
-        methods = [methods];
-      }
-      const method = methods[operationIndex];
-      resolve([original, method]);
+      resolve(data);
     });
     xhr.addEventListener('error',
       () => reject(new Error('Unable to load model file')));
     xhr.open('GET', url);
     xhr.send();
   });
+};
+
+AmfLoader.loadOperation = async function(compact, endpoint, operation) {
+  const data = await AmfLoader.load(compact);
+  const original = data;
+  const method = AmfLoader.lookupOperation(data, endpoint, operation);
+  return ([original, method]);
 };
