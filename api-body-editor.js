@@ -188,7 +188,12 @@ class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(LitElement
        * Prohibits rendering of the documentation (the icon and the
        * description).
        */
-      noDocs: { type: Boolean }
+      noDocs: { type: Boolean },
+      /**
+       * Renders line number on "raw" editor.
+       * @type {Object}
+       */
+      lineNumbers: { type: Boolean }
     };
   }
 
@@ -385,7 +390,8 @@ class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(LitElement
       legacy,
       outlined,
       value,
-      noDocs
+      noDocs,
+      lineNumbers
     } = this;
     return html`<raw-payload-editor
       data-type="raw"
@@ -402,6 +408,7 @@ class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(LitElement
       .legacy="${legacy}"
       .readOnly="${readOnly}"
       .disabled="${disabled}"
+      .lineNumbers="${lineNumbers}"
       @value-changed="${this._panelValueChanged}"
     >
     <anypoint-button
