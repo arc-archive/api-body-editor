@@ -75,20 +75,6 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
     }
   }
 
-  get amf() {
-    return this._amf;
-  }
-
-  set amf(value) {
-    const old = this._amf;
-    /* istanbul ignore if */
-    if (old === value) {
-      return;
-    }
-    this._amf = value;
-    this._amfChanged();
-  }
-
   get amfBody() {
     return this._amfBody;
   }
@@ -101,7 +87,7 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
     }
     this.value = '';
     this._amfBody = value;
-    this._amfChanged();
+    this.__amfChanged();
   }
 
   firstUpdated() {
@@ -116,20 +102,16 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
     }
   }
   /**
-   * Creates a debouncer for body change action so it can be sure that
-   * `amfModel` and `amfBody` properties are set.
-   *
-   * After debouncer timeout `__amfChanged()` is called with current value of
-   * `amfBody`
+   * Overrides `AmfHelperMixin.__amfChanged`
    */
-  _amfChanged() {
+  __amfChanged() {
     if (this.__bodyChangeDebouncer) {
       return;
     }
     this.__bodyChangeDebouncer = true;
     setTimeout(() => {
       this.__bodyChangeDebouncer = false;
-      this.__amfChanged(this.amfBody);
+      this.__processAmfData(this.amfBody);
     });
   }
   /**
@@ -138,7 +120,7 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
    *
    * @param {Array|Object} bodyShape Passed model
    */
-  __amfChanged(bodyShape) {
+  __processAmfData(bodyShape) {
     this._effectiveModel = undefined;
     if (!bodyShape || (bodyShape instanceof Array && !bodyShape.length)) {
       // Clears view model from the value.

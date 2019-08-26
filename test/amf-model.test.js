@@ -8,7 +8,7 @@ import {
 import {
   AmfLoader
 } from './amf-loader.js';
-import sinon from 'sinon/pkg/sinon-esm.js';
+import * as sinon from 'sinon/pkg/sinon-esm.js';
 import '../api-body-editor.js';
 
 describe('<api-body-editor>', function() {
@@ -36,9 +36,9 @@ describe('<api-body-editor>', function() {
           element.amf = amf;
         });
 
-        it('calls __amfChanged() after a timeout', async () => {
+        it('calls __processAmfData() after a timeout', async () => {
           element.amfBody = body;
-          const spy = sinon.spy(element, '__amfChanged');
+          const spy = sinon.spy(element, '__processAmfData');
           await aTimeout();
           assert.isTrue(spy.called);
         });

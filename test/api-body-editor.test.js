@@ -5,7 +5,7 @@ import {
   aTimeout,
   html
 } from '@open-wc/testing';
-import sinon from 'sinon/pkg/sinon-esm.js';
+import * as sinon from 'sinon/pkg/sinon-esm.js';
 import * as MockInteractions from '@polymer/iron-test-helpers/mock-interactions.js';
 import '../api-body-editor.js';
 
