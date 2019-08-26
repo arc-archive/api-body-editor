@@ -442,3 +442,12 @@
 
 
 
+## 3.0.2 (2019-08-26)
+
+
+### Features
+
+* adding lineNumbers propertyto be set on code mirror ([568fc9b](https://github.com/advanced-rest-client/api-body-editor/commit/568fc9b))
+
+
+
