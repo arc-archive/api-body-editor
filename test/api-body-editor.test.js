@@ -256,7 +256,7 @@ describe('<api-body-editor>', function() {
     });
   });
 
-  describe('refreshPanel()', () => {
+  describe('refresh()', () => {
     let element;
     beforeEach(async () => {
       element = await basicFixture();
@@ -268,7 +268,7 @@ describe('<api-body-editor>', function() {
     it('Refreshes state of raw panel', async () => {
       element.selected = 0;
       await nextFrame();
-      element.refreshPanel();
+      element.refresh();
       const panel = element.currentPanel;
       const cm = panel.shadowRoot.querySelector('code-mirror');
       const v = cm.editor.getValue();
@@ -276,8 +276,14 @@ describe('<api-body-editor>', function() {
     });
 
     it('Does nothing for other panels', () => {
-      element.refreshPanel();
+      element.refresh();
       // no error by calling `.refresh()` on the panel.
+    });
+
+    it('calls refresh() from refreshPanel()', () => {
+      const spy = sinon.spy(element, 'refresh');
+      element.refreshPanel();
+      assert.isTrue(spy.called);
     });
   });
 
