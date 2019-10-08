@@ -169,9 +169,9 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
        */
       narrow: { type: Boolean },
       /**
-       * Enables Anypoint legacy styling
+       * Enables compatibility with Anypoint styling
        */
-      legacy: { type: Boolean },
+      compatibility: { type: Boolean },
       /**
        * Enables Material Design outlined style
        */
@@ -282,25 +282,27 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
       contentType,
       readOnly,
       disabled,
-      legacy,
+      compatibility,
       outlined,
     } = this;
     if (!_singleMimeType) {
       const item = this._mimeTypes || [];
       return html`<anypoint-dropdown-menu
         class="amf-types"
-        .outlined="${outlined}"
-        .legacy="${legacy}"
-        .readOnly="${readOnly}"
-        .disabled="${disabled}">
+        ?outlined="${outlined}"
+        ?compatibility="${compatibility}"
+        ?readOnly="${readOnly}"
+        ?disabled="${disabled}">
         <label slot="label">Body content type</label>
         <anypoint-listbox
           slot="dropdown-content"
           attrforselected="data-mime"
           .selected="${contentType}"
-          .disabled="${disabled}"
+          ?disabled="${disabled}"
+          ?compatibility="${compatibility}"
           @selected-changed="${this._typeSelectedChanged}">
-          ${item.map((item) => html`<anypoint-item .legacy="${legacy}" data-mime="${item}">${item}</anypoint-item>`)}
+          ${item.map((item) => html`<anypoint-item
+            .compatibility="${compatibility}" data-mime="${item}">${item}</anypoint-item>`)}
         </anypoint-listbox>
       </anypoint-dropdown-menu>`;
     }
@@ -318,45 +320,49 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
       noFile,
       readOnly,
       disabled,
-      legacy,
+      compatibility,
       outlined
     } = this;
     return html`<content-type-selector
       .contentType="${contentType}"
       .eventsTarget="${eventsTarget}"
-      .outlined="${outlined}"
-      .legacy="${legacy}"
-      .readOnly="${readOnly}"
-      .disabled="${disabled}">
-        <anypoint-item .legacy="${legacy}" data-type="application/octet-stream">Any file data</anypoint-item>
+      ?outlined="${outlined}"
+      ?compatibility="${compatibility}"
+      ?readOnly="${readOnly}"
+      ?disabled="${disabled}"
+    >
+        <anypoint-item
+          ?compatibility="${compatibility}"
+          data-type="application/octet-stream"
+        >Any file data</anypoint-item>
       </content-type-selector>
       ${!_editorSelectorHidden ? html`<anypoint-dropdown-menu
         class="type"
-        .outlined="${outlined}"
-        .legacy="${legacy}"
-        .readOnly="${readOnly}"
-        .disabled="${disabled}">
+        ?outlined="${outlined}"
+        ?compatibility="${compatibility}"
+        ?readOnly="${readOnly}"
+        ?disabled="${disabled}">
         <label slot="label">Editor view</label>
         <anypoint-listbox
           slot="dropdown-content"
           .selected="${selected}"
-          .disabled="${disabled}"
+          ?disabled="${disabled}"
           @selected-changed="${this._typeSelectionHandler}">
           <anypoint-item
             data-source="raw"
-            .legacy="${legacy}"
+            ?compatibility="${compatibility}"
             ?hidden="${noTextInput}">Raw input</anypoint-item>
           <anypoint-item
             data-source="urlencode"
-            .legacy="${legacy}"
+            ?compatibility="${compatibility}"
             ?hidden="${noFormData}">Form data (www-url-form-encoded)</anypoint-item>
           <anypoint-item
             data-source="multipart"
-            .legacy="${legacy}"
+            ?compatibility="${compatibility}"
             ?hidden="${noMultipart}">Multipart form data (multipart/form-data)</anypoint-item>
           <anypoint-item
             data-source="file"
-            .legacy="${legacy}"
+            ?compatibility="${compatibility}"
             ?hidden="${noFile}">Single file</anypoint-item>
         </anypoint-listbox>
       </anypoint-dropdown-menu>` : ''}
@@ -380,17 +386,12 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
   _createRawPanel() {
     const {
       eventsTarget,
-      allowDisableParams,
-      allowCustom,
-      allowHideOptional,
       contentType,
-      narrow,
       readOnly,
       disabled,
-      legacy,
+      compatibility,
       outlined,
       value,
-      noDocs,
       lineNumbers
     } = this;
     return html`<raw-payload-editor
@@ -398,17 +399,12 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
       data-bodypanel
       .contentType="${contentType}"
       .value="${value}"
-      .allowDisableParams="${allowDisableParams}"
-      .allowCustom="${allowCustom}"
-      .allowHideOptional="${allowHideOptional}"
-      .noDocs="${noDocs}"
       .eventsTarget="${eventsTarget}"
-      .narrow="${narrow}"
-      .outlined="${outlined}"
-      .legacy="${legacy}"
-      .readOnly="${readOnly}"
-      .disabled="${disabled}"
-      .lineNumbers="${lineNumbers}"
+      ?outlined="${outlined}"
+      ?compatibility="${compatibility}"
+      ?readOnly="${readOnly}"
+      ?disabled="${disabled}"
+      ?lineNumbers="${lineNumbers}"
       @value-changed="${this._panelValueChanged}"
     >
     <anypoint-button
@@ -417,6 +413,7 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
       data-action="copy"
       emphasis="low"
       slot="content-action"
+      ?compatibility="${compatibility}"
       @click="${this._copyToClipboard}"
       aria-label="Press to copy payload to clipboard"
       title="Copy payload to clipboard"
@@ -438,35 +435,37 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
       narrow,
       readOnly,
       disabled,
-      legacy,
+      compatibility,
       outlined,
       value,
       noDocs,
       _panelModel
     } = this;
     return html`<form-data-editor
-    data-type="urlencode"
-    data-bodypanel
-    .value="${value}"
-    .model="${_panelModel}"
-    .allowDisableParams="${allowDisableParams}"
-    .allowCustom="${allowCustom}"
-    .allowHideOptional="${allowHideOptional}"
-    .noDocs="${noDocs}"
-    .eventsTarget="${eventsTarget}"
-    .narrow="${narrow}"
-    .contentType="${contentType}"
-    .outlined="${outlined}"
-    .legacy="${legacy}"
-    .readOnly="${readOnly}"
-    .disabled="${disabled}"
-    @value-changed="${this._panelValueChanged}">
+      data-type="urlencode"
+      data-bodypanel
+      .value="${value}"
+      .model="${_panelModel}"
+      .eventsTarget="${eventsTarget}"
+      .contentType="${contentType}"
+      ?allowDisableParams="${allowDisableParams}"
+      ?allowCustom="${allowCustom}"
+      ?allowHideOptional="${allowHideOptional}"
+      ?noDocs="${noDocs}"
+      ?narrow="${narrow}"
+      ?outlined="${outlined}"
+      ?compatibility="${compatibility}"
+      ?readOnly="${readOnly}"
+      ?disabled="${disabled}"
+      @value-changed="${this._panelValueChanged}"
+    >
       <anypoint-button
         part="content-action-button, code-content-action-button"
         class="action-button"
         data-action="copy"
         emphasis="low"
         slot="content-action"
+        ?compatibility="${compatibility}"
         @click="${this._copyToClipboard}"
         aria-label="Press to copy payload to clipboard"
         title="Copy payload to clipboard"
@@ -487,22 +486,24 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
       narrow,
       value,
       noDocs,
+      compatibility,
       _panelModel
     } = this;
     return html`<files-payload-editor
-    data-type="file"
-    data-bodypanel
-    .value="${value}"
-    .allowDisableParams="${allowDisableParams}"
-    .allowCustom="${allowCustom}"
-    .allowHideOptional="${allowHideOptional}"
-    .noDocs="${noDocs}"
-    .eventsTarget="${eventsTarget}"
-    .narrow="${narrow}"
-    .contentType="${contentType}"
-    .model="${_panelModel}"
-    @value-changed="${this._panelValueChanged}">
-    </files-payload-editor>`;
+      data-type="file"
+      data-bodypanel
+      .value="${value}"
+      ?allowDisableParams="${allowDisableParams}"
+      ?allowCustom="${allowCustom}"
+      ?allowHideOptional="${allowHideOptional}"
+      ?noDocs="${noDocs}"
+      ?compatibility="${compatibility}"
+      .eventsTarget="${eventsTarget}"
+      ?narrow="${narrow}"
+      .contentType="${contentType}"
+      .model="${_panelModel}"
+      @value-changed="${this._panelValueChanged}"
+    ></files-payload-editor>`;
   }
   /**
    * Creates instance of Multipart body panel.
@@ -518,30 +519,30 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
       narrow,
       readOnly,
       disabled,
-      legacy,
+      compatibility,
       outlined,
       value,
       noDocs,
       _panelModel
     } = this;
     return html`<multipart-payload-editor
-    data-type="formdata"
-    data-bodypanel
-    .value="${value}"
-    .allowDisableParams="${allowDisableParams}"
-    .allowCustom="${allowCustom}"
-    .allowHideOptional="${allowHideOptional}"
-    .noDocs="${noDocs}"
-    .eventsTarget="${eventsTarget}"
-    .narrow="${narrow}"
-    .contentType="${contentType}"
-    .outlined="${outlined}"
-    .legacy="${legacy}"
-    .readOnly="${readOnly}"
-    .disabled="${disabled}"
-    .model="${_panelModel}"
-    @value-changed="${this._panelValueChanged}">
-    </multipart-payload-editor>`;
+      data-type="formdata"
+      data-bodypanel
+      .value="${value}"
+      .eventsTarget="${eventsTarget}"
+      .contentType="${contentType}"
+      .model="${_panelModel}"
+      ?allowDisableParams="${allowDisableParams}"
+      ?allowCustom="${allowCustom}"
+      ?allowHideOptional="${allowHideOptional}"
+      ?noDocs="${noDocs}"
+      ?narrow="${narrow}"
+      ?outlined="${outlined}"
+      ?compatibility="${compatibility}"
+      ?readOnly="${readOnly}"
+      ?disabled="${disabled}"
+      @value-changed="${this._panelValueChanged}"
+    ></multipart-payload-editor>`;
   }
   /**
    * Handler for content type changed event.

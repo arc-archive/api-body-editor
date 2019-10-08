@@ -18,13 +18,13 @@ class ApiDemo extends ApiDemoPageBase {
     super();
 
     this.initObservableProperties([
-      'mainReadOnly', 'mainDisabled', 'demoOutlined', 'demoLegacy',
+      'mainReadOnly', 'mainDisabled', 'demoOutlined', 'demoCompatibility',
       'narrow', 'allowCustom', 'noDocs', 'selectedBody', 'payloadResult',
       'allowHideOptional', 'allowDisableParams'
     ]);
 
     this.componentName = 'api-body-editor';
-    this.demoStates = ['Filled', 'Outlined', 'Legacy'];
+    this.demoStates = ['Filled', 'Outlined', 'Anypoint'];
     this._mainDemoStateHandler = this._mainDemoStateHandler.bind(this);
     this._toggleMainOption = this._toggleMainOption.bind(this);
     this._modelHandler = this._modelHandler.bind(this);
@@ -58,20 +58,8 @@ class ApiDemo extends ApiDemoPageBase {
 
   _mainDemoStateHandler(e) {
     const state = e.detail.value;
-    switch (state) {
-      case 0:
-        this.demoOutlined = false;
-        this.demoLegacy = false;
-        break;
-      case 1:
-        this.demoOutlined = true;
-        this.demoLegacy = false;
-        break;
-      case 2:
-        this.demoOutlined = false;
-        this.demoLegacy = true;
-        break;
-    }
+    this.demoOutlined = state === 1;
+    this.demoCompatibility = state === 2;
   }
 
   _toggleMainOption(e) {
@@ -115,7 +103,7 @@ class ApiDemo extends ApiDemoPageBase {
       demoStates,
       darkThemeActive,
       demoOutlined,
-      demoLegacy,
+      demoCompatibility,
       selectedBody,
       payloadResult,
       amf,
@@ -145,13 +133,13 @@ class ApiDemo extends ApiDemoPageBase {
               ?readonly="${mainReadOnly}"
               ?disabled="${mainDisabled}"
               ?outlined="${demoOutlined}"
-              ?legacy="${demoLegacy}"
+              ?compatibility="${demoCompatibility}"
               .amf="${amf}"
               .amfBody="${selectedBody}"
-              .allowHideOptional="${allowHideOptional}"
-              .allowDisableParams="${allowDisableParams}"
-              .allowCustom="${allowCustom}"
-              .noDocs="${noDocs}"
+              ?allowHideOptional="${allowHideOptional}"
+              ?allowDisableParams="${allowDisableParams}"
+              ?allowCustom="${allowCustom}"
+              ?noDocs="${noDocs}"
               @value-changed="${this._mainValueChanged}"
               @model-changed="${this._modelHandler}"></api-body-editor>
 

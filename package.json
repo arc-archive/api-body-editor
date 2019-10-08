@@ -29,9 +29,9 @@
   },
   "dependencies": {
     "@advanced-rest-client/clipboard-copy": "^3.0.1",
-    "@advanced-rest-client/content-type-selector": "^3.1.1",
+    "@advanced-rest-client/content-type-selector": "^3.1.2",
     "@advanced-rest-client/events-target-mixin": "^3.0.0",
-    "@advanced-rest-client/files-payload-editor": "^3.0.2",
+    "@advanced-rest-client/files-payload-editor": "^3.0.3",
     "@advanced-rest-client/form-data-editor": "^3.0.4",
     "@advanced-rest-client/multipart-payload-editor": "^3.0.7",
     "@advanced-rest-client/raw-payload-editor": "^3.0.4",

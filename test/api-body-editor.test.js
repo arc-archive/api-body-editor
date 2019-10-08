@@ -448,24 +448,6 @@ describe('<api-body-editor>', function() {
       assert.ok(node);
     });
 
-    it('allowDisableParams is passed to the raw element', async () => {
-      const element = await fixture('<api-body-editor allowdisableparams></api-body-editor>');
-      const editor = element.currentPanel;
-      assert.isTrue(editor.allowDisableParams);
-    });
-
-    it('allowCustom is passed to the raw element', async () => {
-      const element = await fixture('<api-body-editor allowcustom></api-body-editor>');
-      const editor = element.currentPanel;
-      assert.isTrue(editor.allowCustom);
-    });
-
-    it('narrow is passed to the raw element', async () => {
-      const element = await fixture('<api-body-editor narrow></api-body-editor>');
-      const editor = element.currentPanel;
-      assert.isTrue(editor.narrow);
-    });
-
     it('contentType is passed to the raw element', async () => {
       const element = await fixture('<api-body-editor contenttype="own/type"></api-body-editor>');
       const editor = element.currentPanel;
