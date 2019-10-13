@@ -18,7 +18,6 @@ import { AmfHelperMixin } from '@api-components/amf-helper-mixin/amf-helper-mixi
  * This mixin's only purpose is to keep AMF support separated from the
  * body editor code so it's clearer to read it.
  *
- * @polymer
  * @mixinFunction
  * @memberof ApiElements
  * @appliesMixin AmfHelperMixin
@@ -153,23 +152,23 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
    */
   _ensurePayloadModel(model) {
     if (model instanceof Array) {
-      if (this._hasType(model[0], this.ns.raml.vocabularies.http + 'Payload')) {
+      if (this._hasType(model[0], this.ns.aml.vocabularies.apiContract.Payload)) {
         return model;
       }
       model = model[0];
     }
-    if (!this._hasType(model, this.ns.w3.hydra.core + 'Operation')) {
+    if (!this._hasType(model, this.ns.aml.vocabularies.apiContract.Operation)) {
       return;
     }
-    const opKey = this._getAmfKey(this.ns.w3.hydra.core + 'expects');
+    const opKey = this._getAmfKey(this.ns.aml.vocabularies.apiContract.expects);
     model = model[opKey];
     if (model instanceof Array) {
       model = model[0];
     }
-    if (!this._hasType(model, this.ns.raml.vocabularies.http + 'Request')) {
+    if (!this._hasType(model, this.ns.aml.vocabularies.apiContract.Request)) {
       return;
     }
-    const pKey = this._getAmfKey(this.ns.raml.vocabularies.http + 'payload');
+    const pKey = this._getAmfKey(this.ns.aml.vocabularies.apiContract.payload);
     return this._ensureArray(model[pKey]);
   }
 
@@ -180,8 +179,7 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
    */
   _updateAmfMediaTypes(model) {
     this._mimeTypes = undefined;
-    const ns = this.ns.raml.vocabularies;
-    const key = ns.http + 'mediaType';
+    const key = this.ns.aml.vocabularies.core.mediaType;
     const mediaTypes = model.map((item) => this._getValue(item, key));
     this._mimeTypes = mediaTypes;
     this._singleMimeType = mediaTypes && mediaTypes.length === 1;
@@ -202,16 +200,15 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
     if (!types || !types[0]) {
       return;
     }
-    const ns = this.ns.raml.vocabularies;
     // Types corresponds to model array in order.
-    const schemaKey = this._getAmfKey(this.ns.raml.vocabularies.http + 'schema');
+    const schemaKey = this._getAmfKey(this.ns.aml.vocabularies.shapes.schema);
     let shape = model[0][schemaKey];
     if (shape instanceof Array) {
       shape = shape[0];
     }
     // this.contentType = undefined;
     let ct;
-    if (this._hasType(shape, ns.shapes + 'FileShape')) {
+    if (this._hasType(shape, this.ns.aml.vocabularies.shapes.FileShape)) {
       this.fileAccept = types;
       ct = 'application/octet-stream';
     } else {
@@ -238,7 +235,7 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
   }
 
   _schemaForMedia(mediaType) {
-    const key = this._getAmfKey(this.ns.raml.vocabularies.http + 'mediaType');
+    const key = this._getAmfKey(this.ns.aml.vocabularies.core.mediaType);
     for (let i = 0, len = this._effectiveModel.length; i < len; i++) {
       const payload = this._effectiveModel[i];
       let itemMedia = payload[key];
@@ -252,7 +249,7 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
         itemMedia = itemMedia['@value'];
       }
       if (itemMedia === mediaType) {
-        const sKey = this._getAmfKey(this.ns.raml.vocabularies.http + 'schema');
+        const sKey = this._getAmfKey(this.ns.aml.vocabularies.shapes.schema);
         let schema = payload[sKey];
         if (schema instanceof Array) {
           schema = schema[0];
@@ -291,10 +288,10 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
     }
     let data;
     this._resolve(schema);
-    if (this._hasType(schema, this.ns.raml.vocabularies.shapes + 'UnionShape')) {
+    if (this._hasType(schema, this.ns.aml.vocabularies.shapes.UnionShape)) {
       data = this._getUnionObjectProperties(schema);
-    } else if (this._hasType(schema, this.ns.w3.shacl.name + 'NodeShape')) {
-      const pKey = this._getAmfKey(this.ns.w3.shacl.name + 'property');
+    } else if (this._hasType(schema, this.ns.w3.shacl.NodeShape)) {
+      const pKey = this._getAmfKey(this.ns.w3.shacl.property);
       data = this._ensureArray(schema[pKey]);
     }
     if (!data) {
@@ -315,19 +312,19 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
    * @return {Array<Object>|undefined} Properies of first object, if any.
    */
   _getUnionObjectProperties(schema) {
-    const key = this._getAmfKey(this.ns.raml.vocabularies.shapes + 'anyOf');
+    const key = this._getAmfKey(this.ns.aml.vocabularies.shapes.anyOf);
     const list = this._ensureArray(schema[key]);
     if (!list) {
       return;
     }
-    const pKey = this._getAmfKey(this.ns.w3.shacl.name + 'property');
+    const pKey = this._getAmfKey(this.ns.w3.shacl.property);
     for (let i = 0, len = list.length; i < len; i++) {
       let item = list[i];
       if (item instanceof Array) {
         item = item[0];
       }
       this._resolve(item);
-      if (this._hasType(item, this.ns.w3.shacl.name + 'NodeShape')) {
+      if (this._hasType(item, this.ns.w3.shacl.NodeShape)) {
         item = this._resolve(item);
         const data = this._ensureArray(item[pKey]);
         if (data) {

@@ -151,15 +151,6 @@ declare namespace ApiElements {
      * Renders line number on "raw" editor.
      */
     lineNumbers: object|null;
-
-    /**
-     * Handler for content type change.
-     * Updates state of the UI depending on AMF model.
-     *
-     * @param contentType New content type value.
-     * @param oldValue Previous value
-     */
-    _contentTypeChanged(contentType: String|null, oldValue: String|null): void;
     render(): any;
     _attachListeners(node: any): void;
     _detachListeners(node: any): void;
@@ -190,6 +181,15 @@ declare namespace ApiElements {
      * Handler for content type changed event.
      */
     _contentTypeHandler(e: CustomEvent|null): void;
+
+    /**
+     * Handler for content type change.
+     * Updates state of the UI depending on AMF model.
+     *
+     * @param contentType New content type value.
+     * @param oldValue Previous value
+     */
+    _contentTypeChanged(contentType: String|null, oldValue: String|null): void;
     _hideAllEditors(): void;
     _renderAllEditors(): void;
 
