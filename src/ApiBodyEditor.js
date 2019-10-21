@@ -55,7 +55,7 @@ import { ApiBodyEditorAmfOverlay } from './ApiBodyEditorAmfOverlay.js';
  * @appliesMixin ApiBodyEditorAmfOverlay
  */
 export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(LitElement)) {
-  static get styles() {
+  get styles() {
     return [
       formStyles,
       css`:host {
@@ -98,7 +98,7 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
       _effectiveModel,
       value
     } = this;
-    return html`
+    return html`<style>${this.styles}</style>
     <api-view-model-transformer .amf="${amf}"></api-view-model-transformer>
     <api-example-generator .amf="${amf}"></api-example-generator>
     ${aware ? html`<raml-aware .api-changed="${this._modelHandler}" .scope="${aware}"></raml-aware>` : ''}
