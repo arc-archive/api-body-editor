@@ -461,3 +461,13 @@
 
 
 
+## 4.0.2 (2019-11-09)
+
+
+### Features
+
+* adding lineNumbers propertyto be set on code mirror ([568fc9b](https://github.com/advanced-rest-client/api-body-editor/commit/568fc9bc7d9b2c4ff1eb3b96d27643bf2ab8ec37))
+* adding refresh() function for compatibility ([4ebd9a6](https://github.com/advanced-rest-client/api-body-editor/commit/4ebd9a6a32fc5907a921537c3a0bcc2cc1f2aae6))
+
+
+
