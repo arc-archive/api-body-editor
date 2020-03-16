@@ -265,7 +265,7 @@ describe('<api-body-editor>', function() {
           const body = AmfLoader.lookupOperation(amf, '/urlencoded', 'post');
           element.amfBody = body;
           await aTimeout();
-          assert.include(element.value, 'etag: "W\\sd3deef3rgrgf4r"');
+          assert.include(element.value, 'etag: "W\\\\sd3deef3rgrgf4r"');
         });
 
         it('sets value from property inline examples', async () => {
