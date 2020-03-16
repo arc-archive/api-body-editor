@@ -367,28 +367,36 @@ describe('<api-body-editor>', function() {
       const body = AmfLoader.lookupOperation(amf, '/people', 'post');
       element.amfBody = body;
       await aTimeout();
-      await assert.isAccessible(element);
+      await assert.isAccessible(element, {
+        ignoredRules: ['color-contrast']
+      });
     });
 
     it('is accessible for single mime type', async () => {
       const body = AmfLoader.lookupOperation(amf, '/messages', 'post');
       element.amfBody = body;
       await aTimeout();
-      await assert.isAccessible(element);
+      await assert.isAccessible(element, {
+        ignoredRules: ['color-contrast']
+      });
     });
 
     it('is accessible for a file', async () => {
       const body = AmfLoader.lookupOperation(amf, '/files/file', 'post');
       element.amfBody = body;
       await aTimeout();
-      await assert.isAccessible(element);
+      await assert.isAccessible(element, {
+        ignoredRules: ['color-contrast']
+      });
     });
 
     it('is accessible for multipart data', async () => {
       const body = AmfLoader.lookupOperation(amf, '/files/multipart', 'post');
       element.amfBody = body;
       await aTimeout();
-      await assert.isAccessible(element);
+      await assert.isAccessible(element, {
+        ignoredRules: ['color-contrast']
+      });
     });
   });
 });
