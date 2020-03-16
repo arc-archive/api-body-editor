@@ -86,7 +86,8 @@
     "test:legacy": "karma start --compatibility all --coverage",
     "test:legacy:watch": "karma start --compatibility all --auto-watch=true --single-run=false",
     "test:sl": "karma start karma.sl.config.js --compatibility all --coverage",
-    "generate-model": "node demo/model.js"
+    "generate-model": "node demo/model.js",
+    "prepare": "node demo/model.js"
   },
   "lint-staged": {
     "*.js": [
