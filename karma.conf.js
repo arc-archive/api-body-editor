@@ -66,6 +66,12 @@ module.exports = (config) => {
         nodeResolve: true
       },
 
+      client: {
+        mocha: {
+          timeout: 10000
+        }
+      },
+
       coverageIstanbulReporter: {
         thresholds: {
           global: {
