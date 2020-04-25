@@ -577,3 +577,43 @@
  [88fa067](https://github.com/advanced-rest-client/api-body-editor/commit/88fa06739dc59149f3993d643dc7d85ef046c6c0) by Pawel Psztyc
 
 
+<a name="4.0.4"></a>
+## [4.0.4](https://github.com/advanced-rest-client/api-body-editor/compare/4.0.2...4.0.4) (2020-04-25)
+
+### Build
+
+* bumping version [79f5310](https://github.com/advanced-rest-client/api-body-editor/commit/79f531079af61b6292666d0fe7c4cea22fd3c339) by Pawel
+* bumping version [f8ee368](https://github.com/advanced-rest-client/api-body-editor/commit/f8ee368c82273e504f11e0726eaf902eb51995ad) by Pawel Psztyc
+
+
+### Continuous integration
+
+* updating travis config [d586826](https://github.com/advanced-rest-client/api-body-editor/commit/d5868263968cd4507e6b925dd05eb5d22160db79) by Pawel
+
+
+### Update
+
+* adding types support [0077ab3](https://github.com/advanced-rest-client/api-body-editor/commit/0077ab34e411dd4570c37e9f45c71ae795f61f6b) by Pawel
+* upgrading example generator [8ed5934](https://github.com/advanced-rest-client/api-body-editor/commit/8ed5934e9c000e36cee28840238daeec78636224) by Pawel
+* [ci skip] automated merge master->stage. syncing main branches [a5ea4db](https://github.com/advanced-rest-client/api-body-editor/commit/a5ea4dba57e55f80d93013c4a201199d903c0df0) by Ci agent
+* removing git add command from lint staged [6db7584](https://github.com/advanced-rest-client/api-body-editor/commit/6db75847c26dcf8868bf1189aa94e4729f0c688e) by Pawel Psztyc
+* upgrading dependencies [3921b61](https://github.com/advanced-rest-client/api-body-editor/commit/3921b61661a22df2d59bd8cc643eeaabb7b8c590) by Pawel Psztyc
+
+
+### Documentation
+
+* updating readme page [dfe50bf](https://github.com/advanced-rest-client/api-body-editor/commit/dfe50bf2636d1a6034a99ea413222e253edd52c7) by Pawel
+
+
+### Bug Fixes
+
+* fix tests and update models with AMF 4.0.6 (#4) [bump-version] [a9710e3](https://github.com/advanced-rest-client/api-body-editor/commit/a9710e33af74ee558b2e206cc203cff7682a6a2d) by Leandro Bauret
+
+
+### Testing
+
+* updating karma config [4b7ba44](https://github.com/advanced-rest-client/api-body-editor/commit/4b7ba44ee6313fac40e78159749778d8be81a6cd) by Pawel Psztyc
+* adding on installation model generation [fff8078](https://github.com/advanced-rest-client/api-body-editor/commit/fff8078eaa60a0e2fb6f1f19231590565233192c) by Pawel Psztyc
+* ignoring color-contrast rule for a11y [e7e8dd5](https://github.com/advanced-rest-client/api-body-editor/commit/e7e8dd56973f4b627b231ac27832bb5e7fe95631) by Pawel Psztyc
+
+
