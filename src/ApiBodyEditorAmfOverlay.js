@@ -12,6 +12,7 @@ License for the specific language governing permissions and limitations under
 the License.
 */
 import { AmfHelperMixin } from '@api-components/amf-helper-mixin/amf-helper-mixin.js';
+import { ExampleGenerator } from '@api-components/api-example-generator';
 /**
  * Adds AMF support to body editor.
  *
@@ -340,14 +341,8 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
    * @param {Object} schema A schema for current payload.
    */
   _updatePanelValue(type, schema) {
-    const node = this.shadowRoot.querySelector('api-example-generator');
-    if (!node) {
-      return;
-    }
-    if (!node.amf) {
-      node.amf = this.amf;
-    }
-    const examples = node.generatePayloadExamples(schema, type, {});
+    const gen = new ExampleGenerator(this.amf);
+    const examples = gen.generatePayloadExamples(schema, type, {});
     if (!examples) {
       return;
     }

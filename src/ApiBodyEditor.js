@@ -26,7 +26,6 @@ import '@advanced-rest-client/files-payload-editor/files-payload-editor.js';
 import '@advanced-rest-client/content-type-selector/content-type-selector.js';
 import '@api-components/api-view-model-transformer/api-view-model-transformer.js';
 import '@api-components/raml-aware/raml-aware.js';
-import '@api-components/api-example-generator/api-example-generator.js';
 import { ApiBodyEditorAmfOverlay } from './ApiBodyEditorAmfOverlay.js';
 
 /**
@@ -100,7 +99,6 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
     } = this;
     return html`<style>${this.styles}</style>
     <api-view-model-transformer .amf="${amf}"></api-view-model-transformer>
-    <api-example-generator .amf="${amf}"></api-example-generator>
     ${aware ? html`<raml-aware .api-changed="${this._modelHandler}" .scope="${aware}"></raml-aware>` : ''}
 
     <div class="content-actions">
