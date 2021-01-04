@@ -359,7 +359,9 @@ describe('<api-body-editor>', function() {
         beforeEach(async () => {
           body = AmfLoader.lookupOperation(amf, '/accounts/{accountNumber}', 'get');
           element.amfBody = body;
-          await aTimeout()
+          await nextFrame();
+          await nextFrame();
+          await nextFrame();
         });
 
         it('returns a payload for operation', () => {
@@ -368,7 +370,7 @@ describe('<api-body-editor>', function() {
           assert.lengthOf(result, 1);
         });
 
-        it('sets media types for operation',  () => {
+        it('sets media types for operation', () => {
           assert.deepEqual(element._mimeTypes, ['application/json']);
         });
 
