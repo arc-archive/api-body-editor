@@ -169,8 +169,26 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
     if (!this._hasType(model, this.ns.aml.vocabularies.apiContract.Request)) {
       return;
     }
+
     const pKey = this._getAmfKey(this.ns.aml.vocabularies.apiContract.payload);
-    return this._ensureArray(model[pKey]);
+    const payload = model[pKey]
+    const contentType = this._defaultMediaTypes()
+    return !!payload && payload.length > 0 ? this._ensureArray(payload) : this._ensureArray(contentType);
+  }
+
+  _defaultMediaTypes() {
+    let amf = this.amf;
+    if (amf instanceof Array) {
+      amf = amf[0];
+    }
+
+    const eKey = this._getAmfKey(this.ns.aml.vocabularies.document.encodes);
+    let encodes = amf[eKey]
+    if (encodes instanceof Array) {
+      encodes = encodes[0]
+    }
+
+    return encodes ? encodes : []
   }
 
   /**
@@ -181,7 +199,9 @@ export const ApiBodyEditorAmfOverlay = (base) => class extends AmfHelperMixin(ba
   _updateAmfMediaTypes(model) {
     this._mimeTypes = undefined;
     const key = this.ns.aml.vocabularies.core.mediaType;
-    const mediaTypes = model.map((item) => this._getValue(item, key));
+    const cKey = this.ns.aml.vocabularies.apiContract.contentType;
+
+    const mediaTypes = model.map((item) => this._getValue(item, key) || this._getValue(item, cKey));
     this._mimeTypes = mediaTypes;
     this._singleMimeType = mediaTypes && mediaTypes.length === 1;
   }

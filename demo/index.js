@@ -223,7 +223,9 @@ ${payloadResult ? payloadResult : 'Value not ready'}
     <paper-item data-src="examples-api.json">Examples render demo api</paper-item>
     <paper-item data-src="examples-api-compact.json">Examples render demo - compact model</paper-item>
     <paper-item data-src="apic-169.json">apic-169</paper-item>
-    <paper-item data-src="apic-169-compact.json">apic-169 - compact model</paper-item>`;
+    <paper-item data-src="apic-169-compact.json">apic-169 - compact model</paper-item>
+    <paper-item data-src="APIC-480.json">APIC-480</paper-item>
+    <paper-item data-src="APIC-480-compact.json">APIC-480 - compact model</paper-item>`;
   }
 
   _render() {
