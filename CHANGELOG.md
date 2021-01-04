@@ -617,3 +617,52 @@
 * ignoring color-contrast rule for a11y [e7e8dd5](https://github.com/advanced-rest-client/api-body-editor/commit/e7e8dd56973f4b627b231ac27832bb5e7fe95631) by Pawel Psztyc
 
 
+<a name="4.0.5"></a>
+## [4.0.5](https://github.com/advanced-rest-client/api-body-editor/compare/4.0.3...4.0.5) (2021-01-04)
+
+### Build
+
+* update package-lock [b575274](https://github.com/advanced-rest-client/api-body-editor/commit/b575274b0e9ea2ddcc99b579d4b3c10c75950ae2) by Carolina Wright
+* add github workflow [64dc869](https://github.com/advanced-rest-client/api-body-editor/commit/64dc8697be97656c2db0272d6163d52cbd1ee256) by Carolina Wright
+* bump version [419c4df](https://github.com/advanced-rest-client/api-body-editor/commit/419c4dfe96e318863cdb6856104f32c30330ccd7) by Carolina Wright
+* bumping version [79f5310](https://github.com/advanced-rest-client/api-body-editor/commit/79f531079af61b6292666d0fe7c4cea22fd3c339) by Pawel
+
+
+### Continuous integration
+
+* updating travis config [d586826](https://github.com/advanced-rest-client/api-body-editor/commit/d5868263968cd4507e6b925dd05eb5d22160db79) by Pawel
+
+
+### Update
+
+* ignore idea folder [3edf085](https://github.com/advanced-rest-client/api-body-editor/commit/3edf085e006b32b290eb0124588b1b58a6d0b2b8) by Carolina Wright
+* [ci skip] automated merge master->stage. syncing main branches [8bf0b07](https://github.com/advanced-rest-client/api-body-editor/commit/8bf0b07d70cdc2f58997e6bb2e278823520def3c) by Ci agent
+* adding types support [0077ab3](https://github.com/advanced-rest-client/api-body-editor/commit/0077ab34e411dd4570c37e9f45c71ae795f61f6b) by Pawel
+* upgrading example generator [8ed5934](https://github.com/advanced-rest-client/api-body-editor/commit/8ed5934e9c000e36cee28840238daeec78636224) by Pawel
+* [ci skip] automated merge master->stage. syncing main branches [a5ea4db](https://github.com/advanced-rest-client/api-body-editor/commit/a5ea4dba57e55f80d93013c4a201199d903c0df0) by Ci agent
+
+
+### Documentation
+
+* updating readme page [dfe50bf](https://github.com/advanced-rest-client/api-body-editor/commit/dfe50bf2636d1a6034a99ea413222e253edd52c7) by Pawel
+
+
+### Bug Fixes
+
+* apic-480 missing content type when defined in mediaTypes node [38c80d8](https://github.com/advanced-rest-client/api-body-editor/commit/38c80d85bac2493e76286aa9481504367d3cbb99) by Carolina Wright
+
+
+### Refactor
+
+* remove karma [1658dfc](https://github.com/advanced-rest-client/api-body-editor/commit/1658dfc877b5be9b7265f95e2680e7fc930138da) by Carolina Wright
+* remove travis [206be2f](https://github.com/advanced-rest-client/api-body-editor/commit/206be2f5632910bf6398e197b4bacb6e51755d49) by Carolina Wright
+
+
+### Testing
+
+* fix test [2fecd90](https://github.com/advanced-rest-client/api-body-editor/commit/2fecd90b94b2653171f02aad06d09c34ceae865a) by Carolina Wright
+* add testRunnerHtml [6919cef](https://github.com/advanced-rest-client/api-body-editor/commit/6919cef9259bcc41c32b32632555eaaa396a54f2) by Carolina Wright
+* use web test runner [3963137](https://github.com/advanced-rest-client/api-body-editor/commit/3963137cbb94585453dbe76dec1b9a493d978ca9) by Carolina Wright
+* content type is set when mediaTypes defined [f4a245e](https://github.com/advanced-rest-client/api-body-editor/commit/f4a245ebff4444f4d82e7e4980c0881412ad878e) by Carolina Wright
+
+
