@@ -1,15 +1,7 @@
-import {
-  fixture,
-  assert,
-  nextFrame,
-  aTimeout,
-  html
-} from '@open-wc/testing';
-import {
-  AmfLoader
-} from './amf-loader.js';
-import * as sinon from 'sinon/pkg/sinon-esm.js';
-import '../api-body-editor.js';
+import { assert, aTimeout, fixture, html, nextFrame } from '@open-wc/testing'
+import { AmfLoader } from './amf-loader.js'
+import * as sinon from 'sinon/pkg/sinon-esm.js'
+import '../api-body-editor.js'
 
 describe('<api-body-editor>', function() {
   async function basicFixture() {
@@ -348,6 +340,66 @@ describe('<api-body-editor>', function() {
         });
       });
     });
+
+    describe('APIC-480', () => {
+      let amf;
+      let element;
+
+      before(async () => {
+        amf = await AmfLoader.load(compact, 'APIC-480');
+      });
+
+      beforeEach(async () => {
+        element = await basicFixture();
+        element.amf = amf;
+      });
+
+      describe('Get operation', () => {
+        let body;
+        beforeEach(async () => {
+          body = AmfLoader.lookupOperation(amf, '/accounts/{accountNumber}', 'get');
+          element.amfBody = body;
+          await aTimeout()
+        });
+
+        it('returns a payload for operation', () => {
+          const result = element._ensurePayloadModel(body);
+          assert.typeOf(result, 'array');
+          assert.lengthOf(result, 1);
+        });
+
+        it('sets media types for operation',  () => {
+          assert.deepEqual(element._mimeTypes, ['application/json']);
+        });
+
+        it('selects first media type',  () => {
+          assert.equal(element.contentType, 'application/json');
+        });
+      })
+
+      describe('Patch operation', () => {
+        let body;
+        beforeEach(async () => {
+          body = AmfLoader.lookupOperation(amf, '/accounts/{accountNumber}', 'patch');
+          element.amfBody = body;
+          await aTimeout()
+        });
+
+        it('returns a payload for operation', () => {
+          const result = element._ensurePayloadModel(body);
+          assert.typeOf(result, 'array');
+          assert.lengthOf(result, 1);
+        });
+
+        it('sets media types for operation', () => {
+          assert.deepEqual(element._mimeTypes, ['application/json']);
+        });
+
+        it('selects first media type',  () => {
+          assert.equal(element.contentType, 'application/json');
+        });
+      })
+    })
   });
 
   describe('a11y', () => {

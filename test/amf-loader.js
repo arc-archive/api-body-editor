@@ -16,8 +16,9 @@ AmfLoader.lookupOperation = function(model, endpoint, operation) {
   return ops.find((item) => helper._getValue(item, helper.ns.aml.vocabularies.apiContract.method) === operation);
 };
 
-AmfLoader.load = async function(compact) {
-  const file = '/demo-api' + (compact ? '-compact' : '') + '.json';
+AmfLoader.load = async function(compact, fileName) {
+  const name = fileName || 'demo-api'
+  const file = '/' + name + (compact ? '-compact' : '') + '.json';
   const url = location.protocol + '//' + location.host + '/base/demo/' + file;
 
   return new Promise((resolve, reject) => {

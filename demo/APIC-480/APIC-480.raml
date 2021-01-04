@@ -5,7 +5,7 @@ description: This API is the system API to interact with Innotrust
 
 protocols:
   - https
-mediaType: 
+mediaType:
   - application/json
 
 traits:
@@ -27,7 +27,7 @@ traits:
       201:
         body:
           example: !include examples/account-response.json
-            
+
   /{accountNumber}:
     displayName: Account
     get:
@@ -54,7 +54,7 @@ traits:
           - event-tracking
         body:
       patch:
-        displayName: Update Fee Account  
+        displayName: Update Fee Account
         description: This method should be used to add fee account.
         is:
           - event-tracking
