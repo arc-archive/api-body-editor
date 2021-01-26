@@ -586,6 +586,12 @@ describe('<api-body-editor>', function() {
       element.contentType = 'application/xml';
       assert.equal(element.noTextInput, false);
     });
+
+    it('clears the boundary of content type if any', async () => {
+      element.contentType = 'multipart/form-data; boundary=----WebKitFormBoundaryoWb1Lth35wfQGh2n';
+      await nextFrame();
+      assert.equal(element.contentType, 'multipart/form-data');
+    });
   });
 
   describe('send-request event', () => {

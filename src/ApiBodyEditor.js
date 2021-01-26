@@ -242,14 +242,16 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
   }
 
   set contentType(value) {
+    const match = value && value.match(/(.*); boundary=(.*)/);
+    const mimeType = match ? match[1]: value;
     const old = this._contentType;
     /* istanbul ignore if */
-    if (old === value) {
+    if (old === mimeType) {
       return;
     }
-    this._contentType = value;
+    this._contentType = mimeType;
     this.requestUpdate('contentType', old);
-    this._contentTypeChanged(value, old);
+    this._contentTypeChanged(mimeType, old);
   }
 
   /**
