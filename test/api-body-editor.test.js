@@ -431,6 +431,15 @@ describe('<api-body-editor>', function() {
       const node = element.shadowRoot.querySelector('multipart-payload-editor');
       assert.ok(node);
     });
+
+    it('should select multipart when contentType has boundary', async () => {
+      const element = await basicFixture();
+      element.contentType = 'multipart/form-data; boundary=----WebKitFormBoundaryoWb1Lth35wfQGh2n';
+      await nextFrame();
+
+      const node = element.shadowRoot.querySelector('anypoint-dropdown-menu anypoint-listbox');
+      assert.equal(node.selected, 2)
+    });
   });
 
   describe('Raw mode', () => {
@@ -585,12 +594,6 @@ describe('<api-body-editor>', function() {
     it('enables raw editor selector for other media types', async () => {
       element.contentType = 'application/xml';
       assert.equal(element.noTextInput, false);
-    });
-
-    it('clears the boundary of content type if any', async () => {
-      element.contentType = 'multipart/form-data; boundary=----WebKitFormBoundaryoWb1Lth35wfQGh2n';
-      await nextFrame();
-      assert.equal(element.contentType, 'multipart/form-data');
     });
   });
 

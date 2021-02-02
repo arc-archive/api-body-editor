@@ -242,16 +242,14 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
   }
 
   set contentType(value) {
-    const match = value && value.match(/(.*); boundary=(.*)/);
-    const mimeType = match ? match[1]: value;
     const old = this._contentType;
     /* istanbul ignore if */
-    if (old === mimeType) {
+    if (old === value) {
       return;
     }
-    this._contentType = mimeType;
+    this._contentType = value;
     this.requestUpdate('contentType', old);
-    this._contentTypeChanged(mimeType, old);
+    this._contentTypeChanged(value, old);
   }
 
   /**
@@ -276,10 +274,15 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
     this.removeEventListener('keydown', this._payloadKeyDown);
   }
 
+  _getMimeType() {
+    const { contentType } = this
+    const match = contentType && contentType.match(/(.*); boundary=(.*)/);
+    return match ? match[1]: contentType;
+  }
+
   _getApiMimeSelector() {
     const {
       _singleMimeType,
-      contentType,
       readOnly,
       disabled,
       compatibility,
@@ -287,6 +290,7 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
     } = this;
     if (!_singleMimeType) {
       const item = this._mimeTypes || [];
+      const selected = this._getMimeType()
       return html`<anypoint-dropdown-menu
         class="amf-types"
         ?outlined="${outlined}"
@@ -297,7 +301,7 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
         <anypoint-listbox
           slot="dropdown-content"
           attrforselected="data-mime"
-          .selected="${contentType}"
+          .selected="${selected}"
           ?disabled="${disabled}"
           ?compatibility="${compatibility}"
           @selected-changed="${this._typeSelectedChanged}">
