@@ -33,7 +33,7 @@
     "@advanced-rest-client/events-target-mixin": "^3.1.1",
     "@advanced-rest-client/files-payload-editor": "^3.0.4",
     "@advanced-rest-client/form-data-editor": "^3.0.7",
-    "@advanced-rest-client/multipart-payload-editor": "^4.0.1",
+    "@advanced-rest-client/multipart-payload-editor": "^4.1.1",
     "@advanced-rest-client/raw-payload-editor": "^3.0.6",
     "@anypoint-web-components/anypoint-button": "^1.0.15",
     "@anypoint-web-components/anypoint-dropdown-menu": "^0.1.14",
