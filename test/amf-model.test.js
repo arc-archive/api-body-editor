@@ -401,7 +401,36 @@ describe('<api-body-editor>', function() {
           assert.equal(element.contentType, 'application/json');
         });
       })
-    })
+    });
+
+    describe('APIC-613', () => {
+      let amf;
+      let element;
+
+      before(async () => {
+        amf = await AmfLoader.load(compact, 'APIC-613');
+      });
+
+      beforeEach(async () => {
+        element = await basicFixture();
+        // @ts-ignore
+        element.amf = amf;
+        await nextFrame();
+        const body = AmfLoader.lookupOperation(amf, '/files', 'post');
+        element.amfBody = body;
+        await aTimeout(10);
+      });
+
+      it('should not reset input fields when manipulating them', async () => {
+        const payloadEditor = element.shadowRoot.querySelector('multipart-payload-editor');
+        payloadEditor.shadowRoot.querySelector('[data-action="add-text"]').click();
+        await aTimeout(5);
+        const textFormItem = payloadEditor.shadowRoot.querySelector('multipart-text-form-item');
+        textFormItem.shadowRoot.querySelector('anypoint-input.name-field').value = 'Test';
+        await aTimeout(5);
+        assert.exists(payloadEditor.shadowRoot.querySelector('multipart-text-form-item'))
+      });
+    });
   });
 
   describe('a11y', () => {
