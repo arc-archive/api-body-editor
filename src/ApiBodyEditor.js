@@ -542,6 +542,7 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
       ?readOnly="${readOnly}"
       ?disabled="${disabled}"
       @value-changed="${this._panelValueChanged}"
+      @modelchanged="${this._modelChanged}"
     ></multipart-payload-editor>`;
   }
   /**
@@ -813,6 +814,11 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
     const { value } = e.detail;
     this.value = value;
     this._notifyBodyChanged(value);
+  }
+
+  _modelChanged(e) {
+    const { value } = e.detail;
+    this._panelModel = value;
   }
   /**
    * Fires when the value change.
