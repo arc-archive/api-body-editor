@@ -1,10 +1,8 @@
-[![Published on NPM](https://img.shields.io/npm/v/@api-components/api-body-editor.svg)](https://www.npmjs.com/package/@api-components/api-body-editor)
+# DEPRECATED
 
-[![Tests and publishing](https://github.com/advanced-rest-client/api-body-editor/actions/workflows/deployment.yml/badge.svg)](https://github.com/advanced-rest-client/api-body-editor/actions/workflows/deployment.yml)
+This component is deprecated. The code base has been moved to [api-request](https://github.com/advanced-rest-client/api-request) module.
 
-[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/advanced-rest-client/api-body-editor)
-
-# api-body-editor
+--------
 
 Renders body editor that correspond to selected media type.
 

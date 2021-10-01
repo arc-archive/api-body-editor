@@ -62,3 +62,4 @@ coverage
 !demo/apis.json
 
 .idea
+coverage
