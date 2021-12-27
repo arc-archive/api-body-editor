@@ -9,6 +9,11 @@ export default {
       return next();
     }
   ],
+  testFramework: {
+    config: {
+      timeout: 60000,
+    },
+  },
   testRunnerHtml: (testFramework) =>
     `<html>
 		<body>
