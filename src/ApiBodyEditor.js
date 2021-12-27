@@ -528,6 +528,7 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
     return html`<multipart-payload-editor
       data-type="formdata"
       data-bodypanel
+      @value-changed="${this._panelValueChanged}"
       .value="${value}"
       .eventsTarget="${eventsTarget}"
       .contentType="${contentType}"
@@ -541,7 +542,6 @@ export class ApiBodyEditor extends ApiBodyEditorAmfOverlay(EventsTargetMixin(Lit
       ?compatibility="${compatibility}"
       ?readOnly="${readOnly}"
       ?disabled="${disabled}"
-      @value-changed="${this._panelValueChanged}"
       @modelchanged="${this._modelChanged}"
     ></multipart-payload-editor>`;
   }
